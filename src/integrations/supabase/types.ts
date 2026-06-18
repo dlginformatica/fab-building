@@ -896,6 +896,114 @@ export type Database = {
           },
         ]
       }
+      module_permissions: {
+        Row: {
+          action: string
+          allowed: boolean
+          created_at: string
+          id: string
+          module: string
+          role: Database["public"]["Enums"]["app_role"] | null
+          structure_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action?: string
+          allowed?: boolean
+          created_at?: string
+          id?: string
+          module: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          structure_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          allowed?: boolean
+          created_at?: string
+          id?: string
+          module?: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          structure_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "module_permissions_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      penalty_rules: {
+        Row: {
+          active: boolean
+          amount_eur: number
+          amount_pct: number | null
+          contract_id: string | null
+          created_at: string
+          id: string
+          name: string
+          per_hour: boolean
+          structure_id: string | null
+          supplier_id: string | null
+          threshold_minutes: number | null
+          trigger_type: string
+        }
+        Insert: {
+          active?: boolean
+          amount_eur?: number
+          amount_pct?: number | null
+          contract_id?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          per_hour?: boolean
+          structure_id?: string | null
+          supplier_id?: string | null
+          threshold_minutes?: number | null
+          trigger_type?: string
+        }
+        Update: {
+          active?: boolean
+          amount_eur?: number
+          amount_pct?: number | null
+          contract_id?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          per_hour?: boolean
+          structure_id?: string | null
+          supplier_id?: string | null
+          threshold_minutes?: number | null
+          trigger_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "penalty_rules_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "penalty_rules_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "penalty_rules_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -989,6 +1097,59 @@ export type Database = {
           },
         ]
       }
+      report_templates: {
+        Row: {
+          columns: Json
+          created_at: string
+          description: string | null
+          filters: Json
+          group_by: string | null
+          id: string
+          is_shared: boolean
+          name: string
+          owner_id: string | null
+          source: string
+          structure_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          columns?: Json
+          created_at?: string
+          description?: string | null
+          filters?: Json
+          group_by?: string | null
+          id?: string
+          is_shared?: boolean
+          name: string
+          owner_id?: string | null
+          source: string
+          structure_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          columns?: Json
+          created_at?: string
+          description?: string | null
+          filters?: Json
+          group_by?: string | null
+          id?: string
+          is_shared?: boolean
+          name?: string
+          owner_id?: string | null
+          source?: string
+          structure_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_templates_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           created_at: string
@@ -1072,6 +1233,77 @@ export type Database = {
             columns: ["structure_id"]
             isOneToOne: false
             referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sla_violations: {
+        Row: {
+          created_at: string
+          delay_minutes: number
+          id: string
+          kind: string
+          notes: string | null
+          penalty_eur: number
+          rule_id: string | null
+          status: string
+          structure_id: string | null
+          supplier_id: string | null
+          ticket_id: string
+        }
+        Insert: {
+          created_at?: string
+          delay_minutes?: number
+          id?: string
+          kind: string
+          notes?: string | null
+          penalty_eur?: number
+          rule_id?: string | null
+          status?: string
+          structure_id?: string | null
+          supplier_id?: string | null
+          ticket_id: string
+        }
+        Update: {
+          created_at?: string
+          delay_minutes?: number
+          id?: string
+          kind?: string
+          notes?: string | null
+          penalty_eur?: number
+          rule_id?: string | null
+          status?: string
+          structure_id?: string | null
+          supplier_id?: string | null
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sla_violations_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "penalty_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_violations_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_violations_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_violations_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
             referencedColumns: ["id"]
           },
         ]
@@ -1401,6 +1633,53 @@ export type Database = {
           },
         ]
       }
+      user_delegations: {
+        Row: {
+          active: boolean
+          created_at: string
+          delegate_id: string
+          delegator_id: string
+          ends_at: string | null
+          id: string
+          modules: string[]
+          reason: string | null
+          starts_at: string
+          structure_id: string | null
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          delegate_id: string
+          delegator_id: string
+          ends_at?: string | null
+          id?: string
+          modules?: string[]
+          reason?: string | null
+          starts_at?: string
+          structure_id?: string | null
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          delegate_id?: string
+          delegator_id?: string
+          ends_at?: string | null
+          id?: string
+          modules?: string[]
+          reason?: string | null
+          starts_at?: string
+          structure_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_delegations_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -1642,6 +1921,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_permission: {
+        Args: {
+          _action?: string
+          _module: string
+          _structure?: string
+          _user: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.8: aggiunti **Permessi per funzione** (granulari per utente/ruolo/struttura), **Deleghe utente** (temporanee, per moduli), **Penali & Violazioni SLA** (calcolo automatico via trigger DB), **Statistiche operative** (KPI, MTTR, % SLA, grafici Recharts, export PDF), **Report Builder universale** (sorgente + colonne + filtri + salvataggio modelli, export PDF/CSV via jsPDF).
 - **2026-06-18** — v0.7: aggiunti **Portale Agenti/Fornitori** (`/portal`), **Dashboard personalizzabile a widget** per direttore/proprietà, **allegati foto/PDF** sui ticket (bucket `tickets`), **rapportino di intervento** firmato (`ticket_reports`), **videocall integrata** via Jitsi Meet (`videocall_rooms`).
 - **2026-06-18** — v0.6: completate Fasi 2-6. Aggiunti: Fornitori, Contratti, Ordini di Lavoro, Manutenzione programmata, Magazzino, Ordini d'Acquisto, Utenze & Letture, Fatture & Bollette, Messaggistica multi-agente (porting Penelope con AI Gateway), Report direzionale, Audit log. Aggiornato __root.tsx per usare Google Fonts (font @fontsource non installato).
 - **2026-06-18** — v0.1: inizializzazione documento. Coperti: autenticazione, multi-tenant, ruoli, Asset & Impianti, Trouble Ticketing con SLA, TTS sui ticket.
