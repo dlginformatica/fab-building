@@ -9,38 +9,214 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
+import { Route as ApiTtsSpeakRouteImport } from './routes/api/tts/speak'
+import { Route as AuthenticatedAppUsersRouteImport } from './routes/_authenticated/app.users'
+import { Route as AuthenticatedAppTicketsRouteImport } from './routes/_authenticated/app.tickets'
+import { Route as AuthenticatedAppStructuresRouteImport } from './routes/_authenticated/app.structures'
+import { Route as AuthenticatedAppSlaRouteImport } from './routes/_authenticated/app.sla'
+import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
+import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
+import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
+import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppIndexRoute = AuthenticatedAppIndexRouteImport.update({
+  id: '/app/',
+  path: '/app/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const ApiTtsSpeakRoute = ApiTtsSpeakRouteImport.update({
+  id: '/api/tts/speak',
+  path: '/api/tts/speak',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedAppUsersRoute = AuthenticatedAppUsersRouteImport.update({
+  id: '/app/users',
+  path: '/app/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppTicketsRoute = AuthenticatedAppTicketsRouteImport.update({
+  id: '/app/tickets',
+  path: '/app/tickets',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppStructuresRoute =
+  AuthenticatedAppStructuresRouteImport.update({
+    id: '/app/structures',
+    path: '/app/structures',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppSlaRoute = AuthenticatedAppSlaRouteImport.update({
+  id: '/app/sla',
+  path: '/app/sla',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppSettingsRoute =
+  AuthenticatedAppSettingsRouteImport.update({
+    id: '/app/settings',
+    path: '/app/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
+  id: '/app/docs',
+  path: '/app/docs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppAssetsRoute = AuthenticatedAppAssetsRouteImport.update({
+  id: '/app/assets',
+  path: '/app/assets',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppTicketsIdRoute =
+  AuthenticatedAppTicketsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAppTicketsRoute,
+  } as any)
+const AuthenticatedAppAssetsIdRoute =
+  AuthenticatedAppAssetsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAppAssetsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
+  '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/app/sla': typeof AuthenticatedAppSlaRoute
+  '/app/structures': typeof AuthenticatedAppStructuresRoute
+  '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
+  '/app/users': typeof AuthenticatedAppUsersRoute
+  '/api/tts/speak': typeof ApiTtsSpeakRoute
+  '/app/': typeof AuthenticatedAppIndexRoute
+  '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
+  '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
+  '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/app/sla': typeof AuthenticatedAppSlaRoute
+  '/app/structures': typeof AuthenticatedAppStructuresRoute
+  '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
+  '/app/users': typeof AuthenticatedAppUsersRoute
+  '/api/tts/speak': typeof ApiTtsSpeakRoute
+  '/app': typeof AuthenticatedAppIndexRoute
+  '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
+  '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
+  '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
+  '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
+  '/_authenticated/app/sla': typeof AuthenticatedAppSlaRoute
+  '/_authenticated/app/structures': typeof AuthenticatedAppStructuresRoute
+  '/_authenticated/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
+  '/_authenticated/app/users': typeof AuthenticatedAppUsersRoute
+  '/api/tts/speak': typeof ApiTtsSpeakRoute
+  '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
+  '/_authenticated/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/app/assets'
+    | '/app/docs'
+    | '/app/settings'
+    | '/app/sla'
+    | '/app/structures'
+    | '/app/tickets'
+    | '/app/users'
+    | '/api/tts/speak'
+    | '/app/'
+    | '/app/assets/$id'
+    | '/app/tickets/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/app/assets'
+    | '/app/docs'
+    | '/app/settings'
+    | '/app/sla'
+    | '/app/structures'
+    | '/app/tickets'
+    | '/app/users'
+    | '/api/tts/speak'
+    | '/app'
+    | '/app/assets/$id'
+    | '/app/tickets/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/app/assets'
+    | '/_authenticated/app/docs'
+    | '/_authenticated/app/settings'
+    | '/_authenticated/app/sla'
+    | '/_authenticated/app/structures'
+    | '/_authenticated/app/tickets'
+    | '/_authenticated/app/users'
+    | '/api/tts/speak'
+    | '/_authenticated/app/'
+    | '/_authenticated/app/assets/$id'
+    | '/_authenticated/app/tickets/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
+  ApiTtsSpeakRoute: typeof ApiTtsSpeakRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +224,145 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/app/': {
+      id: '/_authenticated/app/'
+      path: '/app'
+      fullPath: '/app/'
+      preLoaderRoute: typeof AuthenticatedAppIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/tts/speak': {
+      id: '/api/tts/speak'
+      path: '/api/tts/speak'
+      fullPath: '/api/tts/speak'
+      preLoaderRoute: typeof ApiTtsSpeakRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/users': {
+      id: '/_authenticated/app/users'
+      path: '/app/users'
+      fullPath: '/app/users'
+      preLoaderRoute: typeof AuthenticatedAppUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/tickets': {
+      id: '/_authenticated/app/tickets'
+      path: '/app/tickets'
+      fullPath: '/app/tickets'
+      preLoaderRoute: typeof AuthenticatedAppTicketsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/structures': {
+      id: '/_authenticated/app/structures'
+      path: '/app/structures'
+      fullPath: '/app/structures'
+      preLoaderRoute: typeof AuthenticatedAppStructuresRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/sla': {
+      id: '/_authenticated/app/sla'
+      path: '/app/sla'
+      fullPath: '/app/sla'
+      preLoaderRoute: typeof AuthenticatedAppSlaRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/settings': {
+      id: '/_authenticated/app/settings'
+      path: '/app/settings'
+      fullPath: '/app/settings'
+      preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/docs': {
+      id: '/_authenticated/app/docs'
+      path: '/app/docs'
+      fullPath: '/app/docs'
+      preLoaderRoute: typeof AuthenticatedAppDocsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/assets': {
+      id: '/_authenticated/app/assets'
+      path: '/app/assets'
+      fullPath: '/app/assets'
+      preLoaderRoute: typeof AuthenticatedAppAssetsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/tickets/$id': {
+      id: '/_authenticated/app/tickets/$id'
+      path: '/$id'
+      fullPath: '/app/tickets/$id'
+      preLoaderRoute: typeof AuthenticatedAppTicketsIdRouteImport
+      parentRoute: typeof AuthenticatedAppTicketsRoute
+    }
+    '/_authenticated/app/assets/$id': {
+      id: '/_authenticated/app/assets/$id'
+      path: '/$id'
+      fullPath: '/app/assets/$id'
+      preLoaderRoute: typeof AuthenticatedAppAssetsIdRouteImport
+      parentRoute: typeof AuthenticatedAppAssetsRoute
+    }
   }
 }
 
+interface AuthenticatedAppAssetsRouteChildren {
+  AuthenticatedAppAssetsIdRoute: typeof AuthenticatedAppAssetsIdRoute
+}
+
+const AuthenticatedAppAssetsRouteChildren: AuthenticatedAppAssetsRouteChildren =
+  {
+    AuthenticatedAppAssetsIdRoute: AuthenticatedAppAssetsIdRoute,
+  }
+
+const AuthenticatedAppAssetsRouteWithChildren =
+  AuthenticatedAppAssetsRoute._addFileChildren(
+    AuthenticatedAppAssetsRouteChildren,
+  )
+
+interface AuthenticatedAppTicketsRouteChildren {
+  AuthenticatedAppTicketsIdRoute: typeof AuthenticatedAppTicketsIdRoute
+}
+
+const AuthenticatedAppTicketsRouteChildren: AuthenticatedAppTicketsRouteChildren =
+  {
+    AuthenticatedAppTicketsIdRoute: AuthenticatedAppTicketsIdRoute,
+  }
+
+const AuthenticatedAppTicketsRouteWithChildren =
+  AuthenticatedAppTicketsRoute._addFileChildren(
+    AuthenticatedAppTicketsRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
+  AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
+  AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
+  AuthenticatedAppSlaRoute: typeof AuthenticatedAppSlaRoute
+  AuthenticatedAppStructuresRoute: typeof AuthenticatedAppStructuresRoute
+  AuthenticatedAppTicketsRoute: typeof AuthenticatedAppTicketsRouteWithChildren
+  AuthenticatedAppUsersRoute: typeof AuthenticatedAppUsersRoute
+  AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
+  AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
+  AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
+  AuthenticatedAppSlaRoute: AuthenticatedAppSlaRoute,
+  AuthenticatedAppStructuresRoute: AuthenticatedAppStructuresRoute,
+  AuthenticatedAppTicketsRoute: AuthenticatedAppTicketsRouteWithChildren,
+  AuthenticatedAppUsersRoute: AuthenticatedAppUsersRoute,
+  AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
+  ApiTtsSpeakRoute: ApiTtsSpeakRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
