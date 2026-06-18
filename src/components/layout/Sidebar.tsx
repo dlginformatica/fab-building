@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import {
   LayoutDashboard, Building2, Wrench, Ticket, Settings, FileText, Users, Bell,
   Truck, FileSignature, ClipboardList, CalendarClock, Package, ShoppingCart,
-  Gauge, Receipt, MessageSquare, BarChart3, ScrollText,
+  Gauge, Receipt, MessageSquare, BarChart3, ScrollText, ExternalLink,
 } from "lucide-react";
 
 const groups: Array<{ label: string; items: Array<{ to: string; label: string; icon: any; exact?: boolean }> }> = [
@@ -10,6 +10,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/app/tickets", label: "Ticket", icon: Ticket },
     { to: "/app/messages", label: "Messaggi", icon: MessageSquare },
+    { to: "/portal", label: "Portale Agenti", icon: ExternalLink },
   ]},
   { label: "Strutture & Asset", items: [
     { to: "/app/structures", label: "Strutture", icon: Building2 },
