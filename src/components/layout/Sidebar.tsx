@@ -74,7 +74,7 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
-      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.6 • Fasi 0–6</div>
+      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.9 • Audit · SLA wizard · Onboarding · Report PDF</div>
     </aside>
   );
 }

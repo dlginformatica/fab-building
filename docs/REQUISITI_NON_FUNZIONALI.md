@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.9: nuovi campi su `report_templates` (`layout` jsonb, `schedule_cron`, `last_run_at`, `last_export_url`). Funzione trigger `tg_audit_log` (SECURITY DEFINER, search_path bloccato) collegata in AFTER INSERT/UPDATE/DELETE su `sla_rules`, `penalty_rules`, `module_permissions`, `user_delegations`, `report_templates`, `sla_violations`, `invoices`. RLS `audit_log` allargata per accettare insert da trigger (user_id = auth.uid() o NULL). Onboarding utenti via `signInWithOtp` (magic link) e reset password via `resetPasswordForEmail` con redirect a `/auth`.
 - **2026-06-18** — v0.8: aggiunte tabelle `module_permissions`, `user_delegations`, `penalty_rules`, `sla_violations`, `report_templates`. Funzione `has_permission` (SECURITY DEFINER). Trigger `compute_sla_violation` calcola automaticamente ritardo e penale alla risoluzione del ticket. RLS su tutte le nuove tabelle scopata per struttura/utente.
 - **2026-06-18** — v0.7.1: aggiunto bootstrap automatico ruolo `super_admin` su email `info@dlginformatica.it` via trigger `handle_new_user` (SECURITY DEFINER, search_path bloccato). Nessuna credenziale hardcoded nel codice client.
 - **2026-06-18** — v0.7: aggiunte tabelle `ticket_attachments`, `ticket_reports`, `videocall_rooms`, `dashboard_widgets` con RLS. Storage policies su bucket `tickets` (SELECT/INSERT autenticati, DELETE solo owner). Realtime attivata. Videocall via Jitsi Meet pubblico (room name random, nessuna chiave API).

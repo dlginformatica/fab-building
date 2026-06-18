@@ -1106,8 +1106,12 @@ export type Database = {
           group_by: string | null
           id: string
           is_shared: boolean
+          last_export_url: string | null
+          last_run_at: string | null
+          layout: Json
           name: string
           owner_id: string | null
+          schedule_cron: string | null
           source: string
           structure_id: string | null
           updated_at: string
@@ -1120,8 +1124,12 @@ export type Database = {
           group_by?: string | null
           id?: string
           is_shared?: boolean
+          last_export_url?: string | null
+          last_run_at?: string | null
+          layout?: Json
           name: string
           owner_id?: string | null
+          schedule_cron?: string | null
           source: string
           structure_id?: string | null
           updated_at?: string
@@ -1134,8 +1142,12 @@ export type Database = {
           group_by?: string | null
           id?: string
           is_shared?: boolean
+          last_export_url?: string | null
+          last_run_at?: string | null
+          layout?: Json
           name?: string
           owner_id?: string | null
+          schedule_cron?: string | null
           source?: string
           structure_id?: string | null
           updated_at?: string

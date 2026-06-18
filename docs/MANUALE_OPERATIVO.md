@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.9: Audit log filtrabile + export CSV/PDF (alimentato da trigger automatici), wizard SLA con simulazione, simulatore penali, onboarding utenti via email + reset password, Report Builder con layout PDF personalizzato (header/footer/firma/QR) e pianificazione cron.
 - **2026-06-18** — v0.8: nuove sezioni **Permessi per funzione**, **Deleghe**, **Penali & Violazioni**, **Statistiche** e **Report Builder**. Le violazioni SLA e le penali sono calcolate automaticamente dal database alla risoluzione di ogni ticket; il Report Builder produce PDF e CSV su qualsiasi sorgente (ticket, asset, fatture, contratti, magazzino, violazioni SLA, ecc.) con colonne e filtri salvabili come modello.
 - **2026-06-18** — v0.7.1: bootstrap automatico super_admin per `info@dlginformatica.it`. Al primo `signUp` con questa email il trigger DB assegna il ruolo `super_admin` senza intervento manuale.
 - **2026-06-18** — v0.7: aggiunti Portale Agenti/Fornitori, Dashboard personalizzabile a widget, allegati foto/PDF sui ticket, rapportino intervento firmato, videocall integrata (Jitsi).
