@@ -43,9 +43,9 @@ export function WidgetRenderer({ wkey, structureId, title }: { wkey: WidgetKey; 
     case "kpi_critical_tickets": return <KPI title={title ?? "Ticket critici"} accent icon={<AlertTriangle className="h-4 w-4 text-destructive"/>} q={async()=>(await supabase.from("tickets").select("id",{count:"exact",head:true}).eq("structure_id",structureId!).eq("priority","critica").in("status",["aperto","assegnato","in_corso"])).count ?? 0} dep={["k-crit",structureId]} enabled={!!structureId}/>;
     case "kpi_sla_pct": return <KpiSLA structureId={structureId} title={title ?? "Rispetto SLA"}/>;
     case "kpi_assets": return <KPI title={title ?? "Asset"} icon={<Wrench className="h-4 w-4"/>} q={async()=>(await supabase.from("assets").select("id",{count:"exact",head:true}).eq("structure_id",structureId!)).count ?? 0} dep={["k-ast",structureId]} enabled={!!structureId}/>;
-    case "kpi_open_invoices": return <KPI title={title ?? "Fatture da pagare"} icon={<Receipt className="h-4 w-4"/>} q={async()=>(await supabase.from("invoices").select("id",{count:"exact",head:true}).neq("status","paid")).count ?? 0} dep={["k-inv"]}/>;
+    case "kpi_open_invoices": return <KPI title={title ?? "Fatture da pagare"} icon={<Receipt className="h-4 w-4"/>} q={async()=>(await supabase.from("invoices").select("id",{count:"exact",head:true}).eq("status","da_pagare")).count ?? 0} dep={["k-inv"]}/>;
     case "kpi_stock_value": return <KpiStockValue title={title ?? "Valore magazzino"}/>;
-    case "kpi_active_suppliers": return <KPI title={title ?? "Fornitori attivi"} icon={<Truck className="h-4 w-4"/>} q={async()=>(await supabase.from("suppliers").select("id",{count:"exact",head:true}).eq("active",true)).count ?? 0} dep={["k-sup"]}/>;
+    case "kpi_active_suppliers": return <KPI title={title ?? "Fornitori attivi"} icon={<Truck className="h-4 w-4"/>} q={async()=>(await supabase.from("suppliers").select("id",{count:"exact",head:true}).eq("status","attivo")).count ?? 0} dep={["k-sup"]}/>;
     case "list_recent_tickets": return <ListRecentTickets structureId={structureId} title={title ?? "Ticket recenti"}/>;
     case "list_sla_violations": return <ListSLAViolations structureId={structureId} title={title ?? "Violazioni SLA"}/>;
     case "list_open_work_orders": return <ListOpenWOs structureId={structureId} title={title ?? "Ordini di lavoro aperti"}/>;
@@ -55,13 +55,13 @@ export function WidgetRenderer({ wkey, structureId, title }: { wkey: WidgetKey; 
   }
 }
 
-function KPI({ title, icon, q, dep, accent, enabled = true }: any) {
+function KPI({ title, icon, q, dep, accent, enabled = true }: { title: string; icon: any; q: () => Promise<number | string>; dep: any[]; accent?: boolean; enabled?: boolean }) {
   const { data } = useQuery({ queryKey: dep, queryFn: q, enabled });
   return (
     <Card className={accent ? "border-destructive/40 h-full" : "h-full"}>
       <CardContent className="pt-6">
         <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground">{icon}{title}</div>
-        <div className="mt-2 font-display text-3xl font-bold">{data ?? "—"}</div>
+        <div className="mt-2 font-display text-3xl font-bold">{data == null ? "—" : String(data)}</div>
       </CardContent>
     </Card>
   );
