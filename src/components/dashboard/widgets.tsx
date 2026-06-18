@@ -145,8 +145,8 @@ function ListSLAViolations({ structureId, title }: any) {
 
 function ListOpenWOs({ structureId, title }: any) {
   const { data=[] } = useQuery({ queryKey:["w-wo",structureId], enabled:!!structureId,
-    queryFn: async()=> (await supabase.from("work_orders").select("id,wo_number,title,status").eq("structure_id",structureId!).neq("status","completato").limit(10)).data ?? [] });
-  return <SimpleListCard title={title} items={data.map((w:any)=>({id:w.id, text:`${w.wo_number ?? ""} ${w.title ?? ""}`, sub:w.status}))}/>;
+    queryFn: async()=> (await supabase.from("work_orders").select("id,number,title,status").eq("structure_id",structureId!).neq("status","completato").limit(10)).data ?? [] });
+  return <SimpleListCard title={title} items={data.map((w:any)=>({id:w.id, text:`${w.number ?? ""} ${w.title ?? ""}`, sub:w.status}))}/>;
 }
 function ListMaintenanceDue({ structureId, title }: any) {
   const { data=[] } = useQuery({ queryKey:["w-maint",structureId], enabled:!!structureId,
