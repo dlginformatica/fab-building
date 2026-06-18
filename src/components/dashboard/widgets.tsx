@@ -87,8 +87,8 @@ function KpiSLA({ structureId, title }: any) {
 
 function KpiStockValue({ title }: any) {
   const { data } = useQuery({ queryKey:["kpi-stock-val"], queryFn: async()=>{
-    const { data } = await supabase.from("inventory_items").select("quantity_on_hand,unit_cost");
-    return (data ?? []).reduce((s:number,i:any)=>s + Number(i.quantity_on_hand ?? 0)*Number(i.unit_cost ?? 0), 0);
+    const { data } = await supabase.from("inventory_items").select("quantity,unit_cost");
+    return (data ?? []).reduce((s:number,i:any)=>s + Number(i.quantity ?? 0)*Number(i.unit_cost ?? 0), 0);
   }});
   return (
     <Card className="h-full"><CardContent className="pt-6">
@@ -152,16 +152,16 @@ function ListMaintenanceDue({ structureId, title }: any) {
   const { data=[] } = useQuery({ queryKey:["w-maint",structureId], enabled:!!structureId,
     queryFn: async()=>{
       const in14 = new Date(Date.now()+14*86400000).toISOString();
-      return (await supabase.from("maintenance_plans").select("id,name,next_due_at").eq("structure_id",structureId!).lt("next_due_at",in14).order("next_due_at").limit(10)).data ?? [];
+      return (await supabase.from("maintenance_plans").select("id,name,next_due").eq("structure_id",structureId!).lt("next_due",in14).order("next_due").limit(10)).data ?? [];
     }});
-  return <SimpleListCard title={title} items={data.map((m:any)=>({id:m.id, text:m.name, sub:m.next_due_at?fmtDateTime(m.next_due_at):"—"}))}/>;
+  return <SimpleListCard title={title} items={data.map((m:any)=>({id:m.id, text:m.name, sub:m.next_due?fmtDateTime(m.next_due):"—"}))}/>;
 }
 function ListLowStock({ title }: any) {
   const { data=[] } = useQuery({ queryKey:["w-low"], queryFn: async()=>{
-    const all = (await supabase.from("inventory_items").select("id,name,quantity_on_hand,reorder_point")).data ?? [];
-    return all.filter((i:any)=> i.reorder_point != null && Number(i.quantity_on_hand) <= Number(i.reorder_point)).slice(0,10);
+    const all = (await supabase.from("inventory_items").select("id,name,quantity,min_quantity")).data ?? [];
+    return all.filter((i:any)=> i.min_quantity != null && Number(i.quantity) <= Number(i.min_quantity)).slice(0,10);
   }});
-  return <SimpleListCard title={title} items={data.map((i:any)=>({id:i.id, text:i.name, sub:`${i.quantity_on_hand} / soglia ${i.reorder_point}`}))}/>;
+  return <SimpleListCard title={title} items={data.map((i:any)=>({id:i.id, text:i.name, sub:`${i.quantity} / soglia ${i.min_quantity}`}))}/>;
 }
 
 function SimpleListCard({ title, items }: { title: string; items: Array<{id:string;text:string;sub?:string}> }) {
