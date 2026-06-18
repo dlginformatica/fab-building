@@ -3,8 +3,26 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.7: aggiunti Portale Agenti/Fornitori, Dashboard personalizzabile a widget, allegati foto/PDF sui ticket, rapportino intervento firmato, videocall integrata (Jitsi).
 - **2026-06-18** — v0.6: completate Fasi 2-6. Aggiunte sezioni: Fornitori, Contratti, Ordini di Lavoro, Manutenzione programmata, Magazzino, Ordini d'Acquisto, Utenze & Letture, Fatture & Bollette, Messaggistica multi-agente, Report direzionale, Audit log.
 - **2026-06-18** — v0.1: inizializzazione manuale (autenticazione, asset, ticket, TTS).
+
+## Portale Agenti & Fornitori (`/portal`)
+È una vista alleggerita per i tecnici esterni:
+1. Login con le credenziali del proprio account (stesso `/auth`).
+2. Si apre la sezione **I tuoi interventi** con i ticket assegnati.
+3. Selezionando un ticket si possono:
+   - caricare **foto** e **PDF** (da smartphone o desktop);
+   - compilare il **rapportino di intervento** (riepilogo, ore, materiali) e firmarlo;
+   - avviare una **videocall** col gestore (link Jitsi condivisibile);
+   - aggiornare lo stato (Prendi in carico / Segna risolto).
+
+## Dashboard personalizzabile
+Dalla pagina **Dashboard**:
+1. Al primo accesso clicca **Carica widget predefiniti** per partire da un layout standard.
+2. **Aggiungi widget**: scegli dal catalogo (KPI, liste operative, magazzino, fornitori).
+3. **Modifica layout**: cambia dimensione (SM/MD/LG/XL), riordina o rimuovi i widget.
+4. La configurazione è personale: ogni utente (direttore, proprietà, facility manager) vede la propria.
 
 ## 1. Primo accesso
 1. Vai alla pagina **/auth**.
