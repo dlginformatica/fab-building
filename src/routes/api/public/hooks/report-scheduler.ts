@@ -13,11 +13,34 @@ import { createClient } from "@supabase/supabase-js";
 export const Route = createFileRoute("/api/public/hooks/report-scheduler")({
   server: {
     handlers: {
-      POST: async () => runScheduler(),
-      GET: async () => runScheduler(),
+      POST: async ({ request }) => guard(request) ?? runScheduler(),
+      GET: async ({ request }) => guard(request) ?? runScheduler(),
     },
   },
 });
+
+/**
+ * Allowlist of tables the scheduler is permitted to read with the service role.
+ * Any other `tpl.source` value (e.g. profiles, user_roles) is rejected so that
+ * an authenticated user cannot exfiltrate sensitive data by crafting a template.
+ */
+const ALLOWED_SOURCES = new Set([
+  "tickets", "assets", "work_orders", "invoices", "contracts",
+  "inventory_items", "sla_violations", "suppliers", "maintenance_plans",
+]);
+
+function guard(request: Request): Response | null {
+  const auth = request.headers.get("authorization") ?? "";
+  const apikey = request.headers.get("apikey") ?? "";
+  const expected = process.env.SCHEDULER_SECRET
+    ?? process.env.SUPABASE_PUBLISHABLE_KEY
+    ?? process.env.SUPABASE_SERVICE_ROLE_KEY
+    ?? "";
+  if (!expected) return json({ ok: false, error: "Scheduler non configurato" }, 500);
+  const bearer = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+  if (bearer === expected || apikey === expected) return null;
+  return json({ ok: false, error: "Unauthorized" }, 401);
+}
 
 async function runScheduler() {
   const url = process.env.SUPABASE_URL!;
@@ -40,6 +63,11 @@ async function runScheduler() {
   const results: any[] = [];
 
   for (const tpl of due ?? []) {
+    if (!ALLOWED_SOURCES.has(tpl.source)) {
+      await sb.from("report_templates").update({ next_run_at: null, last_error_at: new Date().toISOString() }).eq("id", tpl.id);
+      results.push({ template: tpl.name, error: `Sorgente non consentita: ${tpl.source}` });
+      continue;
+    }
     const recipients: string[] = tpl.recipients ?? [];
     const { data: run } = await sb.from("scheduled_report_runs").insert({
       template_id: tpl.id, structure_id: tpl.structure_id,
