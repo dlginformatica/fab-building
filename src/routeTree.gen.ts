@@ -31,6 +31,7 @@ import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppInvoicesRouteImport } from './routes/_authenticated/app.invoices'
 import { Route as AuthenticatedAppInventoryRouteImport } from './routes/_authenticated/app.inventory'
 import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
+import { Route as AuthenticatedAppDelegationsRouteImport } from './routes/_authenticated/app.delegations'
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
@@ -157,6 +158,12 @@ const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
   path: '/app/docs',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppDelegationsRoute =
+  AuthenticatedAppDelegationsRouteImport.update({
+    id: '/app/delegations',
+    path: '/app/delegations',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppContractsRoute =
   AuthenticatedAppContractsRouteImport.update({
     id: '/app/contracts',
@@ -193,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
+  '/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -221,6 +229,7 @@ export interface FileRoutesByTo {
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
+  '/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -251,6 +260,7 @@ export interface FileRoutesById {
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
+  '/_authenticated/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
   '/_authenticated/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/_authenticated/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -281,6 +291,7 @@ export interface FileRouteTypes {
     | '/app/assets'
     | '/app/audit'
     | '/app/contracts'
+    | '/app/delegations'
     | '/app/docs'
     | '/app/inventory'
     | '/app/invoices'
@@ -309,6 +320,7 @@ export interface FileRouteTypes {
     | '/app/assets'
     | '/app/audit'
     | '/app/contracts'
+    | '/app/delegations'
     | '/app/docs'
     | '/app/inventory'
     | '/app/invoices'
@@ -338,6 +350,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/assets'
     | '/_authenticated/app/audit'
     | '/_authenticated/app/contracts'
+    | '/_authenticated/app/delegations'
     | '/_authenticated/app/docs'
     | '/_authenticated/app/inventory'
     | '/_authenticated/app/invoices'
@@ -523,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppDocsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/delegations': {
+      id: '/_authenticated/app/delegations'
+      path: '/app/delegations'
+      fullPath: '/app/delegations'
+      preLoaderRoute: typeof AuthenticatedAppDelegationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/contracts': {
       id: '/_authenticated/app/contracts'
       path: '/app/contracts'
@@ -594,6 +614,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
+  AuthenticatedAppDelegationsRoute: typeof AuthenticatedAppDelegationsRoute
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
   AuthenticatedAppInventoryRoute: typeof AuthenticatedAppInventoryRoute
   AuthenticatedAppInvoicesRoute: typeof AuthenticatedAppInvoicesRoute
@@ -618,6 +639,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
+  AuthenticatedAppDelegationsRoute: AuthenticatedAppDelegationsRoute,
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
   AuthenticatedAppInventoryRoute: AuthenticatedAppInventoryRoute,
   AuthenticatedAppInvoicesRoute: AuthenticatedAppInvoicesRoute,
