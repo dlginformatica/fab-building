@@ -40,6 +40,8 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app/delegations", label: "Deleghe", icon: UserCog },
     { to: "/app/delegations-history", label: "Storico deleghe", icon: ScrollText },
     { to: "/app/audit", label: "Audit log", icon: ScrollText },
+    { to: "/app/delegation-audit", label: "Audit deleghe", icon: ScrollText },
+    { to: "/app/delivery-queue", label: "Coda invii report", icon: Activity },
     { to: "/app/docs", label: "Documenti", icon: FileText },
     { to: "/app/settings", label: "Impostazioni", icon: Settings },
   ]},
@@ -75,7 +77,7 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
-      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.10 • Storico deleghe · Report schedulati · Test UI</div>
+      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.11 • PDF per destinatario · Coda invii · Audit deleghe</div>
     </aside>
   );
 }
