@@ -38,11 +38,16 @@ function Page() {
 
   const updateStatus = useMutation({
     mutationFn: async (status: string) => {
-      const patch: Record<string, unknown> = { status };
+      const patch: {
+        status: typeof status;
+        ack_at?: string;
+        resolved_at?: string;
+        closed_at?: string;
+      } = { status };
       if (status === "in_corso" && !t?.ack_at) patch.ack_at = new Date().toISOString();
       if (status === "risolto" && !t?.resolved_at) patch.resolved_at = new Date().toISOString();
       if (status === "chiuso" && !t?.closed_at) patch.closed_at = new Date().toISOString();
-      const { error } = await supabase.from("tickets").update(patch).eq("id", id);
+      const { error } = await supabase.from("tickets").update(patch as never).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["ticket", id] }); qc.invalidateQueries({ queryKey: ["tickets"] }); toast.success("Stato aggiornato"); },
