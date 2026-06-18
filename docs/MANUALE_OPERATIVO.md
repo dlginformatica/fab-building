@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.8: nuove sezioni **Permessi per funzione**, **Deleghe**, **Penali & Violazioni**, **Statistiche** e **Report Builder**. Le violazioni SLA e le penali sono calcolate automaticamente dal database alla risoluzione di ogni ticket; il Report Builder produce PDF e CSV su qualsiasi sorgente (ticket, asset, fatture, contratti, magazzino, violazioni SLA, ecc.) con colonne e filtri salvabili come modello.
 - **2026-06-18** — v0.7.1: bootstrap automatico super_admin per `info@dlginformatica.it`. Al primo `signUp` con questa email il trigger DB assegna il ruolo `super_admin` senza intervento manuale.
 - **2026-06-18** — v0.7: aggiunti Portale Agenti/Fornitori, Dashboard personalizzabile a widget, allegati foto/PDF sui ticket, rapportino intervento firmato, videocall integrata (Jitsi).
 - **2026-06-18** — v0.6: completate Fasi 2-6. Aggiunte sezioni: Fornitori, Contratti, Ordini di Lavoro, Manutenzione programmata, Magazzino, Ordini d'Acquisto, Utenze & Letture, Fatture & Bollette, Messaggistica multi-agente, Report direzionale, Audit log.
