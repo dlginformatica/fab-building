@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.10: storico deleghe consultabile per utente/funzione/stato con export CSV; pianificazione automatica dei modelli del Report Builder (destinatari, prossima esecuzione, log `scheduled_report_runs`) tramite endpoint `/api/public/hooks/report-scheduler`; test automatici (vitest) che verificano l'aggiornamento immediato dei controlli abilitati/disabilitati al concedere o revocare una delega per singola funzione, modulo e struttura.
 - **2026-06-18** — v0.9: Audit log filtrabile + export CSV/PDF (alimentato da trigger automatici), wizard SLA con simulazione, simulatore penali, onboarding utenti via email + reset password, Report Builder con layout PDF personalizzato (header/footer/firma/QR) e pianificazione cron.
 - **2026-06-18** — v0.8: nuove sezioni **Permessi per funzione**, **Deleghe**, **Penali & Violazioni**, **Statistiche** e **Report Builder**. Le violazioni SLA e le penali sono calcolate automaticamente dal database alla risoluzione di ogni ticket; il Report Builder produce PDF e CSV su qualsiasi sorgente (ticket, asset, fatture, contratti, magazzino, violazioni SLA, ecc.) con colonne e filtri salvabili come modello.
 - **2026-06-18** — v0.7.1: bootstrap automatico super_admin per `info@dlginformatica.it`. Al primo `signUp` con questa email il trigger DB assegna il ruolo `super_admin` senza intervento manuale.

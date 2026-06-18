@@ -34,10 +34,12 @@ import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppInvoicesRouteImport } from './routes/_authenticated/app.invoices'
 import { Route as AuthenticatedAppInventoryRouteImport } from './routes/_authenticated/app.inventory'
 import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
+import { Route as AuthenticatedAppDelegationsHistoryRouteImport } from './routes/_authenticated/app.delegations-history'
 import { Route as AuthenticatedAppDelegationsRouteImport } from './routes/_authenticated/app.delegations'
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
+import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
 import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
 import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
 
@@ -179,6 +181,12 @@ const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
   path: '/app/docs',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppDelegationsHistoryRoute =
+  AuthenticatedAppDelegationsHistoryRouteImport.update({
+    id: '/app/delegations-history',
+    path: '/app/delegations-history',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppDelegationsRoute =
   AuthenticatedAppDelegationsRouteImport.update({
     id: '/app/delegations',
@@ -201,6 +209,12 @@ const AuthenticatedAppAssetsRoute = AuthenticatedAppAssetsRouteImport.update({
   path: '/app/assets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicHooksReportSchedulerRoute =
+  ApiPublicHooksReportSchedulerRouteImport.update({
+    id: '/api/public/hooks/report-scheduler',
+    path: '/api/public/hooks/report-scheduler',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAppTicketsIdRoute =
   AuthenticatedAppTicketsIdRouteImport.update({
     id: '/$id',
@@ -222,6 +236,7 @@ export interface FileRoutesByFullPath {
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
+  '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -245,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
+  '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -254,6 +270,7 @@ export interface FileRoutesByTo {
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
+  '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -277,6 +294,7 @@ export interface FileRoutesByTo {
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
+  '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -288,6 +306,7 @@ export interface FileRoutesById {
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
   '/_authenticated/app/delegations': typeof AuthenticatedAppDelegationsRoute
+  '/_authenticated/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
   '/_authenticated/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/_authenticated/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -311,6 +330,7 @@ export interface FileRoutesById {
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/_authenticated/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
+  '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -322,6 +342,7 @@ export interface FileRouteTypes {
     | '/app/audit'
     | '/app/contracts'
     | '/app/delegations'
+    | '/app/delegations-history'
     | '/app/docs'
     | '/app/inventory'
     | '/app/invoices'
@@ -345,6 +366,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/assets/$id'
     | '/app/tickets/$id'
+    | '/api/public/hooks/report-scheduler'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -354,6 +376,7 @@ export interface FileRouteTypes {
     | '/app/audit'
     | '/app/contracts'
     | '/app/delegations'
+    | '/app/delegations-history'
     | '/app/docs'
     | '/app/inventory'
     | '/app/invoices'
@@ -377,6 +400,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/assets/$id'
     | '/app/tickets/$id'
+    | '/api/public/hooks/report-scheduler'
   id:
     | '__root__'
     | '/'
@@ -387,6 +411,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/audit'
     | '/_authenticated/app/contracts'
     | '/_authenticated/app/delegations'
+    | '/_authenticated/app/delegations-history'
     | '/_authenticated/app/docs'
     | '/_authenticated/app/inventory'
     | '/_authenticated/app/invoices'
@@ -410,6 +435,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/'
     | '/_authenticated/app/assets/$id'
     | '/_authenticated/app/tickets/$id'
+    | '/api/public/hooks/report-scheduler'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -417,6 +443,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiTtsSpeakRoute: typeof ApiTtsSpeakRoute
+  ApiPublicHooksReportSchedulerRoute: typeof ApiPublicHooksReportSchedulerRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -596,6 +623,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppDocsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/delegations-history': {
+      id: '/_authenticated/app/delegations-history'
+      path: '/app/delegations-history'
+      fullPath: '/app/delegations-history'
+      preLoaderRoute: typeof AuthenticatedAppDelegationsHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/delegations': {
       id: '/_authenticated/app/delegations'
       path: '/app/delegations'
@@ -623,6 +657,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/assets'
       preLoaderRoute: typeof AuthenticatedAppAssetsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/api/public/hooks/report-scheduler': {
+      id: '/api/public/hooks/report-scheduler'
+      path: '/api/public/hooks/report-scheduler'
+      fullPath: '/api/public/hooks/report-scheduler'
+      preLoaderRoute: typeof ApiPublicHooksReportSchedulerRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/app/tickets/$id': {
       id: '/_authenticated/app/tickets/$id'
@@ -675,6 +716,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
   AuthenticatedAppDelegationsRoute: typeof AuthenticatedAppDelegationsRoute
+  AuthenticatedAppDelegationsHistoryRoute: typeof AuthenticatedAppDelegationsHistoryRoute
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
   AuthenticatedAppInventoryRoute: typeof AuthenticatedAppInventoryRoute
   AuthenticatedAppInvoicesRoute: typeof AuthenticatedAppInvoicesRoute
@@ -703,6 +745,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
   AuthenticatedAppDelegationsRoute: AuthenticatedAppDelegationsRoute,
+  AuthenticatedAppDelegationsHistoryRoute:
+    AuthenticatedAppDelegationsHistoryRoute,
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
   AuthenticatedAppInventoryRoute: AuthenticatedAppInventoryRoute,
   AuthenticatedAppInvoicesRoute: AuthenticatedAppInvoicesRoute,
@@ -733,6 +777,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiTtsSpeakRoute: ApiTtsSpeakRoute,
+  ApiPublicHooksReportSchedulerRoute: ApiPublicHooksReportSchedulerRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
