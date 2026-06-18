@@ -130,6 +130,273 @@ export type Database = {
           },
         ]
       }
+      audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          diff: Json | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          structure_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          diff?: Json | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          structure_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          diff?: Json | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          structure_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contracts: {
+        Row: {
+          amount: number | null
+          auto_renew: boolean
+          code: string
+          created_at: string
+          currency: string
+          document_url: string | null
+          end_date: string | null
+          id: string
+          notes: string | null
+          renewal_months: number | null
+          sla_ack_minutes: number | null
+          sla_resolve_minutes: number | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["contract_status"]
+          structure_id: string
+          supplier_id: string
+          title: string
+          type: Database["public"]["Enums"]["contract_type"]
+          updated_at: string
+        }
+        Insert: {
+          amount?: number | null
+          auto_renew?: boolean
+          code: string
+          created_at?: string
+          currency?: string
+          document_url?: string | null
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          renewal_months?: number | null
+          sla_ack_minutes?: number | null
+          sla_resolve_minutes?: number | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["contract_status"]
+          structure_id: string
+          supplier_id: string
+          title: string
+          type?: Database["public"]["Enums"]["contract_type"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number | null
+          auto_renew?: boolean
+          code?: string
+          created_at?: string
+          currency?: string
+          document_url?: string | null
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          renewal_months?: number | null
+          sla_ack_minutes?: number | null
+          sla_resolve_minutes?: number | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["contract_status"]
+          structure_id?: string
+          supplier_id?: string
+          title?: string
+          type?: Database["public"]["Enums"]["contract_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contracts_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          created_at: string
+          id: string
+          last_read_at: string | null
+          supplier_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          conversation_id: string
+          created_at?: string
+          id?: string
+          last_read_at?: string | null
+          supplier_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          last_read_at?: string | null
+          supplier_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversation_participants_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_participants_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          agent_type: string | null
+          contract_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_group: boolean
+          structure_id: string | null
+          ticket_id: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          agent_type?: string | null
+          contract_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_group?: boolean
+          structure_id?: string | null
+          ticket_id?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agent_type?: string | null
+          contract_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_group?: boolean
+          structure_id?: string | null
+          ticket_id?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "conversations_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversations_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cost_centers: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          name: string
+          parent_id: string | null
+          structure_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          parent_id?: string | null
+          structure_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          parent_id?: string | null
+          structure_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cost_centers_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "cost_centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cost_centers_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       floors: {
         Row: {
           created_at: string
@@ -158,6 +425,434 @@ export type Database = {
             columns: ["structure_id"]
             isOneToOne: false
             referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_items: {
+        Row: {
+          category: string | null
+          created_at: string
+          id: string
+          location: string | null
+          min_quantity: number
+          name: string
+          notes: string | null
+          quantity: number
+          sku: string
+          structure_id: string
+          supplier_id: string | null
+          unit: string
+          unit_cost: number | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          min_quantity?: number
+          name: string
+          notes?: string | null
+          quantity?: number
+          sku: string
+          structure_id: string
+          supplier_id?: string | null
+          unit?: string
+          unit_cost?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          id?: string
+          location?: string | null
+          min_quantity?: number
+          name?: string
+          notes?: string | null
+          quantity?: number
+          sku?: string
+          structure_id?: string
+          supplier_id?: string | null
+          unit?: string
+          unit_cost?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_items_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_items_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_movements: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string
+          movement_type: string
+          notes: string | null
+          quantity: number
+          ticket_id: string | null
+          user_id: string | null
+          work_order_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id: string
+          movement_type: string
+          notes?: string | null
+          quantity: number
+          ticket_id?: string | null
+          user_id?: string | null
+          work_order_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string
+          movement_type?: string
+          notes?: string | null
+          quantity?: number
+          ticket_id?: string | null
+          user_id?: string | null
+          work_order_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movements_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movements_work_order_id_fkey"
+            columns: ["work_order_id"]
+            isOneToOne: false
+            referencedRelation: "work_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          amount_net: number | null
+          amount_total: number
+          contract_id: string | null
+          cost_center_id: string | null
+          created_at: string
+          currency: string
+          due_date: string | null
+          id: string
+          issue_date: string
+          notes: string | null
+          number: string
+          ocr_data: Json | null
+          paid_at: string | null
+          pdf_url: string | null
+          status: Database["public"]["Enums"]["invoice_status"]
+          structure_id: string
+          supplier_id: string | null
+          updated_at: string
+          utility_type: Database["public"]["Enums"]["utility_type"] | null
+          vat: number | null
+        }
+        Insert: {
+          amount_net?: number | null
+          amount_total: number
+          contract_id?: string | null
+          cost_center_id?: string | null
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          id?: string
+          issue_date: string
+          notes?: string | null
+          number: string
+          ocr_data?: Json | null
+          paid_at?: string | null
+          pdf_url?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          structure_id: string
+          supplier_id?: string | null
+          updated_at?: string
+          utility_type?: Database["public"]["Enums"]["utility_type"] | null
+          vat?: number | null
+        }
+        Update: {
+          amount_net?: number | null
+          amount_total?: number
+          contract_id?: string | null
+          cost_center_id?: string | null
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          number?: string
+          ocr_data?: Json | null
+          paid_at?: string | null
+          pdf_url?: string | null
+          status?: Database["public"]["Enums"]["invoice_status"]
+          structure_id?: string
+          supplier_id?: string | null
+          updated_at?: string
+          utility_type?: Database["public"]["Enums"]["utility_type"] | null
+          vat?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_cost_center_id_fkey"
+            columns: ["cost_center_id"]
+            isOneToOne: false
+            referencedRelation: "cost_centers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_plans: {
+        Row: {
+          active: boolean
+          asset_id: string | null
+          assigned_to: string | null
+          category_id: string | null
+          checklist: Json
+          created_at: string
+          description: string | null
+          frequency: Database["public"]["Enums"]["maintenance_frequency"]
+          id: string
+          interval_days: number | null
+          name: string
+          next_due: string | null
+          structure_id: string
+          supplier_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          asset_id?: string | null
+          assigned_to?: string | null
+          category_id?: string | null
+          checklist?: Json
+          created_at?: string
+          description?: string | null
+          frequency?: Database["public"]["Enums"]["maintenance_frequency"]
+          id?: string
+          interval_days?: number | null
+          name: string
+          next_due?: string | null
+          structure_id: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          asset_id?: string | null
+          assigned_to?: string | null
+          category_id?: string | null
+          checklist?: Json
+          created_at?: string
+          description?: string | null
+          frequency?: Database["public"]["Enums"]["maintenance_frequency"]
+          id?: string
+          interval_days?: number | null
+          name?: string
+          next_due?: string | null
+          structure_id?: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_plans_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_plans_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "asset_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_plans_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_plans_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      maintenance_tasks: {
+        Row: {
+          checklist_result: Json | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string
+          due_date: string
+          id: string
+          notes: string | null
+          plan_id: string
+          status: string
+        }
+        Insert: {
+          checklist_result?: Json | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          due_date: string
+          id?: string
+          notes?: string | null
+          plan_id: string
+          status?: string
+        }
+        Update: {
+          checklist_result?: Json | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string
+          due_date?: string
+          id?: string
+          notes?: string | null
+          plan_id?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenance_tasks_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "maintenance_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      messages: {
+        Row: {
+          agent_meta: Json | null
+          attachments: Json | null
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string | null
+          sender_kind: string
+        }
+        Insert: {
+          agent_meta?: Json | null
+          attachments?: Json | null
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id?: string | null
+          sender_kind?: string
+        }
+        Update: {
+          agent_meta?: Json | null
+          attachments?: Json | null
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string | null
+          sender_kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      meter_readings: {
+        Row: {
+          created_at: string
+          id: string
+          meter_id: string
+          notes: string | null
+          reading_date: string
+          user_id: string | null
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          meter_id: string
+          notes?: string | null
+          reading_date: string
+          user_id?: string | null
+          value: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          meter_id?: string
+          notes?: string | null
+          reading_date?: string
+          user_id?: string | null
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meter_readings_meter_id_fkey"
+            columns: ["meter_id"]
+            isOneToOne: false
+            referencedRelation: "utility_meters"
             referencedColumns: ["id"]
           },
         ]
@@ -191,6 +886,69 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      purchase_orders: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expected_delivery: string | null
+          id: string
+          items: Json
+          notes: string | null
+          number: string | null
+          order_date: string
+          status: string
+          structure_id: string
+          supplier_id: string | null
+          total: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expected_delivery?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          number?: string | null
+          order_date?: string
+          status?: string
+          structure_id: string
+          supplier_id?: string | null
+          total?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expected_delivery?: string | null
+          id?: string
+          items?: Json
+          notes?: string | null
+          number?: string | null
+          order_date?: string
+          status?: string
+          structure_id?: string
+          supplier_id?: string | null
+          total?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "purchase_orders_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rooms: {
         Row: {
@@ -317,6 +1075,68 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      suppliers: {
+        Row: {
+          address: string | null
+          category: string | null
+          contact_person: string | null
+          created_at: string
+          durc_expiry: string | null
+          email: string | null
+          id: string
+          insurance_expiry: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          status: Database["public"]["Enums"]["supplier_status"]
+          structure_id: string | null
+          updated_at: string
+          vat_number: string | null
+        }
+        Insert: {
+          address?: string | null
+          category?: string | null
+          contact_person?: string | null
+          created_at?: string
+          durc_expiry?: string | null
+          email?: string | null
+          id?: string
+          insurance_expiry?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["supplier_status"]
+          structure_id?: string | null
+          updated_at?: string
+          vat_number?: string | null
+        }
+        Update: {
+          address?: string | null
+          category?: string | null
+          contact_person?: string | null
+          created_at?: string
+          durc_expiry?: string | null
+          email?: string | null
+          id?: string
+          insurance_expiry?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["supplier_status"]
+          structure_id?: string | null
+          updated_at?: string
+          vat_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ticket_comments: {
         Row: {
@@ -483,6 +1303,162 @@ export type Database = {
           },
         ]
       }
+      utility_meters: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          pod_pdr: string | null
+          serial_number: string | null
+          structure_id: string
+          supplier_id: string | null
+          type: Database["public"]["Enums"]["utility_type"]
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          pod_pdr?: string | null
+          serial_number?: string | null
+          structure_id: string
+          supplier_id?: string | null
+          type: Database["public"]["Enums"]["utility_type"]
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          pod_pdr?: string | null
+          serial_number?: string | null
+          structure_id?: string
+          supplier_id?: string | null
+          type?: Database["public"]["Enums"]["utility_type"]
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "utility_meters_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "utility_meters_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      work_orders: {
+        Row: {
+          asset_id: string | null
+          completed_at: string | null
+          contract_id: string | null
+          cost: number | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          number: string | null
+          report_text: string | null
+          scheduled_at: string | null
+          signature_url: string | null
+          status: Database["public"]["Enums"]["work_order_status"]
+          structure_id: string
+          supplier_id: string | null
+          ticket_id: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          asset_id?: string | null
+          completed_at?: string | null
+          contract_id?: string | null
+          cost?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          number?: string | null
+          report_text?: string | null
+          scheduled_at?: string | null
+          signature_url?: string | null
+          status?: Database["public"]["Enums"]["work_order_status"]
+          structure_id: string
+          supplier_id?: string | null
+          ticket_id?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          asset_id?: string | null
+          completed_at?: string | null
+          contract_id?: string | null
+          cost?: number | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          number?: string | null
+          report_text?: string | null
+          scheduled_at?: string | null
+          signature_url?: string | null
+          status?: Database["public"]["Enums"]["work_order_status"]
+          structure_id?: string
+          supplier_id?: string | null
+          ticket_id?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_orders_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -501,6 +1477,10 @@ export type Database = {
         Returns: boolean
       }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_conversation_member: {
+        Args: { _conv: string; _user: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role:
@@ -512,6 +1492,23 @@ export type Database = {
         | "economato"
         | "viewer"
       asset_status: "attivo" | "in_manutenzione" | "guasto" | "dismesso"
+      contract_status: "bozza" | "attivo" | "scaduto" | "disdetto"
+      contract_type: "canone" | "consumo" | "intervento" | "misto"
+      invoice_status:
+        | "da_pagare"
+        | "pagata"
+        | "scaduta"
+        | "contestata"
+        | "annullata"
+      maintenance_frequency:
+        | "giornaliera"
+        | "settimanale"
+        | "mensile"
+        | "trimestrale"
+        | "semestrale"
+        | "annuale"
+        | "custom"
+      supplier_status: "attivo" | "sospeso" | "dismesso"
       ticket_priority: "bassa" | "media" | "alta" | "critica"
       ticket_status:
         | "aperto"
@@ -520,6 +1517,19 @@ export type Database = {
         | "sospeso"
         | "risolto"
         | "chiuso"
+        | "annullato"
+      utility_type:
+        | "elettricita"
+        | "gas"
+        | "acqua"
+        | "gasolio"
+        | "teleriscaldamento"
+        | "altro"
+      work_order_status:
+        | "aperto"
+        | "programmato"
+        | "in_corso"
+        | "completato"
         | "annullato"
     }
     CompositeTypes: {
@@ -658,6 +1668,25 @@ export const Constants = {
         "viewer",
       ],
       asset_status: ["attivo", "in_manutenzione", "guasto", "dismesso"],
+      contract_status: ["bozza", "attivo", "scaduto", "disdetto"],
+      contract_type: ["canone", "consumo", "intervento", "misto"],
+      invoice_status: [
+        "da_pagare",
+        "pagata",
+        "scaduta",
+        "contestata",
+        "annullata",
+      ],
+      maintenance_frequency: [
+        "giornaliera",
+        "settimanale",
+        "mensile",
+        "trimestrale",
+        "semestrale",
+        "annuale",
+        "custom",
+      ],
+      supplier_status: ["attivo", "sospeso", "dismesso"],
       ticket_priority: ["bassa", "media", "alta", "critica"],
       ticket_status: [
         "aperto",
@@ -666,6 +1695,21 @@ export const Constants = {
         "sospeso",
         "risolto",
         "chiuso",
+        "annullato",
+      ],
+      utility_type: [
+        "elettricita",
+        "gas",
+        "acqua",
+        "gasolio",
+        "teleriscaldamento",
+        "altro",
+      ],
+      work_order_status: [
+        "aperto",
+        "programmato",
+        "in_corso",
+        "completato",
         "annullato",
       ],
     },
