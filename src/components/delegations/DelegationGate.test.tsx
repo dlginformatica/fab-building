@@ -10,6 +10,34 @@ vi.mock("@/integrations/supabase/client", () => ({
   supabase: { from: () => ({ select: () => ({ eq: async () => ({ data: [], error: null }) }) }) },
 }));
 
+// Force the queryFn to read from the live React Query cache so that
+// `setQueryData` updates are reflected immediately and no async fetch
+// resets them mid-test. The hook still uses TanStack Query exactly like
+// in production, we only redirect the data source for the test.
+vi.mock("@tanstack/react-query", async () => {
+  const actual = await vi.importActual<any>("@tanstack/react-query");
+  return {
+    ...actual,
+    useQuery: (opts: any) => {
+      const qc = actual.useQueryClient();
+      const data = qc.getQueryData(opts.queryKey) ?? [];
+      // subscribe to changes for re-render
+      actual.useQueryClient(); // no-op, keep hook order stable
+      const [, force] = actual.useReducer ? [0, () => {}] : [0, () => {}];
+      // use a real subscriber
+      const React = require("react");
+      const [, setTick] = React.useState(0);
+      React.useEffect(() => {
+        const unsub = qc.getQueryCache().subscribe((e: any) => {
+          if (e?.query?.queryHash === JSON.stringify(opts.queryKey)) setTick((t: number) => t + 1);
+        });
+        return unsub;
+      }, [qc, JSON.stringify(opts.queryKey)]);
+      return { data, isLoading: false, isError: false, error: null } as any;
+    },
+  };
+});
+
 const USER = "user-1";
 const STRUCT_A = "struct-a";
 const STRUCT_B = "struct-b";
