@@ -38,6 +38,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app/users", label: "Utenti & Ruoli", icon: Users },
     { to: "/app/permissions", label: "Permessi funzioni", icon: ShieldCheck },
     { to: "/app/delegations", label: "Deleghe", icon: UserCog },
+    { to: "/app/delegations-history", label: "Storico deleghe", icon: ScrollText },
     { to: "/app/audit", label: "Audit log", icon: ScrollText },
     { to: "/app/docs", label: "Documenti", icon: FileText },
     { to: "/app/settings", label: "Impostazioni", icon: Settings },
@@ -74,7 +75,7 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
-      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.9 • Audit · SLA wizard · Onboarding · Report PDF</div>
+      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.10 • Storico deleghe · Report schedulati · Test UI</div>
     </aside>
   );
 }
