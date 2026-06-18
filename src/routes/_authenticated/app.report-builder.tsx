@@ -312,8 +312,8 @@ function Page() {
                     <div className="flex items-center justify-between">
                       <Badge variant="secondary">#{i + 1}</Badge>
                       <div className="flex gap-2">
-                        <Button size="sm" variant="outline" onClick={() => previewPdf(r as any)} disabled={!rows}><Eye className="mr-1 h-3 w-3" />Anteprima</Button>
-                        <Button size="sm" variant="outline" onClick={() => testSend.mutate({ email: r.email, subject: r.subject })}><Send className="mr-1 h-3 w-3" />Test invio</Button>
+                        <Button size="sm" variant="outline" onClick={() => previewPdf(r as any)} disabled={!rows || savingPreview}><Eye className="mr-1 h-3 w-3" />Anteprima</Button>
+                        <Button size="sm" variant="outline" onClick={() => testSend.mutate({ email: r.email, subject: r.subject, layout: r })} disabled={!rows}><Send className="mr-1 h-3 w-3" />Test invio</Button>
                         <Button size="sm" variant="ghost" onClick={() => delRL(i)}><X className="h-3 w-3" /></Button>
                       </div>
                     </div>
@@ -375,8 +375,11 @@ function Page() {
             {previewUrl && (
               <div className="rounded-md border border-border p-2">
                 <div className="mb-2 flex items-center justify-between">
-                  <div className="text-xs font-medium">Anteprima PDF</div>
-                  <Button size="sm" variant="ghost" onClick={() => { URL.revokeObjectURL(previewUrl); setPreviewUrl(null); }}><X className="h-3 w-3" /></Button>
+                  <div className="text-xs font-medium">Anteprima PDF (link valido 24h)</div>
+                  <div className="flex gap-2">
+                    <a href={previewUrl} download className="inline-flex items-center text-xs underline"><FileDown className="mr-1 h-3 w-3" />Scarica</a>
+                    <Button size="sm" variant="ghost" onClick={() => { setPreviewUrl(null); setPreviewPath(null); }}><X className="h-3 w-3" /></Button>
+                  </div>
                 </div>
                 <iframe title="pdf-preview" src={previewUrl} className="h-[480px] w-full rounded border" />
               </div>
