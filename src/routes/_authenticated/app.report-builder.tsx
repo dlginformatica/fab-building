@@ -47,6 +47,8 @@ function Page() {
     qr_url: "",
   });
   const [schedule, setSchedule] = useState("");
+  const [recipients, setRecipients] = useState("");
+  const [nextRunAt, setNextRunAt] = useState("");
 
   const { data: templates } = useQuery({
     queryKey: ["report_templates"],
@@ -70,9 +72,11 @@ function Page() {
   const save = useMutation({
     mutationFn: async () => {
       const user = (await supabase.auth.getUser()).data.user;
+      const recArr = recipients.split(/[,\s;]+/).map(s => s.trim()).filter(Boolean);
       const { error } = await (supabase as any).from("report_templates").insert({
         name, source: source.table, columns: cols, filters: { from, to },
-        layout, schedule_cron: schedule || null,
+        layout, pdf_layout: layout, schedule_cron: schedule || null,
+        recipients: recArr, next_run_at: nextRunAt || null,
         owner_id: user?.id, structure_id: activeStructureId,
       });
       if (error) throw error;
@@ -86,8 +90,10 @@ function Page() {
     setSource(s); setCols(t.columns ?? s.cols);
     setFrom(t.filters?.from ?? ""); setTo(t.filters?.to ?? "");
     setName(t.name); setRows(null);
-    if (t.layout) setLayout({ ...layout, ...t.layout });
+    if (t.pdf_layout ?? t.layout) setLayout({ ...layout, ...(t.pdf_layout ?? t.layout) });
     if (t.schedule_cron) setSchedule(t.schedule_cron);
+    setRecipients((t.recipients ?? []).join(", "));
+    setNextRunAt(t.next_run_at ? t.next_run_at.slice(0, 16) : "");
   };
 
   const delTpl = useMutation({
@@ -206,6 +212,17 @@ function Page() {
                 <Label className="text-xs">Pianificazione (cron)</Label>
                 <Input className="max-w-[220px]" value={schedule} onChange={(e) => setSchedule(e.target.value)} placeholder="0 8 * * 1  (lun ore 8)" />
                 <span className="text-xs text-muted-foreground">Salva il modello per attivarla.</span>
+              </div>
+              <div className="mt-3 grid gap-3 md:grid-cols-2">
+                <div className="space-y-1">
+                  <Label className="text-xs">Destinatari (email separate da virgola)</Label>
+                  <Textarea rows={2} value={recipients} onChange={(e) => setRecipients(e.target.value)} placeholder="direzione@hotel.it, manutenzione@hotel.it" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-xs">Prossima esecuzione</Label>
+                  <Input type="datetime-local" value={nextRunAt} onChange={(e) => setNextRunAt(e.target.value)} />
+                  <p className="text-[10px] text-muted-foreground">Il job <code>/api/public/hooks/report-scheduler</code> raccoglie i modelli scaduti, esegue la query, registra <code>scheduled_report_runs</code> e invia il PDF ai destinatari.</p>
+                </div>
               </div>
             </div>
           </CardContent>
