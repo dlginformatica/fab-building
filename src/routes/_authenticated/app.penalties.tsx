@@ -11,6 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { useActiveStructure } from "@/lib/structure-context";
 import { fmtDateTime } from "@/lib/format";
+import { useMemo } from "react";
+import { Wand2 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/penalties")({ component: Page });
 
@@ -18,6 +20,7 @@ function Page() {
   const qc = useQueryClient();
   const { activeStructureId } = useActiveStructure();
   const [f, setF] = useState({ name: "", trigger_type: "sla_resolve", threshold_minutes: "0", amount_eur: "0", per_hour: false });
+  const [simDelay, setSimDelay] = useState("90");
 
   const { data: rules } = useQuery({
     queryKey: ["penalty_rules", activeStructureId],
@@ -45,6 +48,14 @@ function Page() {
   });
 
   const totalPenalty = (violations ?? []).reduce((a: number, b: any) => a + Number(b.penalty_eur || 0), 0);
+
+  const simResult = useMemo(() => {
+    const d = Number(simDelay) || 0;
+    const thr = Number(f.threshold_minutes) || 0;
+    if (d < thr) return { applies: false, amount: 0 };
+    const amt = Number(f.amount_eur) || 0;
+    return { applies: true, amount: f.per_hour ? amt * Math.max(1, Math.ceil(d / 60)) : amt };
+  }, [simDelay, f]);
 
   return (
     <div className="space-y-6">
@@ -98,6 +109,14 @@ function Page() {
                   </Select>
                 </div>
                 <div className="flex items-end md:col-span-5"><Button disabled={add.isPending || !f.name} onClick={() => add.mutate()}>Crea regola</Button></div>
+              </div>
+              <div className="mt-4 rounded-md border border-dashed border-border p-3">
+                <div className="mb-2 flex items-center gap-2 text-sm font-medium"><Wand2 className="h-4 w-4" />Simulazione</div>
+                <div className="grid gap-3 md:grid-cols-3">
+                  <div className="space-y-1"><Label>Ritardo simulato (min)</Label><Input type="number" value={simDelay} onChange={(e) => setSimDelay(e.target.value)} /></div>
+                  <div className="rounded-md border border-border p-3 text-sm"><div className="text-xs text-muted-foreground">Regola applicabile?</div><div className="font-semibold">{simResult.applies ? "Sì" : "No (sotto soglia)"}</div></div>
+                  <div className="rounded-md border border-border p-3 text-sm"><div className="text-xs text-muted-foreground">Penale stimata</div><div className="font-display text-lg font-bold">€{simResult.amount.toFixed(2)}</div></div>
+                </div>
               </div>
             </CardContent>
           </Card>
