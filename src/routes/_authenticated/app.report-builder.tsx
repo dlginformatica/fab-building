@@ -18,7 +18,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { COMMON_TIMEZONES, CRON_PRESETS, nextRuns, parseCron } from "@/lib/cron";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useActiveStructure as useActive } from "@/lib/structure-context";
 import { fmtDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/report-builder")({ component: Page });
