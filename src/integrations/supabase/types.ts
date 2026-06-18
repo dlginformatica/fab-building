@@ -1215,6 +1215,121 @@ export type Database = {
           },
         ]
       }
+      report_pdf_previews: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          owner_id: string
+          path: string
+          recipient: string | null
+          size_bytes: number | null
+          template_id: string | null
+          template_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          owner_id: string
+          path: string
+          recipient?: string | null
+          size_bytes?: number | null
+          template_id?: string | null
+          template_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          owner_id?: string
+          path?: string
+          recipient?: string | null
+          size_bytes?: number | null
+          template_id?: string | null
+          template_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_pdf_previews_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "report_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_template_access: {
+        Row: {
+          created_at: string
+          granted_by: string | null
+          id: string
+          permission: string
+          role: Database["public"]["Enums"]["app_role"] | null
+          template_id: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          permission?: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          template_id: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          granted_by?: string | null
+          id?: string
+          permission?: string
+          role?: Database["public"]["Enums"]["app_role"] | null
+          template_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_template_access_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "report_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_template_layout_audit: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          field: string
+          id: string
+          new_value: Json | null
+          old_value: Json | null
+          recipient: string | null
+          template_id: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          field: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          recipient?: string | null
+          template_id: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          field?: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          recipient?: string | null
+          template_id?: string
+        }
+        Relationships: []
+      }
       report_templates: {
         Row: {
           columns: Json
@@ -2134,6 +2249,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      can_manage_template: {
+        Args: { _template: string; _user: string }
+        Returns: boolean
+      }
       has_permission: {
         Args: {
           _action?: string

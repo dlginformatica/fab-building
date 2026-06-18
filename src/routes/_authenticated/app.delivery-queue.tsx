@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,7 +86,7 @@ function Page() {
                 return (
                   <tr key={r.id} className="border-b border-border/40">
                     <td className="px-3 py-1.5 font-mono">{fmtDateTime(r.created_at)}</td>
-                    <td className="px-3 py-1.5">{r.recipient}</td>
+                    <td className="px-3 py-1.5"><Link to="/app/delivery-queue/$id" params={{ id: r.id }} className="underline">{r.recipient}</Link></td>
                     <td className="px-3 py-1.5">{r.subject ?? "—"}</td>
                     <td className="px-3 py-1.5"><Badge className={cfg.cls}><Icon className="mr-1 h-3 w-3 inline" />{r.status}</Badge></td>
                     <td className="px-3 py-1.5 font-mono">{r.attempts} / {r.max_attempts}</td>

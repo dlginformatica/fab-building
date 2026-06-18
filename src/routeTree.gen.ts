@@ -43,6 +43,7 @@ import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
 import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
+import { Route as AuthenticatedAppDeliveryQueueIdRouteImport } from './routes/_authenticated/app.delivery-queue.$id'
 import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
 
 const AuthRoute = AuthRouteImport.update({
@@ -235,6 +236,12 @@ const AuthenticatedAppTicketsIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedAppTicketsRoute,
   } as any)
+const AuthenticatedAppDeliveryQueueIdRoute =
+  AuthenticatedAppDeliveryQueueIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAppDeliveryQueueRoute,
+  } as any)
 const AuthenticatedAppAssetsIdRoute =
   AuthenticatedAppAssetsIdRouteImport.update({
     id: '/$id',
@@ -252,7 +259,7 @@ export interface FileRoutesByFullPath {
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
-  '/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRoute
+  '/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -275,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
+  '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
@@ -288,7 +296,7 @@ export interface FileRoutesByTo {
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
-  '/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRoute
+  '/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -311,6 +319,7 @@ export interface FileRoutesByTo {
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
+  '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
@@ -326,7 +335,7 @@ export interface FileRoutesById {
   '/_authenticated/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
   '/_authenticated/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/_authenticated/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
-  '/_authenticated/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRoute
+  '/_authenticated/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
   '/_authenticated/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/_authenticated/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -349,6 +358,7 @@ export interface FileRoutesById {
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
+  '/_authenticated/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/_authenticated/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
@@ -387,6 +397,7 @@ export interface FileRouteTypes {
     | '/api/tts/speak'
     | '/app/'
     | '/app/assets/$id'
+    | '/app/delivery-queue/$id'
     | '/app/tickets/$id'
     | '/api/public/hooks/report-scheduler'
   fileRoutesByTo: FileRoutesByTo
@@ -423,6 +434,7 @@ export interface FileRouteTypes {
     | '/api/tts/speak'
     | '/app'
     | '/app/assets/$id'
+    | '/app/delivery-queue/$id'
     | '/app/tickets/$id'
     | '/api/public/hooks/report-scheduler'
   id:
@@ -460,6 +472,7 @@ export interface FileRouteTypes {
     | '/api/tts/speak'
     | '/_authenticated/app/'
     | '/_authenticated/app/assets/$id'
+    | '/_authenticated/app/delivery-queue/$id'
     | '/_authenticated/app/tickets/$id'
     | '/api/public/hooks/report-scheduler'
   fileRoutesById: FileRoutesById
@@ -712,6 +725,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTicketsIdRouteImport
       parentRoute: typeof AuthenticatedAppTicketsRoute
     }
+    '/_authenticated/app/delivery-queue/$id': {
+      id: '/_authenticated/app/delivery-queue/$id'
+      path: '/$id'
+      fullPath: '/app/delivery-queue/$id'
+      preLoaderRoute: typeof AuthenticatedAppDeliveryQueueIdRouteImport
+      parentRoute: typeof AuthenticatedAppDeliveryQueueRoute
+    }
     '/_authenticated/app/assets/$id': {
       id: '/_authenticated/app/assets/$id'
       path: '/$id'
@@ -736,6 +756,20 @@ const AuthenticatedAppAssetsRouteWithChildren =
     AuthenticatedAppAssetsRouteChildren,
   )
 
+interface AuthenticatedAppDeliveryQueueRouteChildren {
+  AuthenticatedAppDeliveryQueueIdRoute: typeof AuthenticatedAppDeliveryQueueIdRoute
+}
+
+const AuthenticatedAppDeliveryQueueRouteChildren: AuthenticatedAppDeliveryQueueRouteChildren =
+  {
+    AuthenticatedAppDeliveryQueueIdRoute: AuthenticatedAppDeliveryQueueIdRoute,
+  }
+
+const AuthenticatedAppDeliveryQueueRouteWithChildren =
+  AuthenticatedAppDeliveryQueueRoute._addFileChildren(
+    AuthenticatedAppDeliveryQueueRouteChildren,
+  )
+
 interface AuthenticatedAppTicketsRouteChildren {
   AuthenticatedAppTicketsIdRoute: typeof AuthenticatedAppTicketsIdRoute
 }
@@ -758,7 +792,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppDelegationAuditRoute: typeof AuthenticatedAppDelegationAuditRoute
   AuthenticatedAppDelegationsRoute: typeof AuthenticatedAppDelegationsRoute
   AuthenticatedAppDelegationsHistoryRoute: typeof AuthenticatedAppDelegationsHistoryRoute
-  AuthenticatedAppDeliveryQueueRoute: typeof AuthenticatedAppDeliveryQueueRoute
+  AuthenticatedAppDeliveryQueueRoute: typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
   AuthenticatedAppInventoryRoute: typeof AuthenticatedAppInventoryRoute
   AuthenticatedAppInvoicesRoute: typeof AuthenticatedAppInvoicesRoute
@@ -790,7 +824,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppDelegationsRoute: AuthenticatedAppDelegationsRoute,
   AuthenticatedAppDelegationsHistoryRoute:
     AuthenticatedAppDelegationsHistoryRoute,
-  AuthenticatedAppDeliveryQueueRoute: AuthenticatedAppDeliveryQueueRoute,
+  AuthenticatedAppDeliveryQueueRoute:
+    AuthenticatedAppDeliveryQueueRouteWithChildren,
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
   AuthenticatedAppInventoryRoute: AuthenticatedAppInventoryRoute,
   AuthenticatedAppInvoicesRoute: AuthenticatedAppInvoicesRoute,
