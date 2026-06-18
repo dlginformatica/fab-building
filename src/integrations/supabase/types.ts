@@ -436,6 +436,51 @@ export type Database = {
         }
         Relationships: []
       }
+      delegation_audit: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          delegate_id: string | null
+          delegation_id: string | null
+          delegator_id: string | null
+          id: string
+          modules: string[] | null
+          new_row: Json | null
+          old_row: Json | null
+          reason: string | null
+          structure_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          delegate_id?: string | null
+          delegation_id?: string | null
+          delegator_id?: string | null
+          id?: string
+          modules?: string[] | null
+          new_row?: Json | null
+          old_row?: Json | null
+          reason?: string | null
+          structure_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          delegate_id?: string | null
+          delegation_id?: string | null
+          delegator_id?: string | null
+          id?: string
+          modules?: string[] | null
+          new_row?: Json | null
+          old_row?: Json | null
+          reason?: string | null
+          structure_id?: string | null
+        }
+        Relationships: []
+      }
       floors: {
         Row: {
           created_at: string
@@ -1097,6 +1142,79 @@ export type Database = {
           },
         ]
       }
+      report_delivery_queue: {
+        Row: {
+          attempts: number
+          created_at: string
+          id: string
+          last_error: string | null
+          max_attempts: number
+          next_attempt_at: string
+          payload: Json
+          recipient: string
+          run_id: string | null
+          status: string
+          structure_id: string | null
+          subject: string | null
+          template_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          next_attempt_at?: string
+          payload?: Json
+          recipient: string
+          run_id?: string | null
+          status?: string
+          structure_id?: string | null
+          subject?: string | null
+          template_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          id?: string
+          last_error?: string | null
+          max_attempts?: number
+          next_attempt_at?: string
+          payload?: Json
+          recipient?: string
+          run_id?: string | null
+          status?: string
+          structure_id?: string | null
+          subject?: string | null
+          template_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_delivery_queue_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "scheduled_report_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_delivery_queue_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_delivery_queue_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "report_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_templates: {
         Row: {
           columns: Json
@@ -1109,14 +1227,18 @@ export type Database = {
           last_export_url: string | null
           last_run_at: string | null
           layout: Json
+          max_retries: number
           name: string
           next_run_at: string | null
           owner_id: string | null
           pdf_layout: Json | null
+          recipient_layouts: Json
           recipients: string[]
+          retry_backoff_minutes: number
           schedule_cron: string | null
           source: string
           structure_id: string | null
+          timezone: string | null
           updated_at: string
         }
         Insert: {
@@ -1130,14 +1252,18 @@ export type Database = {
           last_export_url?: string | null
           last_run_at?: string | null
           layout?: Json
+          max_retries?: number
           name: string
           next_run_at?: string | null
           owner_id?: string | null
           pdf_layout?: Json | null
+          recipient_layouts?: Json
           recipients?: string[]
+          retry_backoff_minutes?: number
           schedule_cron?: string | null
           source: string
           structure_id?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Update: {
@@ -1151,14 +1277,18 @@ export type Database = {
           last_export_url?: string | null
           last_run_at?: string | null
           layout?: Json
+          max_retries?: number
           name?: string
           next_run_at?: string | null
           owner_id?: string | null
           pdf_layout?: Json | null
+          recipient_layouts?: Json
           recipients?: string[]
+          retry_backoff_minutes?: number
           schedule_cron?: string | null
           source?: string
           structure_id?: string | null
+          timezone?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -1215,37 +1345,52 @@ export type Database = {
       }
       scheduled_report_runs: {
         Row: {
+          attempts: number
           error: string | null
           finished_at: string | null
           id: string
+          last_error_at: string | null
+          next_retry_at: string | null
+          recipient_logs: Json
           recipients: string[]
           rows_count: number | null
           started_at: string
           status: string
           structure_id: string | null
           template_id: string
+          triggered_by: string
         }
         Insert: {
+          attempts?: number
           error?: string | null
           finished_at?: string | null
           id?: string
+          last_error_at?: string | null
+          next_retry_at?: string | null
+          recipient_logs?: Json
           recipients?: string[]
           rows_count?: number | null
           started_at?: string
           status?: string
           structure_id?: string | null
           template_id: string
+          triggered_by?: string
         }
         Update: {
+          attempts?: number
           error?: string | null
           finished_at?: string | null
           id?: string
+          last_error_at?: string | null
+          next_retry_at?: string | null
+          recipient_logs?: Json
           recipients?: string[]
           rows_count?: number | null
           started_at?: string
           status?: string
           structure_id?: string | null
           template_id?: string
+          triggered_by?: string
         }
         Relationships: [
           {
@@ -1384,6 +1529,7 @@ export type Database = {
           name: string
           notes: string | null
           rooms_count: number | null
+          timezone: string
           updated_at: string
         }
         Insert: {
@@ -1396,6 +1542,7 @@ export type Database = {
           name: string
           notes?: string | null
           rooms_count?: number | null
+          timezone?: string
           updated_at?: string
         }
         Update: {
@@ -1408,6 +1555,7 @@ export type Database = {
           name?: string
           notes?: string | null
           rooms_count?: number | null
+          timezone?: string
           updated_at?: string
         }
         Relationships: []
