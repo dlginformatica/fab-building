@@ -34,6 +34,7 @@ import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppInvoicesRouteImport } from './routes/_authenticated/app.invoices'
 import { Route as AuthenticatedAppInventoryRouteImport } from './routes/_authenticated/app.inventory'
 import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
+import { Route as AuthenticatedAppDelegationsHistoryRouteImport } from './routes/_authenticated/app.delegations-history'
 import { Route as AuthenticatedAppDelegationsRouteImport } from './routes/_authenticated/app.delegations'
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
@@ -179,6 +180,12 @@ const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
   path: '/app/docs',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppDelegationsHistoryRoute =
+  AuthenticatedAppDelegationsHistoryRouteImport.update({
+    id: '/app/delegations-history',
+    path: '/app/delegations-history',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppDelegationsRoute =
   AuthenticatedAppDelegationsRouteImport.update({
     id: '/app/delegations',
@@ -222,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
+  '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -254,6 +262,7 @@ export interface FileRoutesByTo {
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
+  '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -288,6 +297,7 @@ export interface FileRoutesById {
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
   '/_authenticated/app/delegations': typeof AuthenticatedAppDelegationsRoute
+  '/_authenticated/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
   '/_authenticated/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/_authenticated/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/app/audit'
     | '/app/contracts'
     | '/app/delegations'
+    | '/app/delegations-history'
     | '/app/docs'
     | '/app/inventory'
     | '/app/invoices'
@@ -354,6 +365,7 @@ export interface FileRouteTypes {
     | '/app/audit'
     | '/app/contracts'
     | '/app/delegations'
+    | '/app/delegations-history'
     | '/app/docs'
     | '/app/inventory'
     | '/app/invoices'
@@ -387,6 +399,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/audit'
     | '/_authenticated/app/contracts'
     | '/_authenticated/app/delegations'
+    | '/_authenticated/app/delegations-history'
     | '/_authenticated/app/docs'
     | '/_authenticated/app/inventory'
     | '/_authenticated/app/invoices'
@@ -596,6 +609,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppDocsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/delegations-history': {
+      id: '/_authenticated/app/delegations-history'
+      path: '/app/delegations-history'
+      fullPath: '/app/delegations-history'
+      preLoaderRoute: typeof AuthenticatedAppDelegationsHistoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/delegations': {
       id: '/_authenticated/app/delegations'
       path: '/app/delegations'
@@ -675,6 +695,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
   AuthenticatedAppDelegationsRoute: typeof AuthenticatedAppDelegationsRoute
+  AuthenticatedAppDelegationsHistoryRoute: typeof AuthenticatedAppDelegationsHistoryRoute
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
   AuthenticatedAppInventoryRoute: typeof AuthenticatedAppInventoryRoute
   AuthenticatedAppInvoicesRoute: typeof AuthenticatedAppInvoicesRoute
@@ -703,6 +724,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
   AuthenticatedAppDelegationsRoute: AuthenticatedAppDelegationsRoute,
+  AuthenticatedAppDelegationsHistoryRoute:
+    AuthenticatedAppDelegationsHistoryRoute,
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
   AuthenticatedAppInventoryRoute: AuthenticatedAppInventoryRoute,
   AuthenticatedAppInvoicesRoute: AuthenticatedAppInvoicesRoute,
