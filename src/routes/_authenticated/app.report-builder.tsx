@@ -12,9 +12,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Save, FileDown, FileSpreadsheet, Play, Trash2, Calendar } from "lucide-react";
+import { Save, FileDown, FileSpreadsheet, Play, Trash2, Calendar, Eye, Send, Plus, X, CheckCircle2, AlertTriangle } from "lucide-react";
 import QRCode from "qrcode";
 import { Textarea } from "@/components/ui/textarea";
+import { COMMON_TIMEZONES, CRON_PRESETS, nextRuns, parseCron } from "@/lib/cron";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useActiveStructure as useActive } from "@/lib/structure-context";
+import { fmtDateTime } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/report-builder")({ component: Page });
 
@@ -49,6 +54,16 @@ function Page() {
   const [schedule, setSchedule] = useState("");
   const [recipients, setRecipients] = useState("");
   const [nextRunAt, setNextRunAt] = useState("");
+  const [timezone, setTimezone] = useState("Europe/Rome");
+  const [recipientLayouts, setRecipientLayouts] = useState<Array<{ email: string; subject: string; header: string; footer: string; signature: string; qr_url: string }>>([]);
+  const [maxRetries, setMaxRetries] = useState(3);
+  const [retryBackoff, setRetryBackoff] = useState(15);
+
+  const cronCheck = useMemo(() => parseCron(schedule), [schedule]);
+  const nextExecutions = useMemo(
+    () => (cronCheck.ok ? nextRuns(schedule, timezone, 5) : []),
+    [schedule, timezone, cronCheck.ok]
+  );
 
   const { data: templates } = useQuery({
     queryKey: ["report_templates"],
@@ -71,12 +86,16 @@ function Page() {
 
   const save = useMutation({
     mutationFn: async () => {
+      if (schedule && !cronCheck.ok) throw new Error(`Cron non valido: ${(cronCheck as any).error}`);
       const user = (await supabase.auth.getUser()).data.user;
       const recArr = recipients.split(/[,\s;]+/).map(s => s.trim()).filter(Boolean);
+      const layouts = recipientLayouts.filter((r) => r.email);
       const { error } = await (supabase as any).from("report_templates").insert({
         name, source: source.table, columns: cols, filters: { from, to },
         layout, pdf_layout: layout, schedule_cron: schedule || null,
-        recipients: recArr, next_run_at: nextRunAt || null,
+        recipients: recArr, next_run_at: nextRunAt || (nextExecutions[0] ?? null),
+        recipient_layouts: layouts, timezone,
+        max_retries: maxRetries, retry_backoff_minutes: retryBackoff,
         owner_id: user?.id, structure_id: activeStructureId,
       });
       if (error) throw error;
@@ -94,6 +113,10 @@ function Page() {
     if (t.schedule_cron) setSchedule(t.schedule_cron);
     setRecipients((t.recipients ?? []).join(", "));
     setNextRunAt(t.next_run_at ? t.next_run_at.slice(0, 16) : "");
+    setRecipientLayouts(Array.isArray(t.recipient_layouts) ? t.recipient_layouts : []);
+    setTimezone(t.timezone ?? "Europe/Rome");
+    setMaxRetries(t.max_retries ?? 3);
+    setRetryBackoff(t.retry_backoff_minutes ?? 15);
   };
 
   const delTpl = useMutation({
@@ -101,39 +124,28 @@ function Page() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["report_templates"] }),
   });
 
-  const exportPdf = async () => {
-    if (!rows) return;
+  const buildPdf = async (overrideLayout?: typeof layout): Promise<jsPDF | null> => {
+    if (!rows) return null;
+    const L = { ...layout, ...(overrideLayout ?? {}) };
     const doc = new jsPDF({ orientation: cols.length > 5 ? "landscape" : "portrait" });
     const pageW = doc.internal.pageSize.getWidth();
     const pageH = doc.internal.pageSize.getHeight();
-
-    // QR (optional)
     let qrDataUrl = "";
-    if (layout.qr_url) {
-      try { qrDataUrl = await QRCode.toDataURL(layout.qr_url, { margin: 0, width: 120 }); } catch { /* ignore */ }
-    }
-
+    if (L.qr_url) { try { qrDataUrl = await QRCode.toDataURL(L.qr_url, { margin: 0, width: 120 }); } catch { /* ignore */ } }
     const drawHeaderFooter = (pageNum: number, pageCount: number) => {
-      // Header
       doc.setFontSize(13); doc.setFont("helvetica", "bold");
-      doc.text(layout.header || "Report", 14, 14);
+      doc.text(L.header || "Report", 14, 14);
       doc.setFontSize(9); doc.setFont("helvetica", "normal");
       doc.text(`${name || source.label} · Periodo: ${from || "—"} → ${to || "—"} · Righe: ${rows.length}`, 14, 20);
-      if (layout.subheader) { doc.setFontSize(8); doc.text(layout.subheader, 14, 25); }
+      if ((L as any).subheader) { doc.setFontSize(8); doc.text((L as any).subheader, 14, 25); }
       doc.setDrawColor(180); doc.line(14, 27, pageW - 14, 27);
-      // QR top-right
       if (qrDataUrl) doc.addImage(qrDataUrl, "PNG", pageW - 32, 8, 22, 22);
-      // Footer
       doc.setDrawColor(180); doc.line(14, pageH - 18, pageW - 14, pageH - 18);
       doc.setFontSize(8);
-      doc.text(layout.footer || "", 14, pageH - 12);
+      doc.text(L.footer || "", 14, pageH - 12);
       doc.text(`Pagina ${pageNum} di ${pageCount} · ${new Date().toLocaleString("it-IT")}`, pageW - 14, pageH - 12, { align: "right" });
-      if (layout.signature) {
-        doc.setFontSize(8);
-        doc.text(`Firma: ${layout.signature}`, 14, pageH - 6);
-      }
+      if (L.signature) { doc.setFontSize(8); doc.text(`Firma: ${L.signature}`, 14, pageH - 6); }
     };
-
     autoTable(doc, {
       startY: 32,
       margin: { top: 32, bottom: 22 },
@@ -145,11 +157,235 @@ function Page() {
         drawHeaderFooter((doc as any).internal.getCurrentPageInfo?.().pageNumber ?? 1, pc);
       },
     });
-    doc.save(`${(name || source.label).replace(/\s+/g, "_")}.pdf`);
+    return doc;
+  };
 
-    // Mark last_run on template if loaded by name
-    if (name) {
-      await (supabase as any).from("report_templates").update({ last_run_at: new Date().toISOString() }).eq("name", name);
+  const exportPdf = async () => {
+    const doc = await buildPdf();
+    if (!doc) return;
+    doc.save(`${(name || source.label).replace(/\s+/g, "_")}.pdf`);
+    if (name) await (supabase as any).from("report_templates").update({ last_run_at: new Date().toISOString() }).eq("name", name);
+  };
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const previewPdf = async (overrideLayout?: typeof layout) => {
+    const doc = await buildPdf(overrideLayout);
+    if (!doc) return toast.error("Esegui prima la query");
+    const blob = doc.output("blob");
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    setPreviewUrl(URL.createObjectURL(blob));
+  };
+
+  const testSend = useMutation({
+    mutationFn: async (recipient: { email: string; subject?: string }) => {
+      if (!recipient.email) throw new Error("Email destinatario richiesta");
+      const { error } = await (supabase as any).from("report_delivery_queue").insert({
+        template_id: null,
+        structure_id: activeStructureId,
+        recipient: recipient.email,
+        subject: recipient.subject ?? `[TEST] ${name || source.label}`,
+        status: "pending",
+        max_attempts: 1,
+        payload: { test: true, template_name: name || source.label, columns: cols, source: source.table, filters: { from, to } },
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => toast.success("Test accodato. Vedi Coda invii report."),
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const addRecipientLayout = () => setRecipientLayouts([...recipientLayouts, {
+    email: "", subject: `${name || source.label}`,
+    header: layout.header, footer: layout.footer, signature: layout.signature, qr_url: layout.qr_url,
+  }]);
+  const updRL = (i: number, patch: Partial<typeof recipientLayouts[number]>) => {
+    const next = [...recipientLayouts]; next[i] = { ...next[i], ...patch }; setRecipientLayouts(next);
+  };
+  const delRL = (i: number) => setRecipientLayouts(recipientLayouts.filter((_, j) => j !== i));
+
+  const exportCsv = () => {
+    if (!rows) return;
+    const esc = (v: any) => `"${String(v ?? "").replace(/"/g,'""')}"`;
+    const csv = [cols.join(","), ...rows.map(r => cols.map(c => esc(r[c])).join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${name || source.label}.csv`; a.click();
+  };
+
+  const preview = useMemo(() => (rows ?? []).slice(0, 50), [rows]);
+
+  return (
+    <div className="space-y-6">
+      <div><h1 className="font-display text-2xl font-bold">Report Builder</h1>
+        <p className="text-sm text-muted-foreground">Sorgente, colonne, filtri, layout PDF per destinatario, pianificazione con timezone e test di invio.</p></div>
+      <div className="grid gap-4 lg:grid-cols-[1fr_300px]">
+        <Card>
+          <CardHeader><CardTitle className="font-display text-base">Configurazione</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-3 md:grid-cols-4">
+              <div className="space-y-1 md:col-span-2"><Label>Nome report</Label><Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Es. Ticket Q1 2026" /></div>
+              <div className="space-y-1"><Label>Sorgente</Label>
+                <Select value={source.table} onValueChange={(v) => { const s = SOURCES.find(x=>x.table===v)!; setSource(s); setCols(s.cols); }}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{SOURCES.map(s => <SelectItem key={s.table} value={s.table}>{s.label}</SelectItem>)}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1"><Label>Timezone</Label>
+                <Select value={timezone} onValueChange={setTimezone}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{COMMON_TIMEZONES.map((tz) => <SelectItem key={tz} value={tz}>{tz}</SelectItem>)}</SelectContent>
+                </Select></div>
+              <div className="space-y-1"><Label>Da</Label><Input type="date" value={from} onChange={(e) => setFrom(e.target.value)} /></div>
+              <div className="space-y-1"><Label>A</Label><Input type="date" value={to} onChange={(e) => setTo(e.target.value)} /></div>
+            </div>
+            <div>
+              <Label className="mb-2 block">Colonne</Label>
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+                {source.cols.map(c => (
+                  <label key={c} className="flex items-center gap-2 rounded-md border border-border p-2 text-xs">
+                    <Checkbox checked={cols.includes(c)} onCheckedChange={(v) => setCols(v ? [...new Set([...cols, c])] : cols.filter(x => x !== c))} />
+                    <span className="font-mono">{c}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button onClick={() => run.mutate()} disabled={run.isPending || cols.length === 0}><Play className="mr-1 h-4 w-4" />Esegui</Button>
+              <Button variant="outline" onClick={() => save.mutate()} disabled={!name || save.isPending}><Save className="mr-1 h-4 w-4" />Salva modello</Button>
+              <Button variant="outline" onClick={() => previewPdf()} disabled={!rows}><Eye className="mr-1 h-4 w-4" />Anteprima PDF</Button>
+              <Button variant="outline" onClick={exportPdf} disabled={!rows}><FileDown className="mr-1 h-4 w-4" />PDF</Button>
+              <Button variant="outline" onClick={exportCsv} disabled={!rows}><FileSpreadsheet className="mr-1 h-4 w-4" />CSV</Button>
+            </div>
+
+            <Tabs defaultValue="layout">
+              <TabsList>
+                <TabsTrigger value="layout">Layout PDF</TabsTrigger>
+                <TabsTrigger value="recipients">Per destinatario</TabsTrigger>
+                <TabsTrigger value="schedule">Pianificazione</TabsTrigger>
+                <TabsTrigger value="retry">Retry & coda</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="layout" className="rounded-md border border-dashed border-border p-3 space-y-3">
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="space-y-1"><Label>Intestazione</Label><Input value={layout.header} onChange={(e) => setLayout({ ...layout, header: e.target.value })} /></div>
+                  <div className="space-y-1"><Label>Sotto-intestazione</Label><Input value={(layout as any).subheader} onChange={(e) => setLayout({ ...layout, subheader: e.target.value } as any)} /></div>
+                  <div className="space-y-1 md:col-span-2"><Label>Piè di pagina</Label><Textarea rows={2} value={layout.footer} onChange={(e) => setLayout({ ...layout, footer: e.target.value })} /></div>
+                  <div className="space-y-1"><Label>Firma (nome / ruolo)</Label><Input value={layout.signature} onChange={(e) => setLayout({ ...layout, signature: e.target.value })} placeholder="es. Mario Rossi · Direttore" /></div>
+                  <div className="space-y-1"><Label>QR (URL o testo)</Label><Input value={layout.qr_url} onChange={(e) => setLayout({ ...layout, qr_url: e.target.value })} placeholder="https://..." /></div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="recipients" className="rounded-md border border-dashed border-border p-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-muted-foreground">Header/footer/firma/QR personalizzati per ciascun destinatario. Override sul layout base.</div>
+                  <Button size="sm" variant="outline" onClick={addRecipientLayout}><Plus className="mr-1 h-3 w-3" />Aggiungi destinatario</Button>
+                </div>
+                {recipientLayouts.length === 0 && <div className="text-xs text-muted-foreground">Nessun override. Tutti i destinatari riceveranno il layout base.</div>}
+                {recipientLayouts.map((r, i) => (
+                  <div key={i} className="rounded-md border border-border p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="secondary">#{i + 1}</Badge>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" onClick={() => previewPdf(r as any)} disabled={!rows}><Eye className="mr-1 h-3 w-3" />Anteprima</Button>
+                        <Button size="sm" variant="outline" onClick={() => testSend.mutate({ email: r.email, subject: r.subject })}><Send className="mr-1 h-3 w-3" />Test invio</Button>
+                        <Button size="sm" variant="ghost" onClick={() => delRL(i)}><X className="h-3 w-3" /></Button>
+                      </div>
+                    </div>
+                    <div className="grid gap-2 md:grid-cols-2">
+                      <div className="space-y-1"><Label className="text-xs">Email</Label><Input value={r.email} onChange={(e) => updRL(i, { email: e.target.value })} placeholder="direzione@hotel.it" /></div>
+                      <div className="space-y-1"><Label className="text-xs">Oggetto</Label><Input value={r.subject} onChange={(e) => updRL(i, { subject: e.target.value })} /></div>
+                      <div className="space-y-1"><Label className="text-xs">Intestazione</Label><Input value={r.header} onChange={(e) => updRL(i, { header: e.target.value })} /></div>
+                      <div className="space-y-1"><Label className="text-xs">Firma</Label><Input value={r.signature} onChange={(e) => updRL(i, { signature: e.target.value })} /></div>
+                      <div className="space-y-1 md:col-span-2"><Label className="text-xs">Piè di pagina</Label><Textarea rows={2} value={r.footer} onChange={(e) => updRL(i, { footer: e.target.value })} /></div>
+                      <div className="space-y-1 md:col-span-2"><Label className="text-xs">QR</Label><Input value={r.qr_url} onChange={(e) => updRL(i, { qr_url: e.target.value })} /></div>
+                    </div>
+                  </div>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="schedule" className="rounded-md border border-dashed border-border p-3 space-y-3">
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <Label className="text-xs">Cron</Label>
+                    <Input value={schedule} onChange={(e) => setSchedule(e.target.value)} placeholder="0 8 * * 1" />
+                    <div className="flex flex-wrap gap-1 pt-1">
+                      {CRON_PRESETS.map((p) => (
+                        <Button key={p.value} size="sm" variant="ghost" className="h-6 px-2 text-[10px]" onClick={() => setSchedule(p.value)}>{p.label}</Button>
+                      ))}
+                    </div>
+                    {schedule && (
+                      <div className={`flex items-center gap-1 text-xs ${cronCheck.ok ? "text-green-600" : "text-destructive"}`}>
+                        {cronCheck.ok ? <CheckCircle2 className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
+                        {cronCheck.ok ? "Cron valido" : (cronCheck as any).error}
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Prossima esecuzione (override manuale)</Label>
+                    <Input type="datetime-local" value={nextRunAt} onChange={(e) => setNextRunAt(e.target.value)} />
+                    <Label className="text-xs">Destinatari (email separate da virgola)</Label>
+                    <Textarea rows={2} value={recipients} onChange={(e) => setRecipients(e.target.value)} placeholder="direzione@hotel.it, manutenzione@hotel.it" />
+                  </div>
+                </div>
+                {cronCheck.ok && nextExecutions.length > 0 && (
+                  <div className="rounded-md bg-muted/40 p-2 text-xs">
+                    <div className="mb-1 font-medium flex items-center gap-1"><Calendar className="h-3 w-3" />Prossime esecuzioni ({timezone})</div>
+                    <ol className="list-decimal pl-5 font-mono">
+                      {nextExecutions.map((iso) => <li key={iso}>{fmtDateTime(iso)}</li>)}
+                    </ol>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="retry" className="rounded-md border border-dashed border-border p-3 space-y-3">
+                <div className="grid gap-3 md:grid-cols-2">
+                  <div className="space-y-1"><Label className="text-xs">Tentativi max</Label><Input type="number" min={1} max={10} value={maxRetries} onChange={(e) => setMaxRetries(Number(e.target.value) || 1)} /></div>
+                  <div className="space-y-1"><Label className="text-xs">Back-off (minuti)</Label><Input type="number" min={1} max={1440} value={retryBackoff} onChange={(e) => setRetryBackoff(Number(e.target.value) || 15)} /></div>
+                </div>
+                <p className="text-[11px] text-muted-foreground">In caso di errore SMTP/render, ogni invio viene rimesso in coda con attesa esponenziale (<code>back-off × tentativo</code>). Dopo il tentativo max va in DLQ e si può riprovare manualmente dalla pagina <em>Coda invii report</em>.</p>
+              </TabsContent>
+            </Tabs>
+
+            {previewUrl && (
+              <div className="rounded-md border border-border p-2">
+                <div className="mb-2 flex items-center justify-between">
+                  <div className="text-xs font-medium">Anteprima PDF</div>
+                  <Button size="sm" variant="ghost" onClick={() => { URL.revokeObjectURL(previewUrl); setPreviewUrl(null); }}><X className="h-3 w-3" /></Button>
+                </div>
+                <iframe title="pdf-preview" src={previewUrl} className="h-[480px] w-full rounded border" />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader><CardTitle className="font-display text-base">Modelli salvati</CardTitle></CardHeader>
+          <CardContent className="space-y-2">
+            {(templates ?? []).length === 0 && <div className="text-xs text-muted-foreground">Nessun modello.</div>}
+            {(templates ?? []).map((t: any) => (
+              <div key={t.id} className="flex items-center justify-between rounded-md border border-border p-2 text-xs">
+                <button className="flex-1 text-left" onClick={() => loadTemplate(t)}>
+                  <div className="font-medium">{t.name}</div><div className="text-muted-foreground">{t.source} · {t.timezone ?? "Europe/Rome"}</div>
+                </button>
+                <Button size="icon" variant="ghost" onClick={() => delTpl.mutate(t.id)}><Trash2 className="h-3 w-3" /></Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+      {rows && (
+        <Card>
+          <CardHeader><CardTitle className="font-display text-base">Anteprima dati · {rows.length} righe</CardTitle></CardHeader>
+          <CardContent className="overflow-x-auto p-0">
+            <table className="w-full text-xs">
+              <thead className="border-b border-border bg-muted/30"><tr>{cols.map(c => <th key={c} className="px-3 py-2 text-left font-medium">{c}</th>)}</tr></thead>
+              <tbody>{preview.map((r, i) => (<tr key={i} className="border-b border-border/40">{cols.map(c => <td key={c} className="px-3 py-1.5 font-mono">{String(r[c] ?? "")}</td>)}</tr>))}</tbody>
+            </table>
+            {rows.length > 50 && <div className="p-3 text-center text-xs text-muted-foreground">Mostrando 50 di {rows.length}. Esporta per vedere tutto.</div>}
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}
     }
   };
   const exportCsv = () => {
