@@ -12,7 +12,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-import { Save, FileDown, FileSpreadsheet, Play, Trash2 } from "lucide-react";
+import { Save, FileDown, FileSpreadsheet, Play, Trash2, Calendar } from "lucide-react";
+import QRCode from "qrcode";
+import { Textarea } from "@/components/ui/textarea";
 
 export const Route = createFileRoute("/_authenticated/app/report-builder")({ component: Page });
 
@@ -37,6 +39,14 @@ function Page() {
   const [to, setTo] = useState("");
   const [name, setName] = useState("");
   const [rows, setRows] = useState<any[] | null>(null);
+  const [layout, setLayout] = useState({
+    header: "HotelOps · Report direzionale",
+    subheader: "",
+    footer: "Documento riservato · generato automaticamente da HotelOps",
+    signature: "",
+    qr_url: "",
+  });
+  const [schedule, setSchedule] = useState("");
 
   const { data: templates } = useQuery({
     queryKey: ["report_templates"],
@@ -62,6 +72,7 @@ function Page() {
       const user = (await supabase.auth.getUser()).data.user;
       const { error } = await (supabase as any).from("report_templates").insert({
         name, source: source.table, columns: cols, filters: { from, to },
+        layout, schedule_cron: schedule || null,
         owner_id: user?.id, structure_id: activeStructureId,
       });
       if (error) throw error;
@@ -75,6 +86,8 @@ function Page() {
     setSource(s); setCols(t.columns ?? s.cols);
     setFrom(t.filters?.from ?? ""); setTo(t.filters?.to ?? "");
     setName(t.name); setRows(null);
+    if (t.layout) setLayout({ ...layout, ...t.layout });
+    if (t.schedule_cron) setSchedule(t.schedule_cron);
   };
 
   const delTpl = useMutation({
@@ -82,13 +95,56 @@ function Page() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["report_templates"] }),
   });
 
-  const exportPdf = () => {
+  const exportPdf = async () => {
     if (!rows) return;
     const doc = new jsPDF({ orientation: cols.length > 5 ? "landscape" : "portrait" });
-    doc.setFontSize(14); doc.text(`HotelOps · ${name || source.label}`, 14, 16);
-    doc.setFontSize(9); doc.text(`Periodo: ${from || "—"} → ${to || "—"} · Righe: ${rows.length}`, 14, 22);
-    autoTable(doc, { startY: 26, head: [cols], body: rows.map(r => cols.map(c => String(r[c] ?? ""))), styles: { fontSize: 7 } });
-    doc.save(`${(name || source.label).replace(/\s+/g,"_")}.pdf`);
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+
+    // QR (optional)
+    let qrDataUrl = "";
+    if (layout.qr_url) {
+      try { qrDataUrl = await QRCode.toDataURL(layout.qr_url, { margin: 0, width: 120 }); } catch { /* ignore */ }
+    }
+
+    const drawHeaderFooter = (pageNum: number, pageCount: number) => {
+      // Header
+      doc.setFontSize(13); doc.setFont("helvetica", "bold");
+      doc.text(layout.header || "Report", 14, 14);
+      doc.setFontSize(9); doc.setFont("helvetica", "normal");
+      doc.text(`${name || source.label} · Periodo: ${from || "—"} → ${to || "—"} · Righe: ${rows.length}`, 14, 20);
+      if (layout.subheader) { doc.setFontSize(8); doc.text(layout.subheader, 14, 25); }
+      doc.setDrawColor(180); doc.line(14, 27, pageW - 14, 27);
+      // QR top-right
+      if (qrDataUrl) doc.addImage(qrDataUrl, "PNG", pageW - 32, 8, 22, 22);
+      // Footer
+      doc.setDrawColor(180); doc.line(14, pageH - 18, pageW - 14, pageH - 18);
+      doc.setFontSize(8);
+      doc.text(layout.footer || "", 14, pageH - 12);
+      doc.text(`Pagina ${pageNum} di ${pageCount} · ${new Date().toLocaleString("it-IT")}`, pageW - 14, pageH - 12, { align: "right" });
+      if (layout.signature) {
+        doc.setFontSize(8);
+        doc.text(`Firma: ${layout.signature}`, 14, pageH - 6);
+      }
+    };
+
+    autoTable(doc, {
+      startY: 32,
+      margin: { top: 32, bottom: 22 },
+      head: [cols],
+      body: rows.map((r) => cols.map((c) => String(r[c] ?? ""))),
+      styles: { fontSize: 7 },
+      didDrawPage: () => {
+        const pc = (doc as any).internal.getNumberOfPages?.() ?? 1;
+        drawHeaderFooter((doc as any).internal.getCurrentPageInfo?.().pageNumber ?? 1, pc);
+      },
+    });
+    doc.save(`${(name || source.label).replace(/\s+/g, "_")}.pdf`);
+
+    // Mark last_run on template if loaded by name
+    if (name) {
+      await (supabase as any).from("report_templates").update({ last_run_at: new Date().toISOString() }).eq("name", name);
+    }
   };
   const exportCsv = () => {
     if (!rows) return;
@@ -135,6 +191,22 @@ function Page() {
               <Button variant="outline" onClick={() => save.mutate()} disabled={!name || save.isPending}><Save className="mr-1 h-4 w-4" />Salva modello</Button>
               <Button variant="outline" onClick={exportPdf} disabled={!rows}><FileDown className="mr-1 h-4 w-4" />PDF</Button>
               <Button variant="outline" onClick={exportCsv} disabled={!rows}><FileSpreadsheet className="mr-1 h-4 w-4" />CSV</Button>
+            </div>
+            <div className="rounded-md border border-dashed border-border p-3">
+              <div className="mb-2 text-sm font-medium">Layout PDF</div>
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="space-y-1"><Label>Intestazione</Label><Input value={layout.header} onChange={(e) => setLayout({ ...layout, header: e.target.value })} /></div>
+                <div className="space-y-1"><Label>Sotto-intestazione</Label><Input value={layout.subheader} onChange={(e) => setLayout({ ...layout, subheader: e.target.value })} /></div>
+                <div className="space-y-1 md:col-span-2"><Label>Piè di pagina</Label><Textarea rows={2} value={layout.footer} onChange={(e) => setLayout({ ...layout, footer: e.target.value })} /></div>
+                <div className="space-y-1"><Label>Firma (nome / ruolo)</Label><Input value={layout.signature} onChange={(e) => setLayout({ ...layout, signature: e.target.value })} placeholder="es. Mario Rossi · Direttore" /></div>
+                <div className="space-y-1"><Label>QR (URL o testo)</Label><Input value={layout.qr_url} onChange={(e) => setLayout({ ...layout, qr_url: e.target.value })} placeholder="https://..." /></div>
+              </div>
+              <div className="mt-3 flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <Label className="text-xs">Pianificazione (cron)</Label>
+                <Input className="max-w-[220px]" value={schedule} onChange={(e) => setSchedule(e.target.value)} placeholder="0 8 * * 1  (lun ore 8)" />
+                <span className="text-xs text-muted-foreground">Salva il modello per attivarla.</span>
+              </div>
             </div>
           </CardContent>
         </Card>
