@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.6: completate Fasi 2-6. Aggiunte sezioni: Fornitori, Contratti, Ordini di Lavoro, Manutenzione programmata, Magazzino, Ordini d'Acquisto, Utenze & Letture, Fatture & Bollette, Messaggistica multi-agente, Report direzionale, Audit log.
 - **2026-06-18** — v0.1: inizializzazione manuale (autenticazione, asset, ticket, TTS).
 
 ## 1. Primo accesso
@@ -64,8 +65,65 @@
 
 ## 9. Roadmap visibile all'utente
 - ✅ Fase 0–1: fondamenta + Asset + Ticketing + TTS
-- ⏳ Fase 2: Fornitori & Contratti
-- ⏳ Fase 3: Manutenzione programmata & Magazzino
-- ⏳ Fase 4: Bollette & Fatture (OCR)
-- ⏳ Fase 5: Messaggistica multi-agente AI
-- ⏳ Fase 6: Dashboard direzionale & Report
+- ✅ Fase 2: Fornitori & Contratti & Ordini di Lavoro
+- ✅ Fase 3: Manutenzione programmata & Magazzino & PO
+- ✅ Fase 4: Utenze, Letture, Fatture
+- ✅ Fase 5: Messaggistica multi-agente AI (Lovable Gateway)
+- ✅ Fase 6: Report direzionale & Audit log
+
+## 10. Nuovi flussi (Fasi 2-6)
+
+### 10.1 Fornitori (menù → Fornitori)
+1. **+ Nuovo fornitore** → compila ragione sociale, P.IVA, categoria, referente, scadenze DURC/assicurazione.
+2. La card mostra contatti e scadenze. Stato Attivo/Sospeso/Dismesso.
+
+### 10.2 Contratti (menù → Contratti)
+1. **+ Nuovo contratto** → seleziona fornitore, imposta tipo, periodo, importo, **SLA ack/resolve in minuti**.
+2. Le SLA contrattuali sono visibili nel record; integrazione con ticket via campo `contract_id` (Fase 7).
+
+### 10.3 Ordini di Lavoro (menù → Ordini di Lavoro)
+1. **+ Nuovo ordine**: collega ticket/asset/fornitore/contratto, programma data, costo. Stati: aperto/programmato/in_corso/completato/annullato.
+
+### 10.4 Manutenzione programmata (menù → Manutenzione)
+1. **+ Nuovo piano**: nome, frequenza (giornaliera→annuale o custom giorni), asset, fornitore, **checklist (1 voce per riga)**, prossima scadenza.
+
+### 10.5 Magazzino (menù → Magazzino)
+1. **+ Nuovo articolo**: SKU univoco, unità (pz/kg/L…), giacenza, scorta minima, costo, ubicazione.
+2. Badge **"sotto-scorta"** rosso quando giacenza ≤ minima.
+
+### 10.6 Ordini d'Acquisto (menù → Ordini d'Acquisto)
+1. **+ Nuovo PO**: fornitore, righe in formato `Nome|Qta|Prezzo` (una per riga), consegna prevista, totale.
+
+### 10.7 Utenze & Letture (menù → Utenze & Letture)
+1. **+ Nuovo contatore**: tipo (elettricità/gas/acqua/…), POD/PDR, matricola, unità.
+2. Sulla card → **+ Lettura** per registrare valore di oggi.
+
+### 10.8 Fatture & Bollette (menù → Fatture & Bollette)
+1. **+ Nuova fattura**: numero, fornitore, tipo utenza, importi, scadenza, upload PDF.
+2. Badge **"scaduta"** automatico se due_date passata e non pagata.
+
+### 10.9 Messaggi (menù → Messaggi)
+1. **+** in colonna sinistra → titolo, partecipanti (multi), **Agente AI opzionale** (concierge / sla_watcher / procurement).
+2. Selezione conversazione → chat realtime. Quando è configurato un agente, ogni messaggio utente riceve risposta automatica dall'AI.
+
+### 10.10 Report (menù → Report)
+- KPI live di struttura: ticket aperti, % SLA rispettati, € fatture, € costo interventi, valore magazzino.
+
+### 10.11 Audit log (menù → Audit log)
+- Solo admin (super_admin / direttore / facility_manager) vedono le ultime 200 operazioni tracciate.
+
+## 11. Funzionalità mancanti / opzioni note
+
+- **Portale fornitore** dedicato (login esterno, vista solo PO/contratti propri).
+- **Rapportini firmabili** (signature pad) negli ordini di lavoro.
+- **OCR PDF fatture** (estrazione automatica importi/scadenze).
+- **Generazione automatica task** dai piani di manutenzione (job ricorrente lato DB).
+- **Scarico magazzino automatico** alla chiusura di un ordine di lavoro.
+- **Notifiche scadenze** DURC/assicurazione/contratti via email o in-app.
+- **Grafici** (consumi utenze nel tempo, andamento ticket, spending).
+- **Export PDF/Excel** dei report.
+- **AI tools/function-calling**: apertura ticket, query asset/fornitore direttamente dall'agente.
+- **Allegati nei messaggi** + ricerca + indicatore "non letto" per conversazione.
+- **Audit trigger DB**: oggi `audit_log` riceve insert manuali; serve trigger su ogni tabella critica.
+- **Mobile PWA** + notifiche push.
+- **Multilingua** (oggi solo IT).

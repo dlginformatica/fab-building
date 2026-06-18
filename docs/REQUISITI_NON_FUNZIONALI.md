@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.6: estesa copertura per Fasi 2-6 (RLS su tutte le nuove tabelle, Realtime su `messages`/`conversations`, server fn `askAgent` autenticata via `requireSupabaseAuth`, Google Fonts CDN al posto di `@fontsource` per evitare dipendenze non installate).
 - **2026-06-18** — v0.1: inizializzazione documento.
 
 ## 1. Architettura
@@ -26,6 +27,9 @@
 - RNF-PRF-04 Realtime Postgres su `tickets` per dashboard live.
 
 ## 4. Affidabilità
+- RNF-REL-04 Tabelle Fasi 2-6: RLS per struttura via `has_structure_access`. Conversazioni protette da funzione `is_conversation_member` (SECURITY DEFINER) per evitare ricorsione.
+- RNF-REL-05 Realtime Postgres su `messages` e `conversations` con filtro per `conversation_id`.
+- RNF-REL-06 AI Agent (Lovable Gateway) chiamato server-side: chiave `LOVABLE_API_KEY` mai esposta al client.
 - RNF-REL-01 Trigger DB calcola SLA in modo deterministico (no race condition).
 - RNF-REL-02 TTS idempotente: flag `tts_announced` impedisce annunci duplicati.
 - RNF-REL-03 Tutte le mutazioni passano da React Query con invalidazione coerente delle liste e dei dettagli.

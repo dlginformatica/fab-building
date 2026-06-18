@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.6: completate Fasi 2-6. Aggiunti: Fornitori, Contratti, Ordini di Lavoro, Manutenzione programmata, Magazzino, Ordini d'Acquisto, Utenze & Letture, Fatture & Bollette, Messaggistica multi-agente (porting Penelope con AI Gateway), Report direzionale, Audit log. Aggiornato __root.tsx per usare Google Fonts (font @fontsource non installato).
 - **2026-06-18** — v0.1: inizializzazione documento. Coperti: autenticazione, multi-tenant, ruoli, Asset & Impianti, Trouble Ticketing con SLA, TTS sui ticket.
 
 ## 1. Visione
@@ -63,8 +64,61 @@ HotelOps è un sistema di **Building & Facility Management** per strutture alber
 - RF-DOC-01 I file `docs/REQUISITI_FUNZIONALI.md`, `docs/REQUISITI_NON_FUNZIONALI.md`, `docs/MANUALE_OPERATIVO.md` sono visibili dentro l'app (pagina "Documenti") e sempre allineati allo stato del codice.
 
 ## 4. Roadmap funzionale (non ancora implementata)
-- Fase 2: Fornitori, Contratti, portale fornitore, ordini di lavoro, rapportini firmabili.
-- Fase 3: Piani di manutenzione preventiva, magazzino ricambi, ordini d'acquisto.
-- Fase 4: Bollette utenze (luce/gas/acqua/gasolio) con letture contatori, fatture passive con OCR PDF, scadenzario, centri di costo.
-- Fase 5: Messaggistica conversazionale 1:1 e di gruppo (porting da "Penelope Course Manager"), agenti AI multi-ruolo (Concierge tecnico, SLA Watcher, Procurement assistant).
-- Fase 6: Dashboard direzionale, report PDF/Excel, audit log, mobile PWA.
+
+### 3.7 Fornitori *(Fase 2 — implementato)*
+- RF-SUP-01 CRUD fornitori: ragione sociale, P.IVA, categoria, referente, contatti, scadenze DURC/assicurazione, stato (attivo/sospeso/dismesso).
+- RF-SUP-02 Fornitori globali (cross-struttura) o legati a singola struttura.
+
+### 3.8 Contratti *(Fase 2 — implementato)*
+- RF-CON-01 CRUD contratti per struttura+fornitore: codice, titolo, tipo (canone/consumo/intervento/misto), periodo, importo, rinnovo automatico.
+- RF-CON-02 SLA contrattuali (ack/resolve in minuti) collegabili ai ticket.
+- RF-CON-03 Stato workflow: bozza → attivo → scaduto/disdetto.
+
+### 3.9 Ordini di Lavoro *(Fase 2 — implementato)*
+- RF-WO-01 Creazione ordine collegato a ticket/asset/contratto/fornitore con costo, data programmata, stato.
+
+### 3.10 Manutenzione Programmata *(Fase 3 — implementato)*
+- RF-MAN-01 Piani con frequenza (giornaliera→annuale o custom giorni), checklist editabile (1 riga per voce), prossima scadenza, assegnazione fornitore.
+- RF-MAN-02 Task generabili dai piani (tabella maintenance_tasks).
+
+### 3.11 Magazzino *(Fase 3 — implementato)*
+- RF-INV-01 Articoli con SKU univoco per struttura, unità, giacenza, scorta minima, costo unitario, ubicazione.
+- RF-INV-02 Alert sotto-scorta automatico in lista (quantità ≤ minima).
+- RF-INV-03 Movimenti magazzino (entrata/uscita/rettifica) legati a ticket/ordine.
+
+### 3.12 Ordini d'Acquisto *(Fase 3 — implementato)*
+- RF-PO-01 PO con fornitore, stato (bozza/inviato/confermato/ricevuto/annullato), righe item (Nome|Qta|Prezzo), totale, consegna prevista.
+
+### 3.13 Utenze & Letture *(Fase 4 — implementato)*
+- RF-UT-01 Contatori per tipo (elettricità/gas/acqua/gasolio/teleriscaldamento/altro) con POD/PDR, matricola, unità.
+- RF-UT-02 Letture periodiche con data/valore; ultima lettura visibile in lista.
+
+### 3.14 Fatture & Bollette *(Fase 4 — implementato)*
+- RF-INV2-01 Registrazione fattura passiva: numero, fornitore, tipo utenza, importi (imponibile/IVA/totale), scadenza, stato.
+- RF-INV2-02 Upload PDF su Storage; link diretto al PDF dalla card.
+- RF-INV2-03 Calcolo automatico "scaduta" (badge rosso) se due_date passata e non pagata.
+- RF-INV2-04 Centri di costo (tabella creata; UI gestita da admin in fasi successive).
+
+### 3.15 Messaggistica multi-agente *(Fase 5 — implementato, adattata da Penelope)*
+- RF-MSG-01 Conversazioni 1:1 o di gruppo legate opzionalmente a ticket/contratto, scopate per struttura.
+- RF-MSG-02 Realtime via Postgres Realtime (canale `conv-<id>`).
+- RF-MSG-03 Agenti AI: `concierge`, `sla_watcher`, `procurement` — ogni conversazione può avere uno; risposta via Lovable AI Gateway (`google/gemini-2.5-flash`).
+- RF-MSG-04 Storia conversazione persistita; messaggi distintivi per utente/agente.
+
+### 3.16 Report direzionale *(Fase 6 — implementato)*
+- RF-REP-01 KPI live per struttura: ticket totali/aperti, % SLA rispettati, € fatture da pagare/pagate, € costo interventi, valore magazzino, articoli sotto-scorta.
+
+### 3.17 Audit log *(Fase 6 — implementato)*
+- RF-AUD-01 Tabella `audit_log` (insert da app, select solo per admin via `is_admin`). UI elenco ultime 200 voci.
+
+## 4. Funzionalità ancora da implementare (rilevate nelle fasi)
+
+**Fase 2 — gap**: portale fornitore esterno (login dedicato fornitore), rapportini intervento firmabili digitalmente (signature pad), notifica automatica scadenze DURC/assicurazione (cron), allegati multipli a contratto.
+
+**Fase 3 — gap**: generazione automatica `maintenance_tasks` dai piani (job ricorrente), scarico automatico magazzino al chiudere un ordine di lavoro, codici a barre articoli, soglie min/max con riordino auto.
+
+**Fase 4 — gap**: OCR PDF fattura (parser → ocr_data), abbinamento fattura↔contratto/POD, grafici consumi nel tempo, esportazione registro IVA, scadenzario calendario, fatturazione attiva.
+
+**Fase 5 — gap**: tools AI (open ticket, query asset, lookup fornitore via function-calling), allegati nei messaggi, indicatore "non letto" (`last_read_at`), reazioni, ricerca, conversazioni con fornitori esterni (via `supplier_id` in participants).
+
+**Fase 6 — gap**: export PDF/Excel report, audit automatico via trigger DB (oggi inserimento solo manuale), grafici (chart.js/recharts), drill-down per centro di costo, mobile PWA, notifiche push.
