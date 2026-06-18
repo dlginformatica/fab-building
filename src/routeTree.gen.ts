@@ -21,6 +21,7 @@ import { Route as AuthenticatedAppUsersRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppTicketsRouteImport } from './routes/_authenticated/app.tickets'
 import { Route as AuthenticatedAppSuppliersRouteImport } from './routes/_authenticated/app.suppliers'
 import { Route as AuthenticatedAppStructuresRouteImport } from './routes/_authenticated/app.structures'
+import { Route as AuthenticatedAppStatisticsRouteImport } from './routes/_authenticated/app.statistics'
 import { Route as AuthenticatedAppSlaRouteImport } from './routes/_authenticated/app.sla'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated/app.reports'
@@ -100,6 +101,12 @@ const AuthenticatedAppStructuresRoute =
   AuthenticatedAppStructuresRouteImport.update({
     id: '/app/structures',
     path: '/app/structures',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppStatisticsRoute =
+  AuthenticatedAppStatisticsRouteImport.update({
+    id: '/app/statistics',
+    path: '/app/statistics',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppSlaRoute = AuthenticatedAppSlaRouteImport.update({
@@ -219,6 +226,7 @@ export interface FileRoutesByFullPath {
   '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
+  '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
@@ -249,6 +257,7 @@ export interface FileRoutesByTo {
   '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
+  '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
@@ -281,6 +290,7 @@ export interface FileRoutesById {
   '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/app/sla': typeof AuthenticatedAppSlaRoute
+  '/_authenticated/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/_authenticated/app/structures': typeof AuthenticatedAppStructuresRoute
   '/_authenticated/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/_authenticated/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
@@ -313,6 +323,7 @@ export interface FileRouteTypes {
     | '/app/reports'
     | '/app/settings'
     | '/app/sla'
+    | '/app/statistics'
     | '/app/structures'
     | '/app/suppliers'
     | '/app/tickets'
@@ -343,6 +354,7 @@ export interface FileRouteTypes {
     | '/app/reports'
     | '/app/settings'
     | '/app/sla'
+    | '/app/statistics'
     | '/app/structures'
     | '/app/suppliers'
     | '/app/tickets'
@@ -374,6 +386,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/reports'
     | '/_authenticated/app/settings'
     | '/_authenticated/app/sla'
+    | '/_authenticated/app/statistics'
     | '/_authenticated/app/structures'
     | '/_authenticated/app/suppliers'
     | '/_authenticated/app/tickets'
@@ -477,6 +490,13 @@ declare module '@tanstack/react-router' {
       path: '/app/structures'
       fullPath: '/app/structures'
       preLoaderRoute: typeof AuthenticatedAppStructuresRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/statistics': {
+      id: '/_authenticated/app/statistics'
+      path: '/app/statistics'
+      fullPath: '/app/statistics'
+      preLoaderRoute: typeof AuthenticatedAppStatisticsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/sla': {
@@ -646,6 +666,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppSlaRoute: typeof AuthenticatedAppSlaRoute
+  AuthenticatedAppStatisticsRoute: typeof AuthenticatedAppStatisticsRoute
   AuthenticatedAppStructuresRoute: typeof AuthenticatedAppStructuresRoute
   AuthenticatedAppSuppliersRoute: typeof AuthenticatedAppSuppliersRoute
   AuthenticatedAppTicketsRoute: typeof AuthenticatedAppTicketsRouteWithChildren
@@ -672,6 +693,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppSlaRoute: AuthenticatedAppSlaRoute,
+  AuthenticatedAppStatisticsRoute: AuthenticatedAppStatisticsRoute,
   AuthenticatedAppStructuresRoute: AuthenticatedAppStructuresRoute,
   AuthenticatedAppSuppliersRoute: AuthenticatedAppSuppliersRoute,
   AuthenticatedAppTicketsRoute: AuthenticatedAppTicketsRouteWithChildren,
