@@ -1,11 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveStructure } from "@/lib/structure-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { AlertTriangle, CheckCircle2, Clock, Ticket as TicketIcon, Wrench } from "lucide-react";
-import { fmtDateTime, timeUntil } from "@/lib/format";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LayoutGrid, Plus, Trash2, ArrowUp, ArrowDown, Save } from "lucide-react";
+import { WIDGET_CATALOG, WidgetRenderer, sizeClass, type WidgetKey } from "@/components/dashboard/widgets";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/app/")({
   component: Dashboard,
@@ -13,109 +18,134 @@ export const Route = createFileRoute("/_authenticated/app/")({
 
 function Dashboard() {
   const { activeStructureId } = useActiveStructure();
-  const { data: stats } = useQuery({
-    queryKey: ["dashboard-stats", activeStructureId],
-    enabled: !!activeStructureId,
-    queryFn: async () => {
-      const sid = activeStructureId!;
-      const [tk, ast, open, crit] = await Promise.all([
-        supabase.from("tickets").select("id,status,resolve_due_at,resolved_at,priority").eq("structure_id", sid),
-        supabase.from("assets").select("id", { count: "exact", head: true }).eq("structure_id", sid),
-        supabase.from("tickets").select("id", { count: "exact", head: true }).eq("structure_id", sid).in("status", ["aperto","assegnato","in_corso"]),
-        supabase.from("tickets").select("id", { count: "exact", head: true }).eq("structure_id", sid).eq("priority","critica").in("status", ["aperto","assegnato","in_corso"]),
-      ]);
-      const tickets = tk.data ?? [];
-      const closed = tickets.filter((t) => t.resolved_at);
-      const inSLA = closed.filter((t) => t.resolve_due_at && new Date(t.resolved_at!) <= new Date(t.resolve_due_at!)).length;
-      return {
-        assetsCount: ast.count ?? 0,
-        openCount: open.count ?? 0,
-        criticalCount: crit.count ?? 0,
-        slaPct: closed.length ? Math.round((inSLA / closed.length) * 100) : null,
-      };
-    },
+  const qc = useQueryClient();
+  const [editing, setEditing] = useState(false);
+
+  const { data: me } = useQuery({ queryKey:["me-dash"], queryFn: async()=> (await supabase.auth.getUser()).data.user });
+  const { data: widgets = [], isLoading } = useQuery({
+    queryKey:["dashboard-widgets", me?.id], enabled: !!me?.id,
+    queryFn: async()=> (await supabase.from("dashboard_widgets").select("*").eq("user_id", me!.id).order("position")).data ?? [],
   });
 
-  const { data: recent } = useQuery({
-    queryKey: ["dashboard-recent", activeStructureId],
-    enabled: !!activeStructureId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("tickets")
-        .select("id,ticket_number,title,priority,status,resolve_due_at,created_at")
-        .eq("structure_id", activeStructureId!)
-        .order("created_at", { ascending: false })
-        .limit(10);
+  const seed = useMutation({
+    mutationFn: async () => {
+      if (!me) return;
+      const defaults: WidgetKey[] = ["kpi_open_tickets","kpi_critical_tickets","kpi_sla_pct","kpi_assets","list_recent_tickets","list_sla_violations"];
+      const rows = defaults.map((k, i) => ({
+        user_id: me.id, widget_key: k, position: i,
+        size: WIDGET_CATALOG.find(w=>w.key===k)?.defaultSize ?? "md",
+      }));
+      const { error } = await supabase.from("dashboard_widgets").insert(rows);
       if (error) throw error;
-      return data ?? [];
     },
+    onSuccess: () => qc.invalidateQueries({queryKey:["dashboard-widgets"]}),
   });
 
-  if (!activeStructureId) {
-    return <EmptyStructure />;
+  const add = useMutation({
+    mutationFn: async (k: WidgetKey) => {
+      if (!me) return;
+      const { error } = await supabase.from("dashboard_widgets").insert({
+        user_id: me.id, widget_key: k, position: widgets.length,
+        size: WIDGET_CATALOG.find(w=>w.key===k)?.defaultSize ?? "md",
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Widget aggiunto"); qc.invalidateQueries({queryKey:["dashboard-widgets"]}); },
+  });
+
+  const del = useMutation({
+    mutationFn: async (id: string) => { const { error } = await supabase.from("dashboard_widgets").delete().eq("id", id); if (error) throw error; },
+    onSuccess: () => qc.invalidateQueries({queryKey:["dashboard-widgets"]}),
+  });
+
+  const updateOne = useMutation({
+    mutationFn: async ({ id, patch }: { id: string; patch: any }) => {
+      const { error } = await supabase.from("dashboard_widgets").update(patch).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({queryKey:["dashboard-widgets"]}),
+  });
+
+  async function move(id: string, dir: -1 | 1) {
+    const list = [...widgets];
+    const idx = list.findIndex(w=>w.id===id);
+    const swap = idx + dir;
+    if (idx<0 || swap<0 || swap>=list.length) return;
+    const a = list[idx], b = list[swap];
+    await Promise.all([
+      supabase.from("dashboard_widgets").update({ position: b.position }).eq("id", a.id),
+      supabase.from("dashboard_widgets").update({ position: a.position }).eq("id", b.id),
+    ]);
+    qc.invalidateQueries({queryKey:["dashboard-widgets"]});
+  }
+
+  const available = useMemo(()=>WIDGET_CATALOG.filter(c=>!widgets.some(w=>w.widget_key===c.key)),[widgets]);
+
+  if (!activeStructureId) return <EmptyStructure />;
+
+  if (!isLoading && widgets.length === 0) {
+    return (
+      <div className="grid h-[50vh] place-items-center">
+        <Card className="max-w-md text-center">
+          <CardHeader><CardTitle className="font-display">Dashboard vuota</CardTitle></CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground">Aggiungi widget personalizzati o usa la configurazione predefinita.</p>
+            <Button onClick={()=>seed.mutate()}>Carica widget predefiniti</Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-baseline justify-between">
+    <div className="space-y-4">
+      <div className="flex items-baseline justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="font-display text-2xl font-bold">Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Stato facility della struttura attiva.</p>
+          <h1 className="font-display text-2xl font-bold flex items-center gap-2"><LayoutGrid className="h-5 w-5"/>Dashboard</h1>
+          <p className="text-sm text-muted-foreground">Widget personalizzati per il tuo ruolo (direttore / proprietà / facility).</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant={editing?"default":"outline"} size="sm" onClick={()=>setEditing(v=>!v)}>
+            {editing ? <><Save className="h-4 w-4 mr-1"/>Fine modifica</> : "Modifica layout"}
+          </Button>
+          <Dialog>
+            <DialogTrigger asChild><Button size="sm" variant="outline" disabled={available.length===0}><Plus className="h-4 w-4 mr-1"/>Aggiungi widget</Button></DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle>Aggiungi widget</DialogTitle></DialogHeader>
+              <div className="max-h-[60vh] overflow-y-auto divide-y">
+                {available.map(c=>(
+                  <button key={c.key} onClick={()=>add.mutate(c.key)} className="flex w-full items-center justify-between py-2 text-left hover:bg-accent/40 px-2 rounded">
+                    <div>
+                      <div className="text-sm font-medium">{c.label}</div>
+                      <div className="text-[10px] uppercase text-muted-foreground">{c.group}</div>
+                    </div>
+                    <Plus className="h-4 w-4"/>
+                  </button>
+                ))}
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
-      <div className="grid gap-4 md:grid-cols-4">
-        <StatCard icon={<Wrench className="h-4 w-4" />} label="Asset censiti" value={stats?.assetsCount ?? "—"} />
-        <StatCard icon={<TicketIcon className="h-4 w-4" />} label="Ticket aperti" value={stats?.openCount ?? "—"} />
-        <StatCard icon={<AlertTriangle className="h-4 w-4 text-destructive" />} label="Ticket critici" value={stats?.criticalCount ?? "—"} accent />
-        <StatCard icon={<CheckCircle2 className="h-4 w-4 text-success" />} label="Rispetto SLA" value={stats?.slaPct == null ? "—" : `${stats.slaPct}%`} />
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+        {widgets.map((w:any)=>(
+          <div key={w.id} className={`${sizeClass(w.size)} relative`}>
+            {editing && (
+              <div className="absolute right-2 top-2 z-10 flex items-center gap-1 rounded-md border bg-background/95 p-1 shadow">
+                <Select value={w.size} onValueChange={(v)=>updateOne.mutate({id:w.id, patch:{size:v}})}>
+                  <SelectTrigger className="h-6 px-2 text-[10px] w-[60px]"><SelectValue/></SelectTrigger>
+                  <SelectContent><SelectItem value="sm">SM</SelectItem><SelectItem value="md">MD</SelectItem><SelectItem value="lg">LG</SelectItem><SelectItem value="xl">XL</SelectItem></SelectContent>
+                </Select>
+                <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={()=>move(w.id,-1)}><ArrowUp className="h-3 w-3"/></Button>
+                <Button size="sm" variant="ghost" className="h-6 w-6 p-0" onClick={()=>move(w.id, 1)}><ArrowDown className="h-3 w-3"/></Button>
+                <Button size="sm" variant="ghost" className="h-6 w-6 p-0 text-destructive" onClick={()=>del.mutate(w.id)}><Trash2 className="h-3 w-3"/></Button>
+              </div>
+            )}
+            <WidgetRenderer wkey={w.widget_key as WidgetKey} structureId={activeStructureId} title={w.title ?? undefined}/>
+          </div>
+        ))}
       </div>
-      <Card>
-        <CardHeader><CardTitle className="font-display text-base">Ticket recenti</CardTitle></CardHeader>
-        <CardContent className="p-0">
-          <table className="w-full text-sm">
-            <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
-              <tr>
-                <th className="px-4 py-2">#</th>
-                <th className="px-4 py-2">Titolo</th>
-                <th className="px-4 py-2">Priorità</th>
-                <th className="px-4 py-2">Stato</th>
-                <th className="px-4 py-2">SLA risolvi</th>
-                <th className="px-4 py-2">Creato</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(recent ?? []).map((t) => {
-                const sla = timeUntil(t.resolve_due_at);
-                return (
-                  <tr key={t.id} className="border-b border-border/60 hover:bg-accent/40">
-                    <td className="px-4 py-2 font-mono text-xs">#{t.ticket_number}</td>
-                    <td className="px-4 py-2"><Link to="/app/tickets/$id" params={{ id: t.id }} className="hover:underline">{t.title}</Link></td>
-                    <td className="px-4 py-2"><PriorityBadge p={t.priority} /></td>
-                    <td className="px-4 py-2"><StatusBadge s={t.status} /></td>
-                    <td className="px-4 py-2"><span className={sla.status === "violated" ? "text-destructive" : sla.status === "warn" ? "text-warning" : "text-success"}><Clock className="mr-1 inline h-3 w-3" />{sla.label}</span></td>
-                    <td className="px-4 py-2 text-xs text-muted-foreground">{fmtDateTime(t.created_at)}</td>
-                  </tr>
-                );
-              })}
-              {(!recent || recent.length === 0) && (
-                <tr><td colSpan={6} className="px-4 py-6 text-center text-sm text-muted-foreground">Nessun ticket.</td></tr>
-              )}
-            </tbody>
-          </table>
-        </CardContent>
-      </Card>
     </div>
-  );
-}
-
-function StatCard({ icon, label, value, accent }: { icon: React.ReactNode; label: string; value: React.ReactNode; accent?: boolean }) {
-  return (
-    <Card className={accent ? "border-destructive/40" : ""}>
-      <CardContent className="pt-6">
-        <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground">{icon}{label}</div>
-        <div className="mt-2 font-display text-3xl font-bold">{value}</div>
-      </CardContent>
-    </Card>
   );
 }
 
