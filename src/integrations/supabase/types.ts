@@ -397,6 +397,45 @@ export type Database = {
           },
         ]
       }
+      dashboard_widgets: {
+        Row: {
+          config: Json
+          created_at: string
+          id: string
+          position: number
+          size: string
+          title: string | null
+          updated_at: string
+          user_id: string
+          visible: boolean
+          widget_key: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          id?: string
+          position?: number
+          size?: string
+          title?: string | null
+          updated_at?: string
+          user_id: string
+          visible?: boolean
+          widget_key: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          id?: string
+          position?: number
+          size?: string
+          title?: string | null
+          updated_at?: string
+          user_id?: string
+          visible?: boolean
+          widget_key?: string
+        }
+        Relationships: []
+      }
       floors: {
         Row: {
           created_at: string
@@ -1138,6 +1177,53 @@ export type Database = {
           },
         ]
       }
+      ticket_attachments: {
+        Row: {
+          caption: string | null
+          created_at: string
+          file_name: string | null
+          id: string
+          kind: string
+          mime_type: string | null
+          size_bytes: number | null
+          storage_path: string
+          ticket_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          file_name?: string | null
+          id?: string
+          kind?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path: string
+          ticket_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          file_name?: string | null
+          id?: string
+          kind?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path?: string
+          ticket_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_attachments_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ticket_comments: {
         Row: {
           author_id: string | null
@@ -1163,6 +1249,50 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "ticket_comments_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_reports: {
+        Row: {
+          author_id: string | null
+          created_at: string
+          hours_worked: number | null
+          id: string
+          materials_used: Json | null
+          signature_data_url: string | null
+          signed_at: string | null
+          summary: string
+          ticket_id: string
+        }
+        Insert: {
+          author_id?: string | null
+          created_at?: string
+          hours_worked?: number | null
+          id?: string
+          materials_used?: Json | null
+          signature_data_url?: string | null
+          signed_at?: string | null
+          summary: string
+          ticket_id: string
+        }
+        Update: {
+          author_id?: string | null
+          created_at?: string
+          hours_worked?: number | null
+          id?: string
+          materials_used?: Json | null
+          signature_data_url?: string | null
+          signed_at?: string | null
+          summary?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_reports_ticket_id_fkey"
             columns: ["ticket_id"]
             isOneToOne: false
             referencedRelation: "tickets"
@@ -1356,6 +1486,54 @@ export type Database = {
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      videocall_rooms: {
+        Row: {
+          created_by: string | null
+          ended_at: string | null
+          id: string
+          room_name: string
+          started_at: string
+          structure_id: string | null
+          ticket_id: string | null
+          topic: string | null
+        }
+        Insert: {
+          created_by?: string | null
+          ended_at?: string | null
+          id?: string
+          room_name: string
+          started_at?: string
+          structure_id?: string | null
+          ticket_id?: string | null
+          topic?: string | null
+        }
+        Update: {
+          created_by?: string | null
+          ended_at?: string | null
+          id?: string
+          room_name?: string
+          started_at?: string
+          structure_id?: string | null
+          ticket_id?: string | null
+          topic?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videocall_rooms_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "videocall_rooms_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
             referencedColumns: ["id"]
           },
         ]

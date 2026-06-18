@@ -3,8 +3,28 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.7: aggiunti **Portale Agenti/Fornitori** (`/portal`), **Dashboard personalizzabile a widget** per direttore/proprietà, **allegati foto/PDF** sui ticket (bucket `tickets`), **rapportino di intervento** firmato (`ticket_reports`), **videocall integrata** via Jitsi Meet (`videocall_rooms`).
 - **2026-06-18** — v0.6: completate Fasi 2-6. Aggiunti: Fornitori, Contratti, Ordini di Lavoro, Manutenzione programmata, Magazzino, Ordini d'Acquisto, Utenze & Letture, Fatture & Bollette, Messaggistica multi-agente (porting Penelope con AI Gateway), Report direzionale, Audit log. Aggiornato __root.tsx per usare Google Fonts (font @fontsource non installato).
 - **2026-06-18** — v0.1: inizializzazione documento. Coperti: autenticazione, multi-tenant, ruoli, Asset & Impianti, Trouble Ticketing con SLA, TTS sui ticket.
+
+## Nuovi moduli v0.7
+
+### RF-PORTAL Portale Agenti & Fornitori (`/portal`)
+- RF-PORTAL-01 Vista dedicata e semplificata per utenti con ruolo `fornitore` / `manutentore`.
+- RF-PORTAL-02 Elenco ticket assegnati all'utente corrente, suddivisi in Aperti / Conclusi.
+- RF-PORTAL-03 Apertura del ticket con allegati foto/PDF, rapportino intervento e videocall integrata.
+- RF-PORTAL-04 Azioni rapide: prendi in carico, segna risolto.
+
+### RF-DASH Dashboard personalizzabile
+- RF-DASH-01 Ogni utente (direttore, proprietà, facility manager) può comporre la propria dashboard scegliendo widget da un catalogo.
+- RF-DASH-02 Widget supportati: KPI (ticket aperti/critici, SLA %, asset, fatture da pagare, valore magazzino, fornitori attivi) e liste (ticket recenti, violazioni SLA, ordini di lavoro aperti, manutenzioni in scadenza, sotto-scorta).
+- RF-DASH-03 Riordino, ridimensionamento (SM/MD/LG/XL) e rimozione dei widget in modalità "Modifica layout".
+- RF-DASH-04 Layout persistito in `dashboard_widgets` con RLS per-utente.
+
+### RF-TKT-EXT Estensioni Ticket
+- RF-TKT-EXT-01 Allegati multipli (foto da smartphone e PDF) per ticket, conservati nel bucket `tickets`.
+- RF-TKT-EXT-02 Rapportino di intervento con riepilogo, ore lavorate, lista materiali e firma (timestamp) — tabella `ticket_reports`.
+- RF-TKT-EXT-03 Videocall on-demand (Jitsi Meet, room univoca per ticket) — tabella `videocall_rooms`. Nessuna chiave API richiesta.
 
 ## 1. Visione
 HotelOps è un sistema di **Building & Facility Management** per strutture alberghiere. Gestisce in un unico ambiente impianti, asset, fornitori, contratti, SLA, manutenzioni, materiali, bollette e fatture, con un sistema di Trouble Ticketing e annuncio vocale (TTS) per gli interventi urgenti.

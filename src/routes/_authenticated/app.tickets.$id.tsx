@@ -12,6 +12,9 @@ import { PriorityBadge, StatusBadge } from "./app.index";
 import { STATUSES } from "./app.tickets";
 import { toast } from "sonner";
 import { useSpeaker } from "@/components/tts/SpeakerProvider";
+import { Attachments } from "@/components/tickets/Attachments";
+import { Videocall } from "@/components/tickets/Videocall";
+import { InterventionReport } from "@/components/tickets/InterventionReport";
 
 export const Route = createFileRoute("/_authenticated/app/tickets/$id")({ component: Page });
 
@@ -112,6 +115,9 @@ function Page() {
               </div>
             </CardContent>
           </Card>
+          <Attachments ticketId={id} />
+          <InterventionReport ticketId={id} />
+          {t.structure_id && <Videocall ticketId={id} structureId={t.structure_id} />}
         </div>
         <div className="space-y-4">
           <Card>
