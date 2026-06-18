@@ -1110,7 +1110,10 @@ export type Database = {
           last_run_at: string | null
           layout: Json
           name: string
+          next_run_at: string | null
           owner_id: string | null
+          pdf_layout: Json | null
+          recipients: string[]
           schedule_cron: string | null
           source: string
           structure_id: string | null
@@ -1128,7 +1131,10 @@ export type Database = {
           last_run_at?: string | null
           layout?: Json
           name: string
+          next_run_at?: string | null
           owner_id?: string | null
+          pdf_layout?: Json | null
+          recipients?: string[]
           schedule_cron?: string | null
           source: string
           structure_id?: string | null
@@ -1146,7 +1152,10 @@ export type Database = {
           last_run_at?: string | null
           layout?: Json
           name?: string
+          next_run_at?: string | null
           owner_id?: string | null
+          pdf_layout?: Json | null
+          recipients?: string[]
           schedule_cron?: string | null
           source?: string
           structure_id?: string | null
@@ -1200,6 +1209,50 @@ export type Database = {
             columns: ["structure_id"]
             isOneToOne: false
             referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scheduled_report_runs: {
+        Row: {
+          error: string | null
+          finished_at: string | null
+          id: string
+          recipients: string[]
+          rows_count: number | null
+          started_at: string
+          status: string
+          structure_id: string | null
+          template_id: string
+        }
+        Insert: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          recipients?: string[]
+          rows_count?: number | null
+          started_at?: string
+          status?: string
+          structure_id?: string | null
+          template_id: string
+        }
+        Update: {
+          error?: string | null
+          finished_at?: string | null
+          id?: string
+          recipients?: string[]
+          rows_count?: number | null
+          started_at?: string
+          status?: string
+          structure_id?: string | null
+          template_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_report_runs_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "report_templates"
             referencedColumns: ["id"]
           },
         ]
