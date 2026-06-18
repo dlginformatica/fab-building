@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.7.1: bootstrap automatico super_admin per `info@dlginformatica.it`. Al primo `signUp` con questa email il trigger DB assegna il ruolo `super_admin` senza intervento manuale.
 - **2026-06-18** — v0.7: aggiunti Portale Agenti/Fornitori, Dashboard personalizzabile a widget, allegati foto/PDF sui ticket, rapportino intervento firmato, videocall integrata (Jitsi).
 - **2026-06-18** — v0.6: completate Fasi 2-6. Aggiunte sezioni: Fornitori, Contratti, Ordini di Lavoro, Manutenzione programmata, Magazzino, Ordini d'Acquisto, Utenze & Letture, Fatture & Bollette, Messaggistica multi-agente, Report direzionale, Audit log.
 - **2026-06-18** — v0.1: inizializzazione manuale (autenticazione, asset, ticket, TTS).
@@ -25,6 +26,14 @@ Dalla pagina **Dashboard**:
 4. La configurazione è personale: ogni utente (direttore, proprietà, facility manager) vede la propria.
 
 ## 1. Primo accesso
+
+### 1.0 Account super_admin di bootstrap
+È preconfigurato un bootstrap automatico per l'email **`info@dlginformatica.it`**:
+1. Vai su `/auth` → tab **Registrati**.
+2. Inserisci email `info@dlginformatica.it` e password iniziale `passw0rd.1` (cambiala dopo il primo accesso).
+3. Al completamento il trigger DB `handle_new_user` assegna automaticamente il ruolo **super_admin** (visibile in `Impostazioni → Utenti & Ruoli`).
+4. Da quel momento questo utente può creare strutture, assegnare ruoli e gestire SLA/fornitori senza alcun intervento SQL manuale.
+
 1. Vai alla pagina **/auth**.
 2. Crea un account con email + password, oppure clicca **Continua con Google**.
 3. Al primo accesso il sistema crea automaticamente il tuo profilo.

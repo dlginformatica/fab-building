@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-18** — v0.7.1: aggiunto bootstrap automatico ruolo `super_admin` su email `info@dlginformatica.it` via trigger `handle_new_user` (SECURITY DEFINER, search_path bloccato). Nessuna credenziale hardcoded nel codice client.
 - **2026-06-18** — v0.7: aggiunte tabelle `ticket_attachments`, `ticket_reports`, `videocall_rooms`, `dashboard_widgets` con RLS. Storage policies su bucket `tickets` (SELECT/INSERT autenticati, DELETE solo owner). Realtime attivata. Videocall via Jitsi Meet pubblico (room name random, nessuna chiave API).
 - **2026-06-18** — v0.6: estesa copertura per Fasi 2-6 (RLS su tutte le nuove tabelle, Realtime su `messages`/`conversations`, server fn `askAgent` autenticata via `requireSupabaseAuth`, Google Fonts CDN al posto di `@fontsource` per evitare dipendenze non installate).
 - **2026-06-18** — v0.1: inizializzazione documento.
