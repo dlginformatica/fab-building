@@ -14,12 +14,13 @@ import { fmtDateTime } from "@/lib/format";
 export const Route = createFileRoute("/_authenticated/app/delegation-audit")({ component: Page });
 
 const ACTIONS = ["all", "created", "updated", "revoked", "reactivated", "deleted"];
+const MODULES = ["*","tickets","assets","maintenance","inventory","suppliers","contracts","work_orders","purchase_orders","utilities","invoices","reports","sla","penalties","users","audit","docs","settings","messages","statistics"];
 const ACTION_LABEL: Record<string, string> = {
   created: "Creata", updated: "Modificata", revoked: "Revocata", reactivated: "Riattivata", deleted: "Eliminata",
 };
 
 function Page() {
-  const [f, setF] = useState({ email: "", action: "all", from: "", to: "" });
+  const [f, setF] = useState({ email: "", action: "all", from: "", to: "", structure: "all", module: "*", query: "" });
 
   const { data: rows } = useQuery({
     queryKey: ["delegation_audit"],
@@ -40,6 +41,7 @@ function Page() {
   const filtered = useMemo(() => {
     const list = rows ?? [];
     const email = f.email.trim().toLowerCase();
+    const fts = f.query.trim().toLowerCase();
     return list.filter((r: any) => {
       if (email) {
         const matched = [r.actor_id, r.delegator_id, r.delegate_id].some((id) =>
@@ -49,9 +51,22 @@ function Page() {
       if (f.action !== "all" && r.action !== f.action) return false;
       if (f.from && r.created_at < f.from) return false;
       if (f.to && r.created_at > f.to + "T23:59:59") return false;
+      if (f.structure !== "all" && (r.structure_id ?? "none") !== f.structure) return false;
+      if (f.module !== "*") {
+        const mods: string[] = r.modules ?? [];
+        if (!mods.includes(f.module) && !mods.includes("*")) return false;
+      }
+      if (fts) {
+        const hay = [
+          r.reason ?? "", (r.modules ?? []).join(" "),
+          profileEmail(r.actor_id), profileEmail(r.delegator_id), profileEmail(r.delegate_id),
+          structName(r.structure_id), r.action,
+        ].join(" ").toLowerCase();
+        if (!hay.includes(fts)) return false;
+      }
       return true;
     });
-  }, [rows, profiles, f]);
+  }, [rows, profiles, structures, f]);
 
   const exportCsv = () => {
     const head = ["data","azione","autore","delegante","delegato","struttura","moduli","motivazione","delegation_id"];
@@ -77,12 +92,28 @@ function Page() {
       <Card>
         <CardHeader><CardTitle className="font-display text-base">Filtri</CardTitle></CardHeader>
         <CardContent className="grid gap-3 md:grid-cols-5">
+          <div className="space-y-1 md:col-span-5"><Label className="text-xs">Ricerca full-text (motivo, moduli, email, struttura)</Label>
+            <Input value={f.query} onChange={(e) => setF({ ...f, query: e.target.value })} placeholder="cerca…" /></div>
           <div className="space-y-1 md:col-span-2"><Label className="text-xs">Email (autore/delegante/delegato)</Label>
             <Input value={f.email} onChange={(e) => setF({ ...f, email: e.target.value })} placeholder="cerca per email" /></div>
           <div className="space-y-1"><Label className="text-xs">Azione</Label>
             <Select value={f.action} onValueChange={(v) => setF({ ...f, action: v })}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>{ACTIONS.map((a) => <SelectItem key={a} value={a}>{a === "all" ? "Tutte" : ACTION_LABEL[a] ?? a}</SelectItem>)}</SelectContent>
+            </Select></div>
+          <div className="space-y-1"><Label className="text-xs">Struttura</Label>
+            <Select value={f.structure} onValueChange={(v) => setF({ ...f, structure: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tutte</SelectItem>
+                <SelectItem value="none">Senza struttura</SelectItem>
+                {(structures ?? []).map((s) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+              </SelectContent>
+            </Select></div>
+          <div className="space-y-1"><Label className="text-xs">Funzione / modulo</Label>
+            <Select value={f.module} onValueChange={(v) => setF({ ...f, module: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>{MODULES.map((m) => <SelectItem key={m} value={m}>{m === "*" ? "Tutti" : m}</SelectItem>)}</SelectContent>
             </Select></div>
           <div className="space-y-1"><Label className="text-xs">Da</Label><Input type="date" value={f.from} onChange={(e) => setF({ ...f, from: e.target.value })} /></div>
           <div className="space-y-1"><Label className="text-xs">A</Label><Input type="date" value={f.to} onChange={(e) => setF({ ...f, to: e.target.value })} /></div>
