@@ -26,6 +26,7 @@ import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated/app.reports'
 import { Route as AuthenticatedAppPurchaseOrdersRouteImport } from './routes/_authenticated/app.purchase-orders'
 import { Route as AuthenticatedAppPermissionsRouteImport } from './routes/_authenticated/app.permissions'
+import { Route as AuthenticatedAppPenaltiesRouteImport } from './routes/_authenticated/app.penalties'
 import { Route as AuthenticatedAppMessagesRouteImport } from './routes/_authenticated/app.messages'
 import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authenticated/app.maintenance'
 import { Route as AuthenticatedAppInvoicesRouteImport } from './routes/_authenticated/app.invoices'
@@ -129,6 +130,12 @@ const AuthenticatedAppPermissionsRoute =
     path: '/app/permissions',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppPenaltiesRoute =
+  AuthenticatedAppPenaltiesRouteImport.update({
+    id: '/app/penalties',
+    path: '/app/penalties',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppMessagesRoute =
   AuthenticatedAppMessagesRouteImport.update({
     id: '/app/messages',
@@ -206,6 +213,7 @@ export interface FileRoutesByFullPath {
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/app/messages': typeof AuthenticatedAppMessagesRoute
+  '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
@@ -235,6 +243,7 @@ export interface FileRoutesByTo {
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/app/messages': typeof AuthenticatedAppMessagesRoute
+  '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
@@ -266,6 +275,7 @@ export interface FileRoutesById {
   '/_authenticated/app/invoices': typeof AuthenticatedAppInvoicesRoute
   '/_authenticated/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/_authenticated/app/messages': typeof AuthenticatedAppMessagesRoute
+  '/_authenticated/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/_authenticated/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/_authenticated/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
   '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/app/invoices'
     | '/app/maintenance'
     | '/app/messages'
+    | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
     | '/app/reports'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/app/invoices'
     | '/app/maintenance'
     | '/app/messages'
+    | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
     | '/app/reports'
@@ -356,6 +368,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/invoices'
     | '/_authenticated/app/maintenance'
     | '/_authenticated/app/messages'
+    | '/_authenticated/app/penalties'
     | '/_authenticated/app/permissions'
     | '/_authenticated/app/purchase-orders'
     | '/_authenticated/app/reports'
@@ -501,6 +514,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPermissionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/penalties': {
+      id: '/_authenticated/app/penalties'
+      path: '/app/penalties'
+      fullPath: '/app/penalties'
+      preLoaderRoute: typeof AuthenticatedAppPenaltiesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/messages': {
       id: '/_authenticated/app/messages'
       path: '/app/messages'
@@ -620,6 +640,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppInvoicesRoute: typeof AuthenticatedAppInvoicesRoute
   AuthenticatedAppMaintenanceRoute: typeof AuthenticatedAppMaintenanceRoute
   AuthenticatedAppMessagesRoute: typeof AuthenticatedAppMessagesRoute
+  AuthenticatedAppPenaltiesRoute: typeof AuthenticatedAppPenaltiesRoute
   AuthenticatedAppPermissionsRoute: typeof AuthenticatedAppPermissionsRoute
   AuthenticatedAppPurchaseOrdersRoute: typeof AuthenticatedAppPurchaseOrdersRoute
   AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
@@ -645,6 +666,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppInvoicesRoute: AuthenticatedAppInvoicesRoute,
   AuthenticatedAppMaintenanceRoute: AuthenticatedAppMaintenanceRoute,
   AuthenticatedAppMessagesRoute: AuthenticatedAppMessagesRoute,
+  AuthenticatedAppPenaltiesRoute: AuthenticatedAppPenaltiesRoute,
   AuthenticatedAppPermissionsRoute: AuthenticatedAppPermissionsRoute,
   AuthenticatedAppPurchaseOrdersRoute: AuthenticatedAppPurchaseOrdersRoute,
   AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
