@@ -14,12 +14,23 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as ApiTtsSpeakRouteImport } from './routes/api/tts/speak'
+import { Route as AuthenticatedAppWorkOrdersRouteImport } from './routes/_authenticated/app.work-orders'
+import { Route as AuthenticatedAppUtilitiesRouteImport } from './routes/_authenticated/app.utilities'
 import { Route as AuthenticatedAppUsersRouteImport } from './routes/_authenticated/app.users'
 import { Route as AuthenticatedAppTicketsRouteImport } from './routes/_authenticated/app.tickets'
+import { Route as AuthenticatedAppSuppliersRouteImport } from './routes/_authenticated/app.suppliers'
 import { Route as AuthenticatedAppStructuresRouteImport } from './routes/_authenticated/app.structures'
 import { Route as AuthenticatedAppSlaRouteImport } from './routes/_authenticated/app.sla'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated/app.reports'
+import { Route as AuthenticatedAppPurchaseOrdersRouteImport } from './routes/_authenticated/app.purchase-orders'
+import { Route as AuthenticatedAppMessagesRouteImport } from './routes/_authenticated/app.messages'
+import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authenticated/app.maintenance'
+import { Route as AuthenticatedAppInvoicesRouteImport } from './routes/_authenticated/app.invoices'
+import { Route as AuthenticatedAppInventoryRouteImport } from './routes/_authenticated/app.inventory'
 import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
+import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
+import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
 import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
@@ -48,6 +59,18 @@ const ApiTtsSpeakRoute = ApiTtsSpeakRouteImport.update({
   path: '/api/tts/speak',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppWorkOrdersRoute =
+  AuthenticatedAppWorkOrdersRouteImport.update({
+    id: '/app/work-orders',
+    path: '/app/work-orders',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppUtilitiesRoute =
+  AuthenticatedAppUtilitiesRouteImport.update({
+    id: '/app/utilities',
+    path: '/app/utilities',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppUsersRoute = AuthenticatedAppUsersRouteImport.update({
   id: '/app/users',
   path: '/app/users',
@@ -58,6 +81,12 @@ const AuthenticatedAppTicketsRoute = AuthenticatedAppTicketsRouteImport.update({
   path: '/app/tickets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppSuppliersRoute =
+  AuthenticatedAppSuppliersRouteImport.update({
+    id: '/app/suppliers',
+    path: '/app/suppliers',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppStructuresRoute =
   AuthenticatedAppStructuresRouteImport.update({
     id: '/app/structures',
@@ -75,9 +104,55 @@ const AuthenticatedAppSettingsRoute =
     path: '/app/settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppReportsRoute = AuthenticatedAppReportsRouteImport.update({
+  id: '/app/reports',
+  path: '/app/reports',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppPurchaseOrdersRoute =
+  AuthenticatedAppPurchaseOrdersRouteImport.update({
+    id: '/app/purchase-orders',
+    path: '/app/purchase-orders',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppMessagesRoute =
+  AuthenticatedAppMessagesRouteImport.update({
+    id: '/app/messages',
+    path: '/app/messages',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppMaintenanceRoute =
+  AuthenticatedAppMaintenanceRouteImport.update({
+    id: '/app/maintenance',
+    path: '/app/maintenance',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppInvoicesRoute =
+  AuthenticatedAppInvoicesRouteImport.update({
+    id: '/app/invoices',
+    path: '/app/invoices',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppInventoryRoute =
+  AuthenticatedAppInventoryRouteImport.update({
+    id: '/app/inventory',
+    path: '/app/inventory',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
   id: '/app/docs',
   path: '/app/docs',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppContractsRoute =
+  AuthenticatedAppContractsRouteImport.update({
+    id: '/app/contracts',
+    path: '/app/contracts',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppAuditRoute = AuthenticatedAppAuditRouteImport.update({
+  id: '/app/audit',
+  path: '/app/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppAssetsRoute = AuthenticatedAppAssetsRouteImport.update({
@@ -102,12 +177,23 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
+  '/app/audit': typeof AuthenticatedAppAuditRoute
+  '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/inventory': typeof AuthenticatedAppInventoryRoute
+  '/app/invoices': typeof AuthenticatedAppInvoicesRoute
+  '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
+  '/app/messages': typeof AuthenticatedAppMessagesRoute
+  '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
+  '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
+  '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/app/users': typeof AuthenticatedAppUsersRoute
+  '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
+  '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
@@ -117,12 +203,23 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
+  '/app/audit': typeof AuthenticatedAppAuditRoute
+  '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/inventory': typeof AuthenticatedAppInventoryRoute
+  '/app/invoices': typeof AuthenticatedAppInvoicesRoute
+  '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
+  '/app/messages': typeof AuthenticatedAppMessagesRoute
+  '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
+  '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
+  '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/app/users': typeof AuthenticatedAppUsersRoute
+  '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
+  '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
@@ -134,12 +231,23 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
+  '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
+  '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
+  '/_authenticated/app/inventory': typeof AuthenticatedAppInventoryRoute
+  '/_authenticated/app/invoices': typeof AuthenticatedAppInvoicesRoute
+  '/_authenticated/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
+  '/_authenticated/app/messages': typeof AuthenticatedAppMessagesRoute
+  '/_authenticated/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
+  '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/app/sla': typeof AuthenticatedAppSlaRoute
   '/_authenticated/app/structures': typeof AuthenticatedAppStructuresRoute
+  '/_authenticated/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/_authenticated/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/_authenticated/app/users': typeof AuthenticatedAppUsersRoute
+  '/_authenticated/app/utilities': typeof AuthenticatedAppUtilitiesRoute
+  '/_authenticated/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
@@ -151,12 +259,23 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/app/assets'
+    | '/app/audit'
+    | '/app/contracts'
     | '/app/docs'
+    | '/app/inventory'
+    | '/app/invoices'
+    | '/app/maintenance'
+    | '/app/messages'
+    | '/app/purchase-orders'
+    | '/app/reports'
     | '/app/settings'
     | '/app/sla'
     | '/app/structures'
+    | '/app/suppliers'
     | '/app/tickets'
     | '/app/users'
+    | '/app/utilities'
+    | '/app/work-orders'
     | '/api/tts/speak'
     | '/app/'
     | '/app/assets/$id'
@@ -166,12 +285,23 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/app/assets'
+    | '/app/audit'
+    | '/app/contracts'
     | '/app/docs'
+    | '/app/inventory'
+    | '/app/invoices'
+    | '/app/maintenance'
+    | '/app/messages'
+    | '/app/purchase-orders'
+    | '/app/reports'
     | '/app/settings'
     | '/app/sla'
     | '/app/structures'
+    | '/app/suppliers'
     | '/app/tickets'
     | '/app/users'
+    | '/app/utilities'
+    | '/app/work-orders'
     | '/api/tts/speak'
     | '/app'
     | '/app/assets/$id'
@@ -182,12 +312,23 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/app/assets'
+    | '/_authenticated/app/audit'
+    | '/_authenticated/app/contracts'
     | '/_authenticated/app/docs'
+    | '/_authenticated/app/inventory'
+    | '/_authenticated/app/invoices'
+    | '/_authenticated/app/maintenance'
+    | '/_authenticated/app/messages'
+    | '/_authenticated/app/purchase-orders'
+    | '/_authenticated/app/reports'
     | '/_authenticated/app/settings'
     | '/_authenticated/app/sla'
     | '/_authenticated/app/structures'
+    | '/_authenticated/app/suppliers'
     | '/_authenticated/app/tickets'
     | '/_authenticated/app/users'
+    | '/_authenticated/app/utilities'
+    | '/_authenticated/app/work-orders'
     | '/api/tts/speak'
     | '/_authenticated/app/'
     | '/_authenticated/app/assets/$id'
@@ -238,6 +379,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiTtsSpeakRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/app/work-orders': {
+      id: '/_authenticated/app/work-orders'
+      path: '/app/work-orders'
+      fullPath: '/app/work-orders'
+      preLoaderRoute: typeof AuthenticatedAppWorkOrdersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/utilities': {
+      id: '/_authenticated/app/utilities'
+      path: '/app/utilities'
+      fullPath: '/app/utilities'
+      preLoaderRoute: typeof AuthenticatedAppUtilitiesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/users': {
       id: '/_authenticated/app/users'
       path: '/app/users'
@@ -250,6 +405,13 @@ declare module '@tanstack/react-router' {
       path: '/app/tickets'
       fullPath: '/app/tickets'
       preLoaderRoute: typeof AuthenticatedAppTicketsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/suppliers': {
+      id: '/_authenticated/app/suppliers'
+      path: '/app/suppliers'
+      fullPath: '/app/suppliers'
+      preLoaderRoute: typeof AuthenticatedAppSuppliersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/structures': {
@@ -273,11 +435,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/reports': {
+      id: '/_authenticated/app/reports'
+      path: '/app/reports'
+      fullPath: '/app/reports'
+      preLoaderRoute: typeof AuthenticatedAppReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/purchase-orders': {
+      id: '/_authenticated/app/purchase-orders'
+      path: '/app/purchase-orders'
+      fullPath: '/app/purchase-orders'
+      preLoaderRoute: typeof AuthenticatedAppPurchaseOrdersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/messages': {
+      id: '/_authenticated/app/messages'
+      path: '/app/messages'
+      fullPath: '/app/messages'
+      preLoaderRoute: typeof AuthenticatedAppMessagesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/maintenance': {
+      id: '/_authenticated/app/maintenance'
+      path: '/app/maintenance'
+      fullPath: '/app/maintenance'
+      preLoaderRoute: typeof AuthenticatedAppMaintenanceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/invoices': {
+      id: '/_authenticated/app/invoices'
+      path: '/app/invoices'
+      fullPath: '/app/invoices'
+      preLoaderRoute: typeof AuthenticatedAppInvoicesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/inventory': {
+      id: '/_authenticated/app/inventory'
+      path: '/app/inventory'
+      fullPath: '/app/inventory'
+      preLoaderRoute: typeof AuthenticatedAppInventoryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/docs': {
       id: '/_authenticated/app/docs'
       path: '/app/docs'
       fullPath: '/app/docs'
       preLoaderRoute: typeof AuthenticatedAppDocsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/contracts': {
+      id: '/_authenticated/app/contracts'
+      path: '/app/contracts'
+      fullPath: '/app/contracts'
+      preLoaderRoute: typeof AuthenticatedAppContractsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/audit': {
+      id: '/_authenticated/app/audit'
+      path: '/app/audit'
+      fullPath: '/app/audit'
+      preLoaderRoute: typeof AuthenticatedAppAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/assets': {
@@ -334,23 +552,45 @@ const AuthenticatedAppTicketsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
+  AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
+  AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
+  AuthenticatedAppInventoryRoute: typeof AuthenticatedAppInventoryRoute
+  AuthenticatedAppInvoicesRoute: typeof AuthenticatedAppInvoicesRoute
+  AuthenticatedAppMaintenanceRoute: typeof AuthenticatedAppMaintenanceRoute
+  AuthenticatedAppMessagesRoute: typeof AuthenticatedAppMessagesRoute
+  AuthenticatedAppPurchaseOrdersRoute: typeof AuthenticatedAppPurchaseOrdersRoute
+  AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppSlaRoute: typeof AuthenticatedAppSlaRoute
   AuthenticatedAppStructuresRoute: typeof AuthenticatedAppStructuresRoute
+  AuthenticatedAppSuppliersRoute: typeof AuthenticatedAppSuppliersRoute
   AuthenticatedAppTicketsRoute: typeof AuthenticatedAppTicketsRouteWithChildren
   AuthenticatedAppUsersRoute: typeof AuthenticatedAppUsersRoute
+  AuthenticatedAppUtilitiesRoute: typeof AuthenticatedAppUtilitiesRoute
+  AuthenticatedAppWorkOrdersRoute: typeof AuthenticatedAppWorkOrdersRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
+  AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
+  AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
+  AuthenticatedAppInventoryRoute: AuthenticatedAppInventoryRoute,
+  AuthenticatedAppInvoicesRoute: AuthenticatedAppInvoicesRoute,
+  AuthenticatedAppMaintenanceRoute: AuthenticatedAppMaintenanceRoute,
+  AuthenticatedAppMessagesRoute: AuthenticatedAppMessagesRoute,
+  AuthenticatedAppPurchaseOrdersRoute: AuthenticatedAppPurchaseOrdersRoute,
+  AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppSlaRoute: AuthenticatedAppSlaRoute,
   AuthenticatedAppStructuresRoute: AuthenticatedAppStructuresRoute,
+  AuthenticatedAppSuppliersRoute: AuthenticatedAppSuppliersRoute,
   AuthenticatedAppTicketsRoute: AuthenticatedAppTicketsRouteWithChildren,
   AuthenticatedAppUsersRoute: AuthenticatedAppUsersRoute,
+  AuthenticatedAppUtilitiesRoute: AuthenticatedAppUtilitiesRoute,
+  AuthenticatedAppWorkOrdersRoute: AuthenticatedAppWorkOrdersRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
 }
 
@@ -366,13 +606,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
