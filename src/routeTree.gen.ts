@@ -25,6 +25,7 @@ import { Route as AuthenticatedAppStatisticsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppSlaRouteImport } from './routes/_authenticated/app.sla'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated/app.reports'
+import { Route as AuthenticatedAppReportBuilderRouteImport } from './routes/_authenticated/app.report-builder'
 import { Route as AuthenticatedAppPurchaseOrdersRouteImport } from './routes/_authenticated/app.purchase-orders'
 import { Route as AuthenticatedAppPermissionsRouteImport } from './routes/_authenticated/app.permissions'
 import { Route as AuthenticatedAppPenaltiesRouteImport } from './routes/_authenticated/app.penalties'
@@ -125,6 +126,12 @@ const AuthenticatedAppReportsRoute = AuthenticatedAppReportsRouteImport.update({
   path: '/app/reports',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppReportBuilderRoute =
+  AuthenticatedAppReportBuilderRouteImport.update({
+    id: '/app/report-builder',
+    path: '/app/report-builder',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppPurchaseOrdersRoute =
   AuthenticatedAppPurchaseOrdersRouteImport.update({
     id: '/app/purchase-orders',
@@ -223,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
+  '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
@@ -254,6 +262,7 @@ export interface FileRoutesByTo {
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
+  '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
@@ -287,6 +296,7 @@ export interface FileRoutesById {
   '/_authenticated/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/_authenticated/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/_authenticated/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
+  '/_authenticated/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/app/sla': typeof AuthenticatedAppSlaRoute
@@ -320,6 +330,7 @@ export interface FileRouteTypes {
     | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
+    | '/app/report-builder'
     | '/app/reports'
     | '/app/settings'
     | '/app/sla'
@@ -351,6 +362,7 @@ export interface FileRouteTypes {
     | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
+    | '/app/report-builder'
     | '/app/reports'
     | '/app/settings'
     | '/app/sla'
@@ -383,6 +395,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/penalties'
     | '/_authenticated/app/permissions'
     | '/_authenticated/app/purchase-orders'
+    | '/_authenticated/app/report-builder'
     | '/_authenticated/app/reports'
     | '/_authenticated/app/settings'
     | '/_authenticated/app/sla'
@@ -518,6 +531,13 @@ declare module '@tanstack/react-router' {
       path: '/app/reports'
       fullPath: '/app/reports'
       preLoaderRoute: typeof AuthenticatedAppReportsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/report-builder': {
+      id: '/_authenticated/app/report-builder'
+      path: '/app/report-builder'
+      fullPath: '/app/report-builder'
+      preLoaderRoute: typeof AuthenticatedAppReportBuilderRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/purchase-orders': {
@@ -663,6 +683,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppPenaltiesRoute: typeof AuthenticatedAppPenaltiesRoute
   AuthenticatedAppPermissionsRoute: typeof AuthenticatedAppPermissionsRoute
   AuthenticatedAppPurchaseOrdersRoute: typeof AuthenticatedAppPurchaseOrdersRoute
+  AuthenticatedAppReportBuilderRoute: typeof AuthenticatedAppReportBuilderRoute
   AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppSlaRoute: typeof AuthenticatedAppSlaRoute
@@ -690,6 +711,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppPenaltiesRoute: AuthenticatedAppPenaltiesRoute,
   AuthenticatedAppPermissionsRoute: AuthenticatedAppPermissionsRoute,
   AuthenticatedAppPurchaseOrdersRoute: AuthenticatedAppPurchaseOrdersRoute,
+  AuthenticatedAppReportBuilderRoute: AuthenticatedAppReportBuilderRoute,
   AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppSlaRoute: AuthenticatedAppSlaRoute,
