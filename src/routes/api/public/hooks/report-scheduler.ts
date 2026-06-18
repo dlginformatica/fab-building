@@ -40,6 +40,7 @@ async function runScheduler() {
       template_id: tpl.id, structure_id: tpl.structure_id,
       status: "running", recipients,
     }).select("id").single();
+    const runId = run?.id as string | undefined;
 
     try {
       let q: any = sb.from(tpl.source).select((tpl.columns ?? ["*"]).join(","));
@@ -77,14 +78,14 @@ async function runScheduler() {
       await sb.from("scheduled_report_runs").update({
         status: "ok", rows_count: rowsData?.length ?? 0,
         finished_at: new Date().toISOString(),
-      }).eq("id", run?.id);
+      }).eq("id", runId);
 
       results.push({ template: tpl.name, rows: rowsData?.length ?? 0, emailed, next_run_at: nextRun });
     } catch (e: any) {
       await sb.from("scheduled_report_runs").update({
         status: "error", error: String(e?.message ?? e),
         finished_at: new Date().toISOString(),
-      }).eq("id", run?.id);
+      }).eq("id", runId);
       results.push({ template: tpl.name, error: String(e?.message ?? e) });
     }
   }
