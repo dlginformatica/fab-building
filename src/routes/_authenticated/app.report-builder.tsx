@@ -19,6 +19,7 @@ import { COMMON_TIMEZONES, CRON_PRESETS, nextRuns, parseCron } from "@/lib/cron"
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fmtDateTime } from "@/lib/format";
+import { uploadPdfPreview } from "@/lib/pdf-preview";
 
 export const Route = createFileRoute("/_authenticated/app/report-builder")({ component: Page });
 
@@ -167,17 +168,44 @@ function Page() {
   };
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewPath, setPreviewPath] = useState<string | null>(null);
+  const [savingPreview, setSavingPreview] = useState(false);
   const previewPdf = async (overrideLayout?: typeof layout) => {
     const doc = await buildPdf(overrideLayout);
     if (!doc) return toast.error("Esegui prima la query");
     const blob = doc.output("blob");
-    if (previewUrl) URL.revokeObjectURL(previewUrl);
-    setPreviewUrl(URL.createObjectURL(blob));
+    setSavingPreview(true);
+    try {
+      const tplName = (name || source.label);
+      const recipient = (overrideLayout as any)?.email ?? null;
+      const { path, signedUrl } = await uploadPdfPreview({
+        blob, templateName: tplName, recipient,
+      });
+      setPreviewUrl(signedUrl);
+      setPreviewPath(path);
+      toast.success("Anteprima generata e salvata 24h");
+    } catch (e: any) {
+      toast.error(`Anteprima non salvata: ${e?.message ?? e}`);
+    } finally {
+      setSavingPreview(false);
+    }
   };
 
   const testSend = useMutation({
-    mutationFn: async (recipient: { email: string; subject?: string }) => {
+    mutationFn: async (recipient: { email: string; subject?: string; layout?: any }) => {
       if (!recipient.email) throw new Error("Email destinatario richiesta");
+      // Build and upload a per-recipient preview so the email can link to a real PDF.
+      let pdfUrl: string | null = null;
+      const doc = await buildPdf(recipient.layout);
+      if (doc) {
+        const blob = doc.output("blob");
+        try {
+          const up = await uploadPdfPreview({
+            blob, templateName: name || source.label, recipient: recipient.email,
+          });
+          pdfUrl = up.signedUrl;
+        } catch { /* upload failed; queue without link */ }
+      }
       const { error } = await (supabase as any).from("report_delivery_queue").insert({
         template_id: null,
         structure_id: activeStructureId,
@@ -185,7 +213,7 @@ function Page() {
         subject: recipient.subject ?? `[TEST] ${name || source.label}`,
         status: "pending",
         max_attempts: 1,
-        payload: { test: true, template_name: name || source.label, columns: cols, source: source.table, filters: { from, to } },
+        payload: { test: true, template_name: name || source.label, columns: cols, source: source.table, filters: { from, to }, pdf_url: pdfUrl },
       });
       if (error) throw error;
     },
