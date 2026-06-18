@@ -74,13 +74,13 @@ function Page() {
         <CardContent>
           <div className="grid gap-3 md:grid-cols-6">
             <div className="space-y-1"><Label>Entità</Label>
-              <Select value={entity} onValueChange={setEntity}>
+              <Select value={entity || "all"} onValueChange={(v) => setEntity(v === "all" ? "" : v)}>
                 <SelectTrigger><SelectValue placeholder="Tutte" /></SelectTrigger>
                 <SelectContent>{ENTITIES.map(e => <SelectItem key={e || "_all"} value={e || "all"}>{e || "tutte"}</SelectItem>)}</SelectContent>
               </Select>
             </div>
             <div className="space-y-1"><Label>Azione</Label>
-              <Select value={action} onValueChange={setAction}>
+              <Select value={action || "all"} onValueChange={(v) => setAction(v === "all" ? "" : v)}>
                 <SelectTrigger><SelectValue placeholder="Tutte" /></SelectTrigger>
                 <SelectContent>{ACTIONS.map(a => <SelectItem key={a || "_all"} value={a || "all"}>{a || "tutte"}</SelectItem>)}</SelectContent>
               </Select>
