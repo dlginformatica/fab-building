@@ -36,6 +36,7 @@ import { Route as AuthenticatedAppReordersRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppPurchaseOrdersRouteImport } from './routes/_authenticated/app.purchase-orders'
 import { Route as AuthenticatedAppPermissionsRouteImport } from './routes/_authenticated/app.permissions'
 import { Route as AuthenticatedAppPenaltiesRouteImport } from './routes/_authenticated/app.penalties'
+import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authenticated/app.onboarding'
 import { Route as AuthenticatedAppNotificationsRouteImport } from './routes/_authenticated/app.notifications'
 import { Route as AuthenticatedAppMessagesRouteImport } from './routes/_authenticated/app.messages'
 import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authenticated/app.maintenance'
@@ -211,6 +212,12 @@ const AuthenticatedAppPenaltiesRoute =
     path: '/app/penalties',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppOnboardingRoute =
+  AuthenticatedAppOnboardingRouteImport.update({
+    id: '/app/onboarding',
+    path: '/app/onboarding',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppNotificationsRoute =
   AuthenticatedAppNotificationsRouteImport.update({
     id: '/app/notifications',
@@ -365,6 +372,7 @@ export interface FileRoutesByFullPath {
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/app/messages': typeof AuthenticatedAppMessagesRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
+  '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -416,6 +424,7 @@ export interface FileRoutesByTo {
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/app/messages': typeof AuthenticatedAppMessagesRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
+  '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -469,6 +478,7 @@ export interface FileRoutesById {
   '/_authenticated/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/_authenticated/app/messages': typeof AuthenticatedAppMessagesRoute
   '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRoute
+  '/_authenticated/app/onboarding': typeof AuthenticatedAppOnboardingRoute
   '/_authenticated/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/_authenticated/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/_authenticated/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -522,6 +532,7 @@ export interface FileRouteTypes {
     | '/app/maintenance'
     | '/app/messages'
     | '/app/notifications'
+    | '/app/onboarding'
     | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
@@ -573,6 +584,7 @@ export interface FileRouteTypes {
     | '/app/maintenance'
     | '/app/messages'
     | '/app/notifications'
+    | '/app/onboarding'
     | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
@@ -625,6 +637,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/maintenance'
     | '/_authenticated/app/messages'
     | '/_authenticated/app/notifications'
+    | '/_authenticated/app/onboarding'
     | '/_authenticated/app/penalties'
     | '/_authenticated/app/permissions'
     | '/_authenticated/app/purchase-orders'
@@ -857,6 +870,13 @@ declare module '@tanstack/react-router' {
       path: '/app/penalties'
       fullPath: '/app/penalties'
       preLoaderRoute: typeof AuthenticatedAppPenaltiesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/onboarding': {
+      id: '/_authenticated/app/onboarding'
+      path: '/app/onboarding'
+      fullPath: '/app/onboarding'
+      preLoaderRoute: typeof AuthenticatedAppOnboardingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/notifications': {
@@ -1096,6 +1116,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppMaintenanceRoute: typeof AuthenticatedAppMaintenanceRoute
   AuthenticatedAppMessagesRoute: typeof AuthenticatedAppMessagesRoute
   AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRoute
+  AuthenticatedAppOnboardingRoute: typeof AuthenticatedAppOnboardingRoute
   AuthenticatedAppPenaltiesRoute: typeof AuthenticatedAppPenaltiesRoute
   AuthenticatedAppPermissionsRoute: typeof AuthenticatedAppPermissionsRoute
   AuthenticatedAppPurchaseOrdersRoute: typeof AuthenticatedAppPurchaseOrdersRoute
@@ -1140,6 +1161,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppMaintenanceRoute: AuthenticatedAppMaintenanceRoute,
   AuthenticatedAppMessagesRoute: AuthenticatedAppMessagesRoute,
   AuthenticatedAppNotificationsRoute: AuthenticatedAppNotificationsRoute,
+  AuthenticatedAppOnboardingRoute: AuthenticatedAppOnboardingRoute,
   AuthenticatedAppPenaltiesRoute: AuthenticatedAppPenaltiesRoute,
   AuthenticatedAppPermissionsRoute: AuthenticatedAppPermissionsRoute,
   AuthenticatedAppPurchaseOrdersRoute: AuthenticatedAppPurchaseOrdersRoute,
