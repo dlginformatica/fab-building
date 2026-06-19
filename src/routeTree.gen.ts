@@ -23,6 +23,7 @@ import { Route as AuthenticatedAppTicketsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAppSuppliersComplianceRouteImport } from './routes/_authenticated/app.suppliers-compliance'
 import { Route as AuthenticatedAppSuppliersRouteImport } from './routes/_authenticated/app.suppliers'
 import { Route as AuthenticatedAppStructuresRouteImport } from './routes/_authenticated/app.structures'
+import { Route as AuthenticatedAppStructureKpiRouteImport } from './routes/_authenticated/app.structure-kpi'
 import { Route as AuthenticatedAppStatisticsRouteImport } from './routes/_authenticated/app.statistics'
 import { Route as AuthenticatedAppSlaNotificationsRouteImport } from './routes/_authenticated/app.sla-notifications'
 import { Route as AuthenticatedAppSlaEscalationsRouteImport } from './routes/_authenticated/app.sla-escalations'
@@ -132,6 +133,12 @@ const AuthenticatedAppStructuresRoute =
   AuthenticatedAppStructuresRouteImport.update({
     id: '/app/structures',
     path: '/app/structures',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppStructureKpiRoute =
+  AuthenticatedAppStructureKpiRouteImport.update({
+    id: '/app/structure-kpi',
+    path: '/app/structure-kpi',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppStatisticsRoute =
@@ -370,6 +377,7 @@ export interface FileRoutesByFullPath {
   '/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
+  '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
@@ -420,6 +428,7 @@ export interface FileRoutesByTo {
   '/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
+  '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
@@ -472,6 +481,7 @@ export interface FileRoutesById {
   '/_authenticated/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/_authenticated/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
   '/_authenticated/app/statistics': typeof AuthenticatedAppStatisticsRoute
+  '/_authenticated/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
   '/_authenticated/app/structures': typeof AuthenticatedAppStructuresRoute
   '/_authenticated/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/_authenticated/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
@@ -524,6 +534,7 @@ export interface FileRouteTypes {
     | '/app/sla-escalations'
     | '/app/sla-notifications'
     | '/app/statistics'
+    | '/app/structure-kpi'
     | '/app/structures'
     | '/app/suppliers'
     | '/app/suppliers-compliance'
@@ -574,6 +585,7 @@ export interface FileRouteTypes {
     | '/app/sla-escalations'
     | '/app/sla-notifications'
     | '/app/statistics'
+    | '/app/structure-kpi'
     | '/app/structures'
     | '/app/suppliers'
     | '/app/suppliers-compliance'
@@ -625,6 +637,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/sla-escalations'
     | '/_authenticated/app/sla-notifications'
     | '/_authenticated/app/statistics'
+    | '/_authenticated/app/structure-kpi'
     | '/_authenticated/app/structures'
     | '/_authenticated/app/suppliers'
     | '/_authenticated/app/suppliers-compliance'
@@ -753,6 +766,13 @@ declare module '@tanstack/react-router' {
       path: '/app/structures'
       fullPath: '/app/structures'
       preLoaderRoute: typeof AuthenticatedAppStructuresRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/structure-kpi': {
+      id: '/_authenticated/app/structure-kpi'
+      path: '/app/structure-kpi'
+      fullPath: '/app/structure-kpi'
+      preLoaderRoute: typeof AuthenticatedAppStructureKpiRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/statistics': {
@@ -1088,6 +1108,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppSlaEscalationsRoute: typeof AuthenticatedAppSlaEscalationsRoute
   AuthenticatedAppSlaNotificationsRoute: typeof AuthenticatedAppSlaNotificationsRoute
   AuthenticatedAppStatisticsRoute: typeof AuthenticatedAppStatisticsRoute
+  AuthenticatedAppStructureKpiRoute: typeof AuthenticatedAppStructureKpiRoute
   AuthenticatedAppStructuresRoute: typeof AuthenticatedAppStructuresRoute
   AuthenticatedAppSuppliersRoute: typeof AuthenticatedAppSuppliersRoute
   AuthenticatedAppSuppliersComplianceRoute: typeof AuthenticatedAppSuppliersComplianceRoute
@@ -1131,6 +1152,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppSlaEscalationsRoute: AuthenticatedAppSlaEscalationsRoute,
   AuthenticatedAppSlaNotificationsRoute: AuthenticatedAppSlaNotificationsRoute,
   AuthenticatedAppStatisticsRoute: AuthenticatedAppStatisticsRoute,
+  AuthenticatedAppStructureKpiRoute: AuthenticatedAppStructureKpiRoute,
   AuthenticatedAppStructuresRoute: AuthenticatedAppStructuresRoute,
   AuthenticatedAppSuppliersRoute: AuthenticatedAppSuppliersRoute,
   AuthenticatedAppSuppliersComplianceRoute:
