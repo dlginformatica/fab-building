@@ -408,9 +408,118 @@ export type Database = {
           },
         ]
       }
+      contract_attachments: {
+        Row: {
+          category: string | null
+          contract_id: string
+          created_at: string
+          file_name: string
+          id: string
+          mime_type: string | null
+          size_bytes: number | null
+          storage_path: string
+          structure_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          category?: string | null
+          contract_id: string
+          created_at?: string
+          file_name: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path: string
+          structure_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          category?: string | null
+          contract_id?: string
+          created_at?: string
+          file_name?: string
+          id?: string
+          mime_type?: string | null
+          size_bytes?: number | null
+          storage_path?: string
+          structure_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_attachments_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contract_attachments_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contract_renewals: {
+        Row: {
+          amount: number | null
+          contract_id: string
+          created_at: string
+          id: string
+          new_end_date: string
+          notes: string | null
+          previous_end_date: string | null
+          renewed_at: string
+          renewed_by: string | null
+          structure_id: string
+        }
+        Insert: {
+          amount?: number | null
+          contract_id: string
+          created_at?: string
+          id?: string
+          new_end_date: string
+          notes?: string | null
+          previous_end_date?: string | null
+          renewed_at?: string
+          renewed_by?: string | null
+          structure_id: string
+        }
+        Update: {
+          amount?: number | null
+          contract_id?: string
+          created_at?: string
+          id?: string
+          new_end_date?: string
+          notes?: string | null
+          previous_end_date?: string | null
+          renewed_at?: string
+          renewed_by?: string | null
+          structure_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_renewals_contract_id_fkey"
+            columns: ["contract_id"]
+            isOneToOne: false
+            referencedRelation: "contracts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contract_renewals_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contracts: {
         Row: {
           amount: number | null
+          attachments_count: number
           auto_renew: boolean
           code: string
           created_at: string
@@ -418,8 +527,12 @@ export type Database = {
           document_url: string | null
           end_date: string | null
           id: string
+          last_notified_at: string | null
+          next_review_at: string | null
           notes: string | null
+          notice_period_days: number
           renewal_months: number | null
+          renewal_terms: string | null
           sla_ack_minutes: number | null
           sla_resolve_minutes: number | null
           start_date: string | null
@@ -432,6 +545,7 @@ export type Database = {
         }
         Insert: {
           amount?: number | null
+          attachments_count?: number
           auto_renew?: boolean
           code: string
           created_at?: string
@@ -439,8 +553,12 @@ export type Database = {
           document_url?: string | null
           end_date?: string | null
           id?: string
+          last_notified_at?: string | null
+          next_review_at?: string | null
           notes?: string | null
+          notice_period_days?: number
           renewal_months?: number | null
+          renewal_terms?: string | null
           sla_ack_minutes?: number | null
           sla_resolve_minutes?: number | null
           start_date?: string | null
@@ -453,6 +571,7 @@ export type Database = {
         }
         Update: {
           amount?: number | null
+          attachments_count?: number
           auto_renew?: boolean
           code?: string
           created_at?: string
@@ -460,8 +579,12 @@ export type Database = {
           document_url?: string | null
           end_date?: string | null
           id?: string
+          last_notified_at?: string | null
+          next_review_at?: string | null
           notes?: string | null
+          notice_period_days?: number
           renewal_months?: number | null
+          renewal_terms?: string | null
           sla_ack_minutes?: number | null
           sla_resolve_minutes?: number | null
           start_date?: string | null
@@ -3416,6 +3539,19 @@ export type Database = {
         Args: { _template: string; _user: string }
         Returns: boolean
       }
+      contracts_due_for_notice: {
+        Args: never
+        Returns: {
+          auto_renew: boolean
+          code: string
+          contract_id: string
+          days_left: number
+          end_date: string
+          structure_id: string
+          supplier_name: string
+          title: string
+        }[]
+      }
       enqueue_sla_warnings: {
         Args: { p_threshold_minutes?: number }
         Returns: number
@@ -3499,6 +3635,7 @@ export type Database = {
         | "workflow_step"
         | "invoice_due"
         | "maintenance_due"
+        | "contract_expiring"
       reorder_status:
         | "da_approvare"
         | "approvato"
@@ -3732,6 +3869,7 @@ export const Constants = {
         "workflow_step",
         "invoice_due",
         "maintenance_due",
+        "contract_expiring",
       ],
       reorder_status: [
         "da_approvare",

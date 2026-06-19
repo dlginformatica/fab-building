@@ -8,7 +8,8 @@ type EventType =
   | "sla_violated"
   | "workflow_step"
   | "invoice_due"
-  | "maintenance_due";
+  | "maintenance_due"
+  | "contract_expiring";
 
 interface DispatchInput {
   event: EventType;

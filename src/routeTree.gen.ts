@@ -49,6 +49,7 @@ import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
 import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
+import { Route as ApiPublicHooksContractsNotifyRouteImport } from './routes/api/public/hooks/contracts-notify'
 import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
 import { Route as AuthenticatedAppReordersIdRouteImport } from './routes/_authenticated/app.reorders.$id'
 import { Route as AuthenticatedAppDeliveryQueueIdRouteImport } from './routes/_authenticated/app.delivery-queue.$id'
@@ -281,6 +282,12 @@ const ApiPublicHooksReportSchedulerRoute =
     path: '/api/public/hooks/report-scheduler',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksContractsNotifyRoute =
+  ApiPublicHooksContractsNotifyRouteImport.update({
+    id: '/api/public/hooks/contracts-notify',
+    path: '/api/public/hooks/contracts-notify',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const AuthenticatedAppTicketsIdRoute =
   AuthenticatedAppTicketsIdRouteImport.update({
     id: '/$id',
@@ -355,6 +362,7 @@ export interface FileRoutesByFullPath {
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
+  '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
 export interface FileRoutesByTo {
@@ -401,6 +409,7 @@ export interface FileRoutesByTo {
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
+  '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
 export interface FileRoutesById {
@@ -449,6 +458,7 @@ export interface FileRoutesById {
   '/_authenticated/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/_authenticated/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
   '/_authenticated/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
+  '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
 export interface FileRouteTypes {
@@ -497,6 +507,7 @@ export interface FileRouteTypes {
     | '/app/delivery-queue/$id'
     | '/app/reorders/$id'
     | '/app/tickets/$id'
+    | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -543,6 +554,7 @@ export interface FileRouteTypes {
     | '/app/delivery-queue/$id'
     | '/app/reorders/$id'
     | '/app/tickets/$id'
+    | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
   id:
     | '__root__'
@@ -590,6 +602,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/delivery-queue/$id'
     | '/_authenticated/app/reorders/$id'
     | '/_authenticated/app/tickets/$id'
+    | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
   fileRoutesById: FileRoutesById
 }
@@ -598,6 +611,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   ApiTtsSpeakRoute: typeof ApiTtsSpeakRoute
+  ApiPublicHooksContractsNotifyRoute: typeof ApiPublicHooksContractsNotifyRoute
   ApiPublicHooksReportSchedulerRoute: typeof ApiPublicHooksReportSchedulerRoute
 }
 
@@ -883,6 +897,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksReportSchedulerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/contracts-notify': {
+      id: '/api/public/hooks/contracts-notify'
+      path: '/api/public/hooks/contracts-notify'
+      fullPath: '/api/public/hooks/contracts-notify'
+      preLoaderRoute: typeof ApiPublicHooksContractsNotifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/app/tickets/$id': {
       id: '/_authenticated/app/tickets/$id'
       path: '/$id'
@@ -1066,6 +1087,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   ApiTtsSpeakRoute: ApiTtsSpeakRoute,
+  ApiPublicHooksContractsNotifyRoute: ApiPublicHooksContractsNotifyRoute,
   ApiPublicHooksReportSchedulerRoute: ApiPublicHooksReportSchedulerRoute,
 }
 export const routeTree = rootRouteImport

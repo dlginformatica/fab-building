@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.1 Contratti
+- Allegati contratti su bucket privato Supabase Storage `contracts`; accesso solo via URL firmati (300 s) e RLS che incrocia `storage_path` con `contract_attachments.structure_id`.
+- Trigger `tg_contract_attachments_count` e `tg_contract_apply_renewal` SECURITY DEFINER con search_path bloccato a `public`.
+- Funzione `contracts_due_for_notice` con EXECUTE revocato ad anon/authenticated (callable solo dal cron via service role).
+- Cron giornaliero (08:00) invoca `/api/public/hooks/contracts-notify` autenticato con `SCHEDULER_SECRET`; idempotenza basata su `last_notified_at` (finestra 24 h).
+- Indice parziale `idx_contracts_expiry` su `end_date WHERE status='attivo'` per scadenziario.
+
 ### 2026-06-19 — Fase 7.4
 - Notifiche outbound: chiamate HTTP POST verso webhook Teams con timeout breve; errori loggati in `notification_log` (status=error) senza bloccare il flusso applicativo.
 - Email: integrazione opzionale con Lovable Emails (queue + retry gestiti dall'infrastruttura email Lovable quando attivata).

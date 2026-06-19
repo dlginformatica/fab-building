@@ -4,6 +4,18 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.1 Contratti completi
+**Gestione contratti** (`/app/contracts`):
+- Tab **Tutti**: card con codice, fornitore, periodo, importo, badge stato, indicatore allegati e auto-rinnovo. Pulsanti **Rinnova** e **Allegati** su ogni card.
+- Tab **Scadenzario**: KPI (Scaduti, ≤30, 31–60, 61–90 gg) e tabella ordinata per data scadenza con azione rapida di rinnovo.
+- Nuovo contratto: compila codice, titolo, fornitore, periodo, importo, **preavviso (giorni)**, **rinnovo automatico**, **termini di rinnovo**, SLA contrattuali.
+
+**Rinnovi**: dal pulsante Rinnova inserisci nuova scadenza e (opzionale) nuovo importo + note. Lo storico è visibile nello stesso dialog. Il rinnovo aggiorna `end_date` e riporta lo stato ad attivo.
+
+**Allegati**: bucket privato `contracts`. Carica file dal dialog Allegati; download via link firmato 5 minuti; elimina rimuove anche il file dallo storage.
+
+**Notifiche scadenza**: per ricevere alert su Teams/Email aggiungi un canale in *Notifiche Email & Teams* selezionando l'evento **contract_expiring**. Lo scheduler è un cron giornaliero `/api/public/hooks/contracts-notify` (auth `apikey: SCHEDULER_SECRET`) — per attivarlo lato DB: `SELECT cron.schedule('hotelops-contracts-notify-daily','0 8 * * *', $$SELECT net.http_post(url:='https://project--83b017ab-cb1a-4977-a89e-bc32522b4ed2.lovable.app/api/public/hooks/contracts-notify', headers:=jsonb_build_object('Content-Type','application/json','apikey','<SCHEDULER_SECRET>'), body:='{}'::jsonb);$$);` (chiedi al super_admin se non è già attivo).
+
 ### 2026-06-19 — Fase 7.4 Notifiche Email & Teams
 - Vai in **Amministrazione → Notifiche Email & Teams**.
 - Clicca **Nuovo canale**, scegli tipo (Teams o Email), incolla l'URL webhook Teams (creato in Teams → canale → Connettori → Webhook in ingresso) o l'indirizzo email destinatario.
