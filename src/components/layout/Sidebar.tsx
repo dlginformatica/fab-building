@@ -38,6 +38,8 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
   ]},
   { label: "Amministrazione", items: [
     { to: "/app/sla", label: "Regole SLA", icon: Bell },
+    { to: "/app/sla-escalations", label: "Escalation SLA", icon: AlertTriangle },
+    { to: "/app/sla-compliance", label: "Conformità SLA", icon: FileBarChart },
     { to: "/app/sla-notifications", label: "Notifiche SLA", icon: Bell },
     { to: "/app/penalties", label: "Penali & Violazioni", icon: AlertTriangle },
     { to: "/app/workflows", label: "Workflow & procedure", icon: Workflow },
