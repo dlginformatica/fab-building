@@ -4,6 +4,15 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.1 Contratti
+- `contracts`: nuovi campi `notice_period_days INT NOT NULL DEFAULT 30`, `renewal_terms TEXT`, `next_review_at DATE`, `attachments_count INT NOT NULL DEFAULT 0`, `last_notified_at TIMESTAMPTZ`.
+- Nuova tabella `contract_renewals` (id, contract_id FK, structure_id FK, previous_end_date, new_end_date, amount, notes, renewed_by, renewed_at, created_at) + RLS `has_structure_access`.
+- Nuova tabella `contract_attachments` (id, contract_id FK, structure_id FK, storage_path, file_name, mime_type, size_bytes, category, uploaded_by, created_at) + RLS `has_structure_access`.
+- Trigger `tg_contract_attachments_count`, `tg_contract_apply_renewal`.
+- Funzione `contracts_due_for_notice()` (SECURITY DEFINER, EXECUTE solo a `service_role`).
+- Bucket privato `contracts` con policy su `storage.objects` join `contract_attachments`.
+- Enum `notification_event` esteso con `contract_expiring`.
+
 ### 2026-06-19 — Fase 7.2 Workflow Engine
 - Nuove tabelle: workflows, workflow_steps, workflow_instances, workflow_transitions (append-only).
 - Editor procedure multi-step con tipi: approval, action, notification, wait, condition, form.
