@@ -1,73 +1,59 @@
-# Piano: HotelOps — Building & Facility Management
+… (piano di lavoro)
 
-Applicazione completa per la gestione di impianti, facilities, fornitori, contratti, SLA, asset, bollette/fatture e ticketing di strutture alberghiere. Multi-tenant (più hotel), ruoli, TTS sul Trouble Ticketing, modulo messaggistica adattato da "Penelope Course Manager".
+# Piano: Fase 7 — Consolidamento + nuovi moduli
 
-Visto lo scope enorme, lavoreremo in **fasi incrementali**. In questa prima iterazione costruisco le fondamenta + i 2 moduli core; gli altri seguono nei turni successivi (puoi sempre dirmi "passa alla Fase X" o "prima fai Y").
+Lo scope richiesto è molto ampio. Propongo di spezzarlo in **6 sotto-fasi** consegnate in turni separati (un singolo turno non basta per qualità e test). Confermami l'ordine o riordina.
 
----
+## 7.1 — Manutenzione programmata evoluta (1 turno)
+- Vista **calendario** mensile/settimanale dei piani (drag & drop date)
+- **Checklist operatore** runtime: apertura task da calendario, spunta voci, foto, firma, generazione automatica `maintenance_tasks` + `ticket_reports`
+- **Storico interventi** per asset/piano con filtri (periodo, esito, operatore, fornitore)
+- Notifiche scadenze + escalation se task non chiuso
 
-## Stack & fondamenta (Fase 0 — adesso)
+## 7.2 — Workflow engine procedure (1 turno)
+- Tabelle `workflows`, `workflow_steps`, `workflow_instances`, `workflow_transitions`
+- Editor visuale step (tipo: approvazione, azione, attesa, condizione, notifica)
+- Trigger: apertura ticket, scadenza contratto, fattura ricevuta, evento manuale
+- Audit completo, SLA per step, deleghe
 
-- TanStack Start + Tailwind v4 + shadcn (già nel template)
-- **Lovable Cloud** abilitato → DB Postgres, Auth (email/password + Google), Storage per documenti/foto asset, server functions
-- Design system: palette professionale "facility ops" (blu petrolio + ambra per alert SLA), font Inter/Space Grotesk, dark mode
-- Auth multi-tenant: tabella `organizations` (hotel/gruppi), `memberships` (user↔org↔ruolo)
-- Ruoli (tabella `user_roles` separata): `super_admin`, `direttore`, `facility_manager`, `manutentore`, `fornitore`, `economato`, `viewer`
-- Layout: sidebar con switcher struttura, topbar con notifiche/messaggi/profilo
+## 7.3 — OCR fatture + scadenzario (1 turno)
+- Upload PDF/immagine fattura → Lovable AI Gateway (`google/gemini-2.5-flash`) per estrazione strutturata (fornitore, numero, data, importi, IVA, righe, IBAN)
+- Matching automatico fornitore/contratto/centro costo
+- Conferma manuale dei campi estratti, salvataggio in `invoices`
+- Scadenzario pagamenti con alert
 
-## Moduli applicativi
+## 7.4 — Integrazioni Email + Microsoft Teams (1 turno)
+- **Email**: Lovable Emails (dominio mittente, queue, templates) per notifiche ticket/SLA/fatture, digest giornaliero direttore
+- **Teams**: connettore standard → invio messaggi a canale per ticket critici, SLA violati, ordini approvati
+- Configurazione per struttura (canale Teams, indirizzi destinatari, eventi attivi)
 
-**Fase 1 — Asset & Trouble Ticketing + TTS** *(prima release operativa)*
-- **Asset & Impianti**: anagrafica, categorie (HVAC, idraulico, elettrico, ascensori, cucine, lavanderia, antincendio, piscine, TV/Wi-Fi…), ubicazione (struttura→piano→stanza/area), QR code stampabile, foto, schede tecniche, manuali, garanzie, lifecycle
-- **Trouble Ticketing**: apertura ticket (anche via QR), priorità, assegnazione, stati workflow, foto, commenti, timeline, escalation
-- **TTS** (Lovable AI Gateway `openai/gpt-4o-mini-tts`): lettura vocale automatica di ticket urgenti/critici, alert SLA in violazione, notifiche turno; pannello "speaker" con coda audio + voce configurabile per ruolo
-- **SLA engine**: regole per priorità/categoria/contratto, tempi di presa in carico e risoluzione, countdown live, alert pre-violazione, KPI
+## 7.5 — App mobile (PWA) role-aware (1 turno)
+- PWA installabile (manifest + icone) con layout mobile-first dedicato a `/m/*`
+- **Comportamento differenziato per ruolo**:
+  - **Manutentore**: scansiona QR, vede task del giorno, apre/chiude ticket, firma rapportini, foto
+  - **Fornitore**: portale ordini, accettazione interventi, upload documenti firmati
+  - **Gestore/Direttore**: dashboard KPI, approvazioni rapide, alert SLA
+  - **Agente AI**: chat assistant inline (concierge/sla/procurement)
+- **Profilo configurabile**: scelta widget home, notifiche push, lingua, tema, scorciatoie preferite
+- Push notifications via FCM (richiede config utente)
 
-**Fase 2 — Fornitori, Contratti, SLA contrattuali**
-- Anagrafica fornitori (categorie servizio, referenti, documenti DURC/assicurazioni con scadenze)
-- Contratti (canone/consumo/intervento, allegati, rinnovi automatici, SLA legati)
-- Portale fornitore (login dedicato, vede solo i suoi ticket/ordini)
-- Ordini di lavoro & rapportini intervento firmabili
+## 7.6 — Consolidamento + QA (1 turno)
+- Audit UI completa: link rotti, route inesistenti, label incoerenti, viewport mobile, dark/light
+- Suite test Vitest per server functions critiche (auth, SLA, workflow, OCR, scheduler, agent)
+- Smoke test routing + permessi per ogni ruolo
+- Fix di tutto quello che emerge
 
-**Fase 3 — Manutenzione programmata & Materiali**
-- Piani manutenzione preventiva (calendario ricorrente, checklist)
-- Magazzino ricambi (giacenze, minimi, movimenti, scarico su intervento)
-- Ordini d'acquisto
-
-**Fase 4 — Bollette & Fatture**
-- Utenze (luce, gas, acqua, gasolio) con letture contatori
-- Fatture passive (OCR upload PDF → estrazione), scadenzario pagamenti
-- Centri di costo per struttura/reparto, report consumi & spending
-
-**Fase 5 — Messaggistica multi-agente** (adattata da Penelope)
-- Porting di `pages/admin/Messaggistica.tsx` + componenti correlati dal progetto Penelope (stack classico → TanStack), riadattando entità: destinatari = membri struttura, fornitori, gruppi per ruolo
-- Conversazioni 1:1 e di gruppo legate a ticket/contratto
-- Agenti AI multi-ruolo (Concierge tecnico, SLA Watcher, Procurement assistant) con tools per cercare asset, aprire ticket, leggere contratti
-
-**Fase 6 — Dashboard direzionale, report PDF/Excel, mobile-friendly, audit log**
-
----
-
-## Documenti vivi (impegno permanente)
-
-Memorizzo come regola permanente: **a ogni interazione** (anche micro-modifica) aggiorno i tre documenti:
+## Documenti (regola permanente)
+Ad **ogni** sotto-fase aggiorno con changelog datato:
 - `docs/REQUISITI_FUNZIONALI.md`
 - `docs/REQUISITI_NON_FUNZIONALI.md`
 - `docs/MANUALE_OPERATIVO.md`
+- **NUOVO**: `docs/SCHEMA_DB.md` — schema completo (tabelle, colonne, FK, RLS, funzioni, trigger, bucket storage) rigenerato a ogni migration
 
-Versionati con changelog in testa (data + sintesi modifica). Li creo subito in Fase 0 con il contenuto iniziale e li mantengo allineati.
+## Domanda di scope
+1. Confermi le 6 sotto-fasi nell'ordine proposto (7.1 → 7.6)?
+2. Per Teams: usi già Microsoft 365 aziendale? Serve che configuri il connettore standard (richiede tue credenziali al momento dell'attivazione)?
+3. Per Email: vuoi che attivi subito Lovable Emails con un sottodominio (es. `notify.tuodominio.it`) o partiamo con dominio di test?
+4. Per OCR: ok usare Lovable AI (Gemini) gratuito incluso, oppure preferisci un servizio OCR dedicato (es. Mindee, AWS Textract)?
 
----
-
-## Cosa faccio in questo turno (Fase 0 + 1)
-
-1. Abilito Lovable Cloud
-2. Salvo la regola permanente in memoria progetto
-3. Creo design system + layout app con sidebar/topbar
-4. Auth (email/password + Google) + multi-tenant + ruoli
-5. Modulo **Asset & Impianti** (CRUD + QR + foto + filtri)
-6. Modulo **Trouble Ticketing** con SLA engine base
-7. **TTS** integrato sui ticket urgenti / alert SLA (Lovable AI Gateway)
-8. I 3 documenti `docs/*.md` inizializzati
-
-Fasi 2–6 nei turni successivi. Confermi questo piano e procedo?
+Dimmi "vai con 7.1" (o l'ordine che preferisci) e procedo turno per turno.
