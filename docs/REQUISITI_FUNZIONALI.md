@@ -4,6 +4,15 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 7.3 OCR fatture + scadenzario
+- Server function extractInvoice (createServerFn protetta da requireSupabaseAuth) che invia PDF/immagine a Lovable AI Gateway (google/gemini-2.5-flash) con response_format json_object e prompt strutturato.
+- Estrazione automatica: fornitore, P.IVA, IBAN, numero fattura, date emissione/scadenza, imponibile, IVA, totale, valuta, tipo utenza, righe di dettaglio, note.
+- UI: in /app/invoices nuova sezione OCR nel dialog "Nuova fattura" — upload + bottone "Estrai dati dal file" che pre-compila il form; gli ocr_data vengono salvati nel campo JSONB della fattura.
+- Matching automatico fornitore best-effort per nome (prima parola); l'utente conferma sempre prima di salvare.
+- Nuovo tab "Scadenzario" con KPI (totale 30gg + scadute, scadute, in scadenza) e tabella ordinata per data, evidenziando in rosso le scadute.
+- Errori AI gestiti: 429 (rate limit) e 402 (crediti esauriti) mostrati come toast.
+
+
 ### 2026-06-19 — Fase 7.2 Workflow Engine
 - Nuove tabelle: workflows, workflow_steps, workflow_instances, workflow_transitions (append-only).
 - Editor procedure multi-step con tipi: approval, action, notification, wait, condition, form.
