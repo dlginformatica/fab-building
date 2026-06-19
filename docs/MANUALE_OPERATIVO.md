@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### 2026-06-19 — Verifica fornitori + documenti fiscali
+Nella pagina **Fornitori** ogni scheda ora mostra un badge con lo stato di verifica (Da verificare / In verifica / Verificato / Rifiutato) e tre azioni rapide:
+- **Documenti** apre il dialog di gestione documenti fiscali: caricamento (PDF/JPG/PNG) con tipo (visura, DURC, polizza, certificazione SDI, attestazione IBAN, HACCP, privacy, altro), data di scadenza opzionale e stato iniziale "da confermare". Lo staff autorizzato può confermare o rifiutare ogni documento dall'archivio; i file sono conservati nel bucket privato `supplier-docs` (link firmato 60s).
+- **Verifica** / **Rifiuta** aggiornano lo stato di verifica del fornitore e registrano chi ha effettuato l'operazione.
+
+Il form di creazione fornitore valida ora il **Codice SDI** (6-7 caratteri alfanumerici, "0000000" ammesso come placeholder) e la **PEC** (formato email). Errori inline impediscono l'invio.
+
 ### 2026-06-19 — Anagrafica fornitori estesa
 Form nuovo fornitore riorganizzato in sezioni (Anagrafica, Dati fiscali, Contatti, Sede legale, Compliance) con i campi richiesti per la fatturazione elettronica italiana:
 - **Dati fiscali**: P.IVA, Codice Fiscale, Codice SDI (7 caratteri), PEC, IBAN, REA.
