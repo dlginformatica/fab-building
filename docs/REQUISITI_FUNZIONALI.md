@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.4 PWA offline + sync
+- RF-PWA-01 App installabile (manifest + icone 192/512 + display standalone, start_url `/app/tickets`).
+- RF-PWA-02 Cache offline app shell (NetworkFirst per navigazioni, CacheFirst per asset hashati e font).
+- RF-PWA-03 Outbox IndexedDB per ticket, commenti e scan asset creati offline; flush automatico su evento `online`.
+- RF-PWA-04 Indicatore stato rete + coda + pulsante Sync manuale.
+
 ### 2026-06-19 — Fase 8.3 Asset avanzati
 - RF-ASSET-12 Storico modifiche asset con tracciamento automatico campi principali (nome, codice, stato, stanza, area, garanzia, foto, note, marca/modello/seriale).
 - RF-ASSET-13 Timeline manutenzioni asset: unione interventi preventivi (piani) e correttivi (ticket) ordinati cronologicamente.
