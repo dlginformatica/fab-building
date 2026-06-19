@@ -41,6 +41,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app/sla-notifications", label: "Notifiche SLA", icon: Bell },
     { to: "/app/penalties", label: "Penali & Violazioni", icon: AlertTriangle },
     { to: "/app/workflows", label: "Workflow & procedure", icon: Workflow },
+    { to: "/app/notifications", label: "Notifiche Email & Teams", icon: Mail },
     { to: "/app/users", label: "Utenti & Ruoli", icon: Users },
     { to: "/app/permissions", label: "Permessi funzioni", icon: ShieldCheck },
     { to: "/app/delegations", label: "Deleghe", icon: UserCog },
