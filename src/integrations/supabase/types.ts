@@ -2240,6 +2240,76 @@ export type Database = {
           },
         ]
       }
+      sla_escalation_rules: {
+        Row: {
+          after_minutes: number
+          created_at: string
+          enabled: boolean
+          event: Database["public"]["Enums"]["notification_event"]
+          id: string
+          level: number
+          notes: string | null
+          notify_channel_id: string | null
+          notify_role: Database["public"]["Enums"]["app_role"] | null
+          notify_user_id: string | null
+          sla_rule_id: string | null
+          structure_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          after_minutes: number
+          created_at?: string
+          enabled?: boolean
+          event?: Database["public"]["Enums"]["notification_event"]
+          id?: string
+          level: number
+          notes?: string | null
+          notify_channel_id?: string | null
+          notify_role?: Database["public"]["Enums"]["app_role"] | null
+          notify_user_id?: string | null
+          sla_rule_id?: string | null
+          structure_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          after_minutes?: number
+          created_at?: string
+          enabled?: boolean
+          event?: Database["public"]["Enums"]["notification_event"]
+          id?: string
+          level?: number
+          notes?: string | null
+          notify_channel_id?: string | null
+          notify_role?: Database["public"]["Enums"]["app_role"] | null
+          notify_user_id?: string | null
+          sla_rule_id?: string | null
+          structure_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sla_escalation_rules_notify_channel_id_fkey"
+            columns: ["notify_channel_id"]
+            isOneToOne: false
+            referencedRelation: "notification_channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_escalation_rules_sla_rule_id_fkey"
+            columns: ["sla_rule_id"]
+            isOneToOne: false
+            referencedRelation: "sla_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_escalation_rules_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sla_notifications: {
         Row: {
           acknowledged_at: string | null
@@ -2360,6 +2430,8 @@ export type Database = {
           delay_minutes: number
           id: string
           kind: string
+          last_escalation_at: string | null
+          last_escalation_level: number
           notes: string | null
           penalty_eur: number
           rule_id: string | null
@@ -2373,6 +2445,8 @@ export type Database = {
           delay_minutes?: number
           id?: string
           kind: string
+          last_escalation_at?: string | null
+          last_escalation_level?: number
           notes?: string | null
           penalty_eur?: number
           rule_id?: string | null
@@ -2386,6 +2460,8 @@ export type Database = {
           delay_minutes?: number
           id?: string
           kind?: string
+          last_escalation_at?: string | null
+          last_escalation_level?: number
           notes?: string | null
           penalty_eur?: number
           rule_id?: string | null
@@ -3586,6 +3662,36 @@ export type Database = {
         Args: { _conv: string; _user: string }
         Returns: boolean
       }
+      sla_compliance_report: {
+        Args: { _from: string; _structure?: string; _to: string }
+        Returns: {
+          ack_compliance_pct: number
+          ack_on_time: number
+          avg_resolve_minutes: number
+          priority: Database["public"]["Enums"]["ticket_priority"]
+          resolve_compliance_pct: number
+          resolve_on_time: number
+          structure_id: string
+          structure_name: string
+          total_tickets: number
+          violated: number
+        }[]
+      }
+      sla_pending_escalations: {
+        Args: never
+        Returns: {
+          after_minutes: number
+          delay_minutes: number
+          event: Database["public"]["Enums"]["notification_event"]
+          next_level: number
+          notify_channel_id: string
+          notify_role: Database["public"]["Enums"]["app_role"]
+          notify_user_id: string
+          structure_id: string
+          ticket_id: string
+          violation_id: string
+        }[]
+      }
       user_has_ticket_access: {
         Args: { _ticket_id: string; _user: string }
         Returns: boolean
@@ -3636,6 +3742,10 @@ export type Database = {
         | "invoice_due"
         | "maintenance_due"
         | "contract_expiring"
+        | "sla_escalation_l1"
+        | "sla_escalation_l2"
+        | "sla_escalation_l3"
+        | "compliance_report_ready"
       reorder_status:
         | "da_approvare"
         | "approvato"
@@ -3870,6 +3980,10 @@ export const Constants = {
         "invoice_due",
         "maintenance_due",
         "contract_expiring",
+        "sla_escalation_l1",
+        "sla_escalation_l2",
+        "sla_escalation_l3",
+        "compliance_report_ready",
       ],
       reorder_status: [
         "da_approvare",
