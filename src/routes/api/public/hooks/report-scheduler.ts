@@ -32,11 +32,11 @@ const ALLOWED_SOURCES = new Set([
 function guard(request: Request): Response | null {
   const auth = request.headers.get("authorization") ?? "";
   const apikey = request.headers.get("apikey") ?? "";
-  const expected = process.env.SCHEDULER_SECRET
-    ?? process.env.SUPABASE_PUBLISHABLE_KEY
-    ?? process.env.SUPABASE_SERVICE_ROLE_KEY
-    ?? "";
-  if (!expected) return json({ ok: false, error: "Scheduler non configurato" }, 500);
+  // Only accept a dedicated, server-only secret. NEVER fall back to the
+  // Supabase publishable/anon key (it ships in the client bundle) or the
+  // service-role key (its leakage would be catastrophic).
+  const expected = process.env.SCHEDULER_SECRET ?? "";
+  if (!expected) return json({ ok: false, error: "Scheduler non configurato (SCHEDULER_SECRET mancante)" }, 500);
   const bearer = auth.startsWith("Bearer ") ? auth.slice(7) : "";
   if (bearer === expected || apikey === expected) return null;
   return json({ ok: false, error: "Unauthorized" }, 401);
@@ -76,7 +76,12 @@ async function runScheduler() {
     const runId = run?.id as string | undefined;
 
     try {
-      let q: any = sb.from(tpl.source).select((tpl.columns ?? ["*"]).join(","));
+      // Sanitize columns to prevent PostgREST resource-embedding exfiltration
+      // (e.g. `profiles!assigned_to(email,phone)`). Only plain identifiers and `*`.
+      const safeColumns = ((tpl.columns ?? ["*"]) as string[])
+        .filter((c) => typeof c === "string" && /^[a-z0-9_*]+$/i.test(c));
+      if (safeColumns.length === 0) safeColumns.push("*");
+      let q: any = sb.from(tpl.source).select(safeColumns.join(","));
       if (tpl.structure_id) {
         try { q = q.eq("structure_id", tpl.structure_id); } catch { /* table has no structure_id */ }
       }
