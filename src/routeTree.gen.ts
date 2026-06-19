@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as ApiTtsSpeakRouteImport } from './routes/api/tts/speak'
+import { Route as AuthenticatedAppWorkflowsRouteImport } from './routes/_authenticated/app.workflows'
 import { Route as AuthenticatedAppWorkOrdersRouteImport } from './routes/_authenticated/app.work-orders'
 import { Route as AuthenticatedAppUtilitiesRouteImport } from './routes/_authenticated/app.utilities'
 import { Route as AuthenticatedAppUsersRouteImport } from './routes/_authenticated/app.users'
@@ -82,6 +83,12 @@ const ApiTtsSpeakRoute = ApiTtsSpeakRouteImport.update({
   path: '/api/tts/speak',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedAppWorkflowsRoute =
+  AuthenticatedAppWorkflowsRouteImport.update({
+    id: '/app/workflows',
+    path: '/app/workflows',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppWorkOrdersRoute =
   AuthenticatedAppWorkOrdersRouteImport.update({
     id: '/app/work-orders',
@@ -332,6 +339,7 @@ export interface FileRoutesByFullPath {
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
+  '/app/workflows': typeof AuthenticatedAppWorkflowsRoute
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/app/': typeof AuthenticatedAppIndexRoute
   '/app/a/$qr': typeof AuthenticatedAppAQrRoute
@@ -376,6 +384,7 @@ export interface FileRoutesByTo {
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
+  '/app/workflows': typeof AuthenticatedAppWorkflowsRoute
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/app': typeof AuthenticatedAppIndexRoute
   '/app/a/$qr': typeof AuthenticatedAppAQrRoute
@@ -422,6 +431,7 @@ export interface FileRoutesById {
   '/_authenticated/app/users': typeof AuthenticatedAppUsersRoute
   '/_authenticated/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/_authenticated/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
+  '/_authenticated/app/workflows': typeof AuthenticatedAppWorkflowsRoute
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
   '/_authenticated/app/a/$qr': typeof AuthenticatedAppAQrRoute
@@ -468,6 +478,7 @@ export interface FileRouteTypes {
     | '/app/users'
     | '/app/utilities'
     | '/app/work-orders'
+    | '/app/workflows'
     | '/api/tts/speak'
     | '/app/'
     | '/app/a/$qr'
@@ -512,6 +523,7 @@ export interface FileRouteTypes {
     | '/app/users'
     | '/app/utilities'
     | '/app/work-orders'
+    | '/app/workflows'
     | '/api/tts/speak'
     | '/app'
     | '/app/a/$qr'
@@ -557,6 +569,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/users'
     | '/_authenticated/app/utilities'
     | '/_authenticated/app/work-orders'
+    | '/_authenticated/app/workflows'
     | '/api/tts/speak'
     | '/_authenticated/app/'
     | '/_authenticated/app/a/$qr'
@@ -618,6 +631,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/tts/speak'
       preLoaderRoute: typeof ApiTtsSpeakRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/app/workflows': {
+      id: '/_authenticated/app/workflows'
+      path: '/app/workflows'
+      fullPath: '/app/workflows'
+      preLoaderRoute: typeof AuthenticatedAppWorkflowsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/work-orders': {
       id: '/_authenticated/app/work-orders'
@@ -970,6 +990,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppUsersRoute: typeof AuthenticatedAppUsersRoute
   AuthenticatedAppUtilitiesRoute: typeof AuthenticatedAppUtilitiesRoute
   AuthenticatedAppWorkOrdersRoute: typeof AuthenticatedAppWorkOrdersRoute
+  AuthenticatedAppWorkflowsRoute: typeof AuthenticatedAppWorkflowsRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppAQrRoute: typeof AuthenticatedAppAQrRoute
 }
@@ -1010,6 +1031,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppUsersRoute: AuthenticatedAppUsersRoute,
   AuthenticatedAppUtilitiesRoute: AuthenticatedAppUtilitiesRoute,
   AuthenticatedAppWorkOrdersRoute: AuthenticatedAppWorkOrdersRoute,
+  AuthenticatedAppWorkflowsRoute: AuthenticatedAppWorkflowsRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppAQrRoute: AuthenticatedAppAQrRoute,
 }
