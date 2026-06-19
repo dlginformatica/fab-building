@@ -4,6 +4,16 @@
 
 ## Changelog
 
+### 2026-06-19 — Setup guidato in 5 minuti
+Nuova pagina **Setup guidato** (`/app/onboarding`, in sidebar sotto Operativo) che porta un albergatore dal primo accesso a una struttura pronta all'uso in pochi minuti:
+1. **Struttura**: nome + città (crea o aggiorna la struttura attiva).
+2. **Preset**: B&B / Hotel piccolo / Boutique-Resort, ciascuno con dimensioni consigliate.
+3. **Piani e camere**: piani (1-20) e camere per piano (1-100); le camere sono numerate automaticamente con la convenzione `piano*100 + n` (101, 102, …, 201, …).
+4. **Riepilogo**: mostra esattamente cosa verrà creato — piani, camere, 11 categorie asset (caldaia, climatizzazione, idraulico, elettrico, ascensori, TV/Wi-Fi, mini-bar, lavanderia, cucina, antincendio, generico) e 4 SLA di default per priorità.
+5. **Completato**: 4 prossimi passi consigliati (asset, fornitori, primo ticket, KPI).
+
+Sulla dashboard principale appare un banner "Completa il setup in 5 minuti" finché la struttura non viene marcata come `onboarded_at`. Il seed è idempotente: rilanciarlo non duplica piani/camere/SLA già esistenti.
+
 ### 2026-06-19 — Verifica fornitori + documenti fiscali
 Nella pagina **Fornitori** ogni scheda ora mostra un badge con lo stato di verifica (Da verificare / In verifica / Verificato / Rifiutato) e tre azioni rapide:
 - **Documenti** apre il dialog di gestione documenti fiscali: caricamento (PDF/JPG/PNG) con tipo (visura, DURC, polizza, certificazione SDI, attestazione IBAN, HACCP, privacy, altro), data di scadenza opzionale e stato iniziale "da confermare". Lo staff autorizzato può confermare o rifiutare ogni documento dall'archivio; i file sono conservati nel bucket privato `supplier-docs` (link firmato 60s).

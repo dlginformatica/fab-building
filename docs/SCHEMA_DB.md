@@ -4,6 +4,15 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 1 killer: onboarding wizard
+**structures** — nuovi campi: `onboarded_at` (timestamptz), `onboarding_preset` (text: `bb`/`piccolo`/`boutique`).
+
+**Funzione** `seed_structure_preset(_structure uuid, _preset text, _floors_count int=2, _rooms_per_floor int=10)` → jsonb (`floors`, `rooms`, `categories`, `sla_rules`, `preset`).
+- `SECURITY DEFINER`, `search_path=public`, EXECUTE solo a `authenticated` (revoke da `anon`/`public`).
+- Verifica via `has_role`: super_admin, oppure direttore/facility_manager sulla struttura.
+- Idempotente: usa `WHERE NOT EXISTS` su `(structure_id, level)`, `(structure_id, floor_id, name)`, `(name)` per categorie, `(structure_id, priority, category_id IS NULL, area IS NULL)` per SLA.
+- Aggiorna `structures.onboarded_at`, `onboarding_preset`, ricalcola `rooms_count`.
+
 ### 2026-06-19 — Verifica fornitori + supplier_documents
 **suppliers** — nuovi campi: `verification_status` (`pending`/`in_review`/`verified`/`rejected`, default `pending`), `verified_at`, `verified_by` (auth.users), `verification_notes`.
 

@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { LayoutGrid, Plus, Trash2, ArrowUp, ArrowDown, Save } from "lucide-react";
+import { LayoutGrid, Plus, Trash2, ArrowUp, ArrowDown, Save, Sparkles, Rocket } from "lucide-react";
 import { WIDGET_CATALOG, WidgetRenderer, sizeClass, type WidgetKey } from "@/components/dashboard/widgets";
 import { toast } from "sonner";
 
@@ -22,6 +22,10 @@ function Dashboard() {
   const [editing, setEditing] = useState(false);
 
   const { data: me } = useQuery({ queryKey:["me-dash"], queryFn: async()=> (await supabase.auth.getUser()).data.user });
+  const { data: structure } = useQuery({
+    queryKey: ["dash-structure", activeStructureId], enabled: !!activeStructureId,
+    queryFn: async () => (await (supabase as any).from("structures").select("id,name,onboarded_at").eq("id", activeStructureId).maybeSingle()).data,
+  });
   const { data: widgets = [], isLoading } = useQuery({
     queryKey:["dashboard-widgets", me?.id], enabled: !!me?.id,
     queryFn: async()=> (await supabase.from("dashboard_widgets").select("*").eq("user_id", me!.id).order("position")).data ?? [],
@@ -83,22 +87,28 @@ function Dashboard() {
 
   if (!activeStructureId) return <EmptyStructure />;
 
+  const needsOnboarding = structure && !structure.onboarded_at;
+
   if (!isLoading && widgets.length === 0) {
     return (
-      <div className="grid h-[50vh] place-items-center">
-        <Card className="max-w-md text-center">
-          <CardHeader><CardTitle className="font-display">Dashboard vuota</CardTitle></CardHeader>
-          <CardContent className="space-y-3">
-            <p className="text-sm text-muted-foreground">Aggiungi widget personalizzati o usa la configurazione predefinita.</p>
-            <Button onClick={()=>seed.mutate()}>Carica widget predefiniti</Button>
-          </CardContent>
-        </Card>
+      <div className="space-y-4">
+        {needsOnboarding && <OnboardingBanner />}
+        <div className="grid h-[50vh] place-items-center">
+          <Card className="max-w-md text-center">
+            <CardHeader><CardTitle className="font-display">Dashboard vuota</CardTitle></CardHeader>
+            <CardContent className="space-y-3">
+              <p className="text-sm text-muted-foreground">Aggiungi widget personalizzati o usa la configurazione predefinita.</p>
+              <Button onClick={()=>seed.mutate()}>Carica widget predefiniti</Button>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
+      {needsOnboarding && <OnboardingBanner />}
       <div className="flex items-baseline justify-between gap-3 flex-wrap">
         <div>
           <h1 className="font-display text-2xl font-bold flex items-center gap-2"><LayoutGrid className="h-5 w-5"/>Dashboard</h1>
@@ -175,11 +185,31 @@ function EmptyStructure() {
   return (
     <div className="grid h-[60vh] place-items-center">
       <Card className="max-w-md">
-        <CardHeader><CardTitle className="font-display">Benvenuto in HotelOps</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="font-display flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary"/>Benvenuto in HotelOps</CardTitle>
+        </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
-          <p>Per iniziare, crea la tua prima struttura e assegnati il ruolo super_admin. Vai a <Link to="/app/structures" className="text-primary underline">Strutture</Link> e poi a <Link to="/app/users" className="text-primary underline">Utenti & Ruoli</Link>.</p>
+          <p>Configura la tua struttura in 5 minuti con il wizard guidato.</p>
+          <Link to="/app/onboarding"><Button className="w-full"><Rocket className="mr-2 h-4 w-4"/>Avvia setup guidato</Button></Link>
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function OnboardingBanner() {
+  return (
+    <Card className="border-primary/40 bg-primary/5">
+      <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+        <div className="flex items-center gap-3">
+          <span className="grid h-10 w-10 place-items-center rounded-md bg-primary/15 text-primary"><Sparkles className="h-5 w-5"/></span>
+          <div>
+            <div className="font-semibold">Completa il setup in 5 minuti</div>
+            <p className="text-xs text-muted-foreground">Genera piani, camere, categorie asset e regole SLA con il wizard guidato.</p>
+          </div>
+        </div>
+        <Link to="/app/onboarding"><Button size="sm"><Rocket className="mr-2 h-4 w-4"/>Avvia wizard</Button></Link>
+      </CardContent>
+    </Card>
   );
 }
