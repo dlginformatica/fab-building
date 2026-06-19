@@ -1105,37 +1105,67 @@ export type Database = {
       }
       maintenance_tasks: {
         Row: {
+          actual_hours: number | null
+          assigned_to: string | null
           checklist_result: Json | null
           completed_at: string | null
           completed_by: string | null
           created_at: string
           due_date: string
+          estimated_hours: number | null
           id: string
           notes: string | null
+          outcome: string | null
+          photos: Json
           plan_id: string
+          scheduled_for: string | null
+          signature_url: string | null
+          signed_at: string | null
           status: string
+          ticket_report_id: string | null
+          updated_at: string
         }
         Insert: {
+          actual_hours?: number | null
+          assigned_to?: string | null
           checklist_result?: Json | null
           completed_at?: string | null
           completed_by?: string | null
           created_at?: string
           due_date: string
+          estimated_hours?: number | null
           id?: string
           notes?: string | null
+          outcome?: string | null
+          photos?: Json
           plan_id: string
+          scheduled_for?: string | null
+          signature_url?: string | null
+          signed_at?: string | null
           status?: string
+          ticket_report_id?: string | null
+          updated_at?: string
         }
         Update: {
+          actual_hours?: number | null
+          assigned_to?: string | null
           checklist_result?: Json | null
           completed_at?: string | null
           completed_by?: string | null
           created_at?: string
           due_date?: string
+          estimated_hours?: number | null
           id?: string
           notes?: string | null
+          outcome?: string | null
+          photos?: Json
           plan_id?: string
+          scheduled_for?: string | null
+          signature_url?: string | null
+          signed_at?: string | null
           status?: string
+          ticket_report_id?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -1143,6 +1173,13 @@ export type Database = {
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "maintenance_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_tasks_ticket_report_id_fkey"
+            columns: ["ticket_report_id"]
+            isOneToOne: false
+            referencedRelation: "ticket_reports"
             referencedColumns: ["id"]
           },
         ]
@@ -2989,6 +3026,10 @@ export type Database = {
       }
       enqueue_sla_warnings: {
         Args: { p_threshold_minutes?: number }
+        Returns: number
+      }
+      generate_maintenance_tasks: {
+        Args: { _from: string; _to: string }
         Returns: number
       }
       has_permission: {

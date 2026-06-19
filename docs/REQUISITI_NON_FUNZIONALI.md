@@ -3,6 +3,12 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+
+### 2026-06-19 — Fase 7.1
+- Indici su `maintenance_tasks(due_date, plan_id, assigned_to, status)` per performance calendario/storico.
+- Trigger `updated_at` su `maintenance_tasks`.
+- Storage foto intervento nel bucket privato `assets/` sotto prefisso `maintenance/<task_id>/`.
+
 - **v0.16 (2026-06-19)** — Tabella `sla_notifications` con UNIQUE su `(ticket_id, kind)` per garantire idempotenza (un solo warning + una sola notifica di violazione per ticket); INSERT revocata agli utenti `authenticated`, alimentata solo da trigger SECURITY DEFINER (`tg_sla_violation_notify`) e dalla funzione `enqueue_sla_warnings(threshold)` (EXECUTE solo a `service_role`). Job `pg_cron` `sla-warnings-enqueue` ogni 5 minuti. Nuovi bucket privati `asset-docs` e `asset-media` con policy `storage.objects` scoped su `(storage.foldername(name))[1] = structure_id` e verifica ownership su update/delete. Tabelle `asset_documents` e `asset_media` con RLS scoped per struttura, INSERT vincolato a `uploaded_by = auth.uid()`, UPDATE/DELETE riservato all'uploader o agli admin. Trigger di ereditarietà `structure_id` da asset per evitare desincronizzazioni.
 - **v0.15 (2026-06-19)** — Trigger `tg_log_reorder_status` (SECURITY DEFINER) garantisce auditabilità completa dei cambi stato riordini senza dipendere dal client. Trigger `tg_inherit_area_from_asset` esteso a `tickets` e `work_orders` per mantenere coerenza area in pipeline analitica. Bucket `reorders` privato con RLS basata su `storage.foldername(name)[1] = structure_id`. Tabella `asset_qr_audit` immutabile via RLS (solo SELECT per i membri della struttura), inserimenti via trigger SECURITY DEFINER. SLA: la `apply_sla_on_ticket` ordina per specificità (struttura → area → categoria) per garantire risoluzione deterministica delle regole.
 - **v0.12 (2026-06-18)** — Nuovo bucket privato `report-previews` (RLS sotto-cartella per `auth.uid()`). Tabelle: `report_pdf_previews` (anteprime con scadenza 24h, RLS owner), `report_template_access` (permessi per template, helper `can_manage_template`), `report_template_layout_audit` + trigger `tg_report_layout_audit` che cattura diff su header/footer/firma/QR/sotto-intestazione e su `recipient_layouts`. Scheduler hook ora richiede header `Authorization: Bearer <SCHEDULER_SECRET|anon|service>` o `apikey`, e applica allowlist `ALLOWED_SOURCES` per impedire l'esfiltrazione di tabelle sensibili via service role.
