@@ -2537,6 +2537,24 @@ export type Database = {
           },
         ]
       }
+      public_profiles: {
+        Row: {
+          avatar_url: string | null
+          full_name: string | null
+          id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          full_name?: string | null
+          id?: string | null
+        }
+        Relationships: []
+      }
       supplier_compliance: {
         Row: {
           address: string | null
@@ -2650,6 +2668,10 @@ export type Database = {
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_conversation_member: {
         Args: { _conv: string; _user: string }
+        Returns: boolean
+      }
+      user_has_ticket_access: {
+        Args: { _ticket_id: string; _user: string }
         Returns: boolean
       }
     }
