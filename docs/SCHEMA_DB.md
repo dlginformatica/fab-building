@@ -4,6 +4,16 @@
 
 ## Changelog
 
+### 2026-06-19 — Verifica fornitori + supplier_documents
+**suppliers** — nuovi campi: `verification_status` (`pending`/`in_review`/`verified`/`rejected`, default `pending`), `verified_at`, `verified_by` (auth.users), `verification_notes`.
+
+**supplier_documents** (nuova tabella)
+- Campi: `supplier_id` → suppliers, `doc_type` (`visura`/`durc`/`insurance`/`sdi_certification`/`iban_proof`/`haccp`/`privacy`/`other`), `status` (`pending`/`confirmed`/`rejected`/`expired`, default `pending`), `file_path`, `file_name`, `mime_type`, `size_bytes`, `issued_on`, `expires_on`, `notes`, `uploaded_by`, `confirmed_by`, `confirmed_at`.
+- RLS: lettura per ogni utente autenticato; insert per super_admin/direttore/facility_manager/economato/fornitore; update per super_admin/direttore/facility_manager/economato; delete per super_admin/direttore.
+- Indici: `(supplier_id)`, `(status)`.
+
+**Storage bucket privato `supplier-docs`** — policy `storage.objects`: SELECT a tutti gli autenticati, INSERT come supplier_documents, UPDATE allo staff, DELETE a super_admin/direttore.
+
 ### 2026-06-19 — suppliers (estensione)
 Aggiunti campi: `tax_code`, `sdi_code`, `pec`, `iban`, `rea_number`, `website`, `billing_address`, `city`, `province`, `postal_code`, `country` (default `IT`). Indici su `tax_code` e `vat_number`.
 

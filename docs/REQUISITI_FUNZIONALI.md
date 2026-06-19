@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### 2026-06-19 — Fornitori: verifica e documenti fiscali
+- RF-SUP-06 Stato verifica fornitore (`pending` / `in_review` / `verified` / `rejected`) con tracciamento di chi verifica e quando.
+- RF-SUP-07 Archivio documenti fiscali per fornitore (visura, DURC, polizza, certificazione SDI, attestazione IBAN, HACCP, privacy, altro) con upload file e stato di conferma (`pending` / `confirmed` / `rejected` / `expired`) e data scadenza.
+- RF-SUP-08 Validazione formato lato client per Codice SDI (6-7 A-Z/0-9) e PEC (formato email).
+- RF-SUP-09 Solo super_admin, direttore, facility_manager ed economato possono confermare/rifiutare documenti e verificare il fornitore; il ruolo `fornitore` può solo caricare propri documenti.
+
 ### 2026-06-19 — Fornitori: dati fiscali
 - RF-SUP-05 Anagrafica fornitori con campi obbligatori per fatturazione elettronica IT: P.IVA, Codice Fiscale, Codice SDI, PEC, IBAN, REA, sito web, sede legale strutturata (indirizzo, città, prov., CAP, paese).
 

@@ -2591,6 +2591,78 @@ export type Database = {
         }
         Relationships: []
       }
+      supplier_documents: {
+        Row: {
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          doc_type: Database["public"]["Enums"]["supplier_doc_type"]
+          expires_on: string | null
+          file_name: string | null
+          file_path: string | null
+          id: string
+          issued_on: string | null
+          mime_type: string | null
+          notes: string | null
+          size_bytes: number | null
+          status: Database["public"]["Enums"]["supplier_doc_status"]
+          supplier_id: string
+          updated_at: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          doc_type: Database["public"]["Enums"]["supplier_doc_type"]
+          expires_on?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          issued_on?: string | null
+          mime_type?: string | null
+          notes?: string | null
+          size_bytes?: number | null
+          status?: Database["public"]["Enums"]["supplier_doc_status"]
+          supplier_id: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          doc_type?: Database["public"]["Enums"]["supplier_doc_type"]
+          expires_on?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          id?: string
+          issued_on?: string | null
+          mime_type?: string | null
+          notes?: string | null
+          size_bytes?: number | null
+          status?: Database["public"]["Enums"]["supplier_doc_status"]
+          supplier_id?: string
+          updated_at?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_documents_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "supplier_documents_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       suppliers: {
         Row: {
           address: string | null
@@ -2622,6 +2694,10 @@ export type Database = {
           tax_code: string | null
           updated_at: string
           vat_number: string | null
+          verification_notes: string | null
+          verification_status: Database["public"]["Enums"]["supplier_verification_status"]
+          verified_at: string | null
+          verified_by: string | null
           visura_expiry: string | null
           website: string | null
         }
@@ -2655,6 +2731,10 @@ export type Database = {
           tax_code?: string | null
           updated_at?: string
           vat_number?: string | null
+          verification_notes?: string | null
+          verification_status?: Database["public"]["Enums"]["supplier_verification_status"]
+          verified_at?: string | null
+          verified_by?: string | null
           visura_expiry?: string | null
           website?: string | null
         }
@@ -2688,6 +2768,10 @@ export type Database = {
           tax_code?: string | null
           updated_at?: string
           vat_number?: string | null
+          verification_notes?: string | null
+          verification_status?: Database["public"]["Enums"]["supplier_verification_status"]
+          verified_at?: string | null
+          verified_by?: string | null
           visura_expiry?: string | null
           website?: string | null
         }
@@ -3886,7 +3970,22 @@ export type Database = {
         | "ordinato"
         | "ricevuto"
         | "annullato"
+      supplier_doc_status: "pending" | "confirmed" | "rejected" | "expired"
+      supplier_doc_type:
+        | "visura"
+        | "durc"
+        | "insurance"
+        | "sdi_certification"
+        | "iban_proof"
+        | "haccp"
+        | "privacy"
+        | "other"
       supplier_status: "attivo" | "sospeso" | "dismesso"
+      supplier_verification_status:
+        | "pending"
+        | "in_review"
+        | "verified"
+        | "rejected"
       ticket_priority: "bassa" | "media" | "alta" | "critica"
       ticket_status:
         | "aperto"
@@ -4126,7 +4225,24 @@ export const Constants = {
         "ricevuto",
         "annullato",
       ],
+      supplier_doc_status: ["pending", "confirmed", "rejected", "expired"],
+      supplier_doc_type: [
+        "visura",
+        "durc",
+        "insurance",
+        "sdi_certification",
+        "iban_proof",
+        "haccp",
+        "privacy",
+        "other",
+      ],
       supplier_status: ["attivo", "sospeso", "dismesso"],
+      supplier_verification_status: [
+        "pending",
+        "in_review",
+        "verified",
+        "rejected",
+      ],
       ticket_priority: ["bassa", "media", "alta", "critica"],
       ticket_status: [
         "aperto",
