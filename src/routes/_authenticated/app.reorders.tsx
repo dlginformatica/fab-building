@@ -138,6 +138,9 @@ function Page() {
                   <td className="px-4 py-2"><Badge variant="outline">{STATUS_LABEL[r.status]}</Badge></td>
                   <td className="px-4 py-2 text-xs">{r.notes ?? ""}</td>
                   <td className="px-4 py-2 text-right space-x-1">
+                    <Button size="sm" variant="outline" asChild>
+                      <Link to="/app/reorders/$id" params={{ id: r.id }}><ListTree className="h-3 w-3 mr-1"/>Dettaglio</Link>
+                    </Button>
                     {NEXT_STATUS[r.status] && <Button size="sm" onClick={()=>advance.mutate(r)}>
                       {r.status==="ordinato" ? <><Truck className="h-3 w-3 mr-1"/>Ricevi</> :
                        r.status==="approvato" ? <><ShoppingCart className="h-3 w-3 mr-1"/>Ordina</> :
