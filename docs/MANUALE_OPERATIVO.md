@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 7.4 Notifiche Email & Teams
+- Vai in **Amministrazione → Notifiche Email & Teams**.
+- Clicca **Nuovo canale**, scegli tipo (Teams o Email), incolla l'URL webhook Teams (creato in Teams → canale → Connettori → Webhook in ingresso) o l'indirizzo email destinatario.
+- Seleziona gli eventi su cui ricevere notifica (es. SLA violato + Ticket creato per il team manutenzione).
+- Usa il bottone **Test** per inviare un messaggio di prova; controlla il tab **Log invii** per esiti e diagnostica errori.
+- Toggle **Attivo** per sospendere temporaneamente un canale senza eliminarlo.
+
 ### 2026-06-19 — Fase 7.3 OCR fatture + scadenzario
 - Server function extractInvoice (createServerFn protetta da requireSupabaseAuth) che invia PDF/immagine a Lovable AI Gateway (google/gemini-2.5-flash) con response_format json_object e prompt strutturato.
 - Estrazione automatica: fornitore, P.IVA, IBAN, numero fattura, date emissione/scadenza, imponibile, IVA, totale, valuta, tipo utenza, righe di dettaglio, note.
