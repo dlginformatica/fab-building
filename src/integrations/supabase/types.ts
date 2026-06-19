@@ -3693,6 +3693,42 @@ export type Database = {
           title: string
         }[]
       }
+      dashboard_structure_kpi: {
+        Args: { _structure: string }
+        Returns: {
+          expiring_contracts_90d: number
+          invoice_total_30d: number
+          open_tickets: number
+          overdue_tickets: number
+          pending_maintenance: number
+          sla_resolve_30d_pct: number
+          total_assets: number
+        }[]
+      }
+      dashboard_tickets_by_category: {
+        Args: { _structure: string }
+        Returns: {
+          category: string
+          count: number
+        }[]
+      }
+      dashboard_top_suppliers: {
+        Args: { _structure: string }
+        Returns: {
+          rating: number
+          supplier_id: string
+          supplier_name: string
+          tickets_count: number
+        }[]
+      }
+      dashboard_weekly_tickets: {
+        Args: { _structure: string }
+        Returns: {
+          opened: number
+          resolved: number
+          week_start: string
+        }[]
+      }
       enqueue_sla_warnings: {
         Args: { p_threshold_minutes?: number }
         Returns: number
