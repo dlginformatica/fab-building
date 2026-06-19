@@ -64,9 +64,16 @@ export function SpeakerProvider({ children }: { children: ReactNode }) {
       setIsSpeaking(true);
       try {
         const ctx = await ensureCtx();
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (!token) throw new Error("TTS: utente non autenticato");
         const res = await fetch("/api/tts/speak", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify({ text, voice }),
         });
         if (!res.ok || !res.body) throw new Error(`TTS ${res.status}`);
