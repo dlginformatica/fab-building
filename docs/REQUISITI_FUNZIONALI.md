@@ -4,6 +4,16 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 7.4 Notifiche Email & Microsoft Teams
+- Nuove tabelle `notification_channels` (canale per struttura: tipo email/teams, destinazione, eventi sottoscritti, attivo) e `notification_log` (storico invii con esito).
+- Eventi supportati: ticket_created, ticket_assigned, sla_warning, sla_violated, workflow_step, invoice_due, maintenance_due.
+- Server function `dispatchNotification` (createServerFn protetta) e `sendTestNotification` per test diretto del canale.
+- Microsoft Teams via webhook entrante (MessageCard con titolo/testo/azione "Apri in HotelOps").
+- Email pronta per integrazione con Lovable Emails (dominio mittente da configurare in Cloud → Emails).
+- UI: /app/notifications con tabs Canali / Log invii, toggle attivo, multi-evento, test invio in un click.
+- RLS: solo admin (super_admin/direttore/facility_manager) della struttura possono creare/modificare canali e leggere log.
+
+
 ### 2026-06-19 — Fase 7.3 OCR fatture + scadenzario
 - Server function extractInvoice (createServerFn protetta da requireSupabaseAuth) che invia PDF/immagine a Lovable AI Gateway (google/gemini-2.5-flash) con response_format json_object e prompt strutturato.
 - Estrazione automatica: fornitore, P.IVA, IBAN, numero fattura, date emissione/scadenza, imponibile, IVA, totale, valuta, tipo utenza, righe di dettaglio, note.
