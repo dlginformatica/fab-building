@@ -4,6 +4,16 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 7.2 Workflow Engine
+- Nuove tabelle: workflows, workflow_steps, workflow_instances, workflow_transitions (append-only).
+- Editor procedure multi-step con tipi: approval, action, notification, wait, condition, form.
+- Assegnatario per ruolo/utente, SLA per step in minuti, escalation su timeout (config).
+- Istanze collegabili a ticket/asset/fornitore/fattura; transizioni con outcome (approved, rejected, completed, skipped, timeout, escalated, cancelled).
+- RLS scoped per struttura; admin (super_admin/direttore/facility_manager) gestiscono definizioni; membri struttura avviano/avanzano istanze.
+- Audit automatico via tg_audit_log su workflows e workflow_instances.
+- UI: /app/workflows con tabs Procedure / Esecuzioni, editor step inline, dialog di avanzamento.
+
+
 ### 2026-06-19 — Fase 7.1 Manutenzione evoluta
 - Pagina Manutenzione con 3 tab: **Piani**, **Calendario** (mese, evidenziazione scaduto/in scadenza/completato), **Storico interventi** filtrabile per esito.
 - Esecuzione task da calendario: checklist spuntabile, ore lavorate, esito (ok/da rifare/problema/annullato), note, foto multiple, firma chiusura (`signed_at`, `completed_by`).
