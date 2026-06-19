@@ -2559,6 +2559,8 @@ export type Database = {
           id: string
           name: string
           notes: string | null
+          onboarded_at: string | null
+          onboarding_preset: string | null
           rooms_count: number | null
           timezone: string
           updated_at: string
@@ -2572,6 +2574,8 @@ export type Database = {
           id?: string
           name: string
           notes?: string | null
+          onboarded_at?: string | null
+          onboarding_preset?: string | null
           rooms_count?: number | null
           timezone?: string
           updated_at?: string
@@ -2585,6 +2589,8 @@ export type Database = {
           id?: string
           name?: string
           notes?: string | null
+          onboarded_at?: string | null
+          onboarding_preset?: string | null
           rooms_count?: number | null
           timezone?: string
           updated_at?: string
@@ -3879,6 +3885,15 @@ export type Database = {
       is_conversation_member: {
         Args: { _conv: string; _user: string }
         Returns: boolean
+      }
+      seed_structure_preset: {
+        Args: {
+          _floors_count?: number
+          _preset: string
+          _rooms_per_floor?: number
+          _structure: string
+        }
+        Returns: Json
       }
       sla_compliance_report: {
         Args: { _from: string; _structure?: string; _to: string }
