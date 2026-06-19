@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.5
+**Funzioni dashboard**
+- `dashboard_structure_kpi(_structure)` → open_tickets, overdue_tickets, sla_resolve_30d_pct, expiring_contracts_90d, invoice_total_30d, total_assets, pending_maintenance.
+- `dashboard_weekly_tickets(_structure)` → 12 righe (week_start, opened, resolved).
+- `dashboard_top_suppliers(_structure)` → top 5 (supplier_id, supplier_name, tickets_count, rating).
+- `dashboard_tickets_by_category(_structure)` → category, count.
+
 ### 2026-06-19 — Fase 8.3
 **Tabelle**
 - `asset_history(id, asset_id→assets, structure_id, actor_id, field, old_value jsonb, new_value jsonb, created_at)` — trigger `tg_asset_history` after update su `assets`.

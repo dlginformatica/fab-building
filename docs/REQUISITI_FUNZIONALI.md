@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.5 Dashboard KPI struttura
+- RF-DASH-01 Selettore struttura + 7 KPI cliccabili (ticket aperti/in ritardo, % SLA 30g, contratti scadenza 90g, bollette 30g, asset, manutenzioni pending).
+- RF-DASH-02 Trend settimanale ticket aperti/risolti (12 settimane).
+- RF-DASH-03 Distribuzione ticket per categoria.
+- RF-DASH-04 Top 5 fornitori per attività (90g) con rating.
+
 ### 2026-06-19 — Fase 8.4 PWA offline + sync
 - RF-PWA-01 App installabile (manifest + icone 192/512 + display standalone, start_url `/app/tickets`).
 - RF-PWA-02 Cache offline app shell (NetworkFirst per navigazioni, CacheFirst per asset hashati e font).

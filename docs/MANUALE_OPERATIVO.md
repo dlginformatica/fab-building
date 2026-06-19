@@ -4,6 +4,14 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.5 Dashboard KPI struttura
+Nuova pagina `/app/structure-kpi` con selettore struttura e:
+- 7 KPI card cliccabili: ticket aperti, ticket in ritardo (rosso se >0), % SLA risolti on time (30g), contratti in scadenza 90g, totale bollette ultimi 30g, asset totali, manutenzioni pending.
+- Trend ticket aperti vs risolti, ultime 12 settimane (line chart).
+- Distribuzione ticket aperti per categoria (bar chart).
+- Tabella Top 5 fornitori per numero ticket gestiti (ultimi 90g) con rating.
+- Voce sidebar "KPI struttura" sotto Operativo.
+
 ### 2026-06-19 — Fase 8.4 PWA offline + sync
 HotelOps è ora installabile come app (icona home, splash, manifest) e funziona offline.
 - **Installazione**: dal browser mobile usa "Aggiungi a schermata Home" / "Installa app". L'icona apre direttamente la pagina ticket.

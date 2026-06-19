@@ -4,6 +4,10 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.5
+- RNF-DASH-01 KPI calcolati da funzioni `dashboard_*` SECURITY DEFINER con `has_structure_access(auth.uid(), structure_id)` — nessuna struttura altrui visibile.
+- RNF-DASH-02 Una sola query per blocco (kpi, weekly, top suppliers, by category) — preview perf accettabile su >10k ticket.
+
 ### 2026-06-19 — Fase 8.4
 - RNF-PWA-01 Service worker generato da `vite-plugin-pwa` (Workbox) con `injectRegister: null` — registrazione solo dal wrapper guardato `src/lib/pwa/register.ts`.
 - RNF-PWA-02 Nessuna registrazione in dev, iframe, host Lovable preview, beta o quando `?sw=off`. In quei contesti viene fatto `unregister()` dei SW esistenti.
