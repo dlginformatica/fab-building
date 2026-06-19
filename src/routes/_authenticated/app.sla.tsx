@@ -14,7 +14,7 @@ export const Route = createFileRoute("/_authenticated/app/sla")({ component: Pag
 
 function Page() {
   const qc = useQueryClient();
-  const [form, setForm] = useState({ priority: "media", ack_minutes: "60", resolve_minutes: "480", category_id: "", structure_id: "" });
+  const [form, setForm] = useState({ priority: "media", ack_minutes: "60", resolve_minutes: "480", category_id: "", structure_id: "", area: "", name: "", description: "" });
   const [sim, setSim] = useState({ created: new Date().toISOString().slice(0,16), ackAt: "", resolvedAt: "" });
   const { data: rules } = useQuery({ queryKey: ["sla_rules"], queryFn: async () => (await supabase.from("sla_rules").select("*, asset_categories(name), structures(name)").order("priority")).data ?? [] });
   const { data: categories } = useQuery({ queryKey: ["asset_categories"], queryFn: async () => (await supabase.from("asset_categories").select("id,name").order("name")).data ?? [] });
@@ -22,12 +22,16 @@ function Page() {
 
   const add = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("sla_rules").insert({
-        priority: form.priority as "bassa"|"media"|"alta"|"critica",
+      const { error } = await (supabase as any).from("sla_rules").insert({
+        priority: form.priority,
         ack_minutes: parseInt(form.ack_minutes, 10),
         resolve_minutes: parseInt(form.resolve_minutes, 10),
         category_id: form.category_id || null,
         structure_id: form.structure_id || null,
+        area: form.area || null,
+        name: form.name || null,
+        description: form.description || null,
+        enabled: true,
       });
       if (error) throw error;
     },
@@ -58,12 +62,26 @@ function Page() {
       <Card>
         <CardHeader><CardTitle className="font-display text-base">1 · Nuova regola</CardTitle></CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-7">
+            <div className="space-y-1 md:col-span-2">
+              <Label>Nome regola</Label>
+              <Input value={form.name} placeholder="Es. Emergenze impianti SPA" onChange={(e)=>setForm({...form, name:e.target.value})}/>
+            </div>
             <div className="space-y-1">
               <Label>Priorità</Label>
               <Select value={form.priority} onValueChange={(v) => setForm({ ...form, priority: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>{["bassa","media","alta","critica"].map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1">
+              <Label>Area (opz.)</Label>
+              <Select value={form.area || "all"} onValueChange={(v)=>setForm({...form, area: v==="all"?"":v})}>
+                <SelectTrigger><SelectValue placeholder="Tutte"/></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tutte</SelectItem>
+                  {["camere","spa","ristorante","cucina","aree_comuni","esterno","uffici","altro"].map(a=><SelectItem key={a} value={a}>{a}</SelectItem>)}
+                </SelectContent>
               </Select>
             </div>
             <div className="space-y-1">
@@ -83,6 +101,11 @@ function Page() {
             <div className="space-y-1"><Label>Ack (min)</Label><Input type="number" value={form.ack_minutes} onChange={(e) => setForm({ ...form, ack_minutes: e.target.value })} /></div>
             <div className="space-y-1"><Label>Resolve (min)</Label><Input type="number" value={form.resolve_minutes} onChange={(e) => setForm({ ...form, resolve_minutes: e.target.value })} /></div>
             <div className="flex items-end"><Button className="w-full" onClick={() => add.mutate()}>Aggiungi</Button></div>
+          </div>
+          <div className="mt-3 space-y-1">
+            <Label>Descrizione / motivazione (opz.)</Label>
+            <Input value={form.description} placeholder="Es. SLA stringenti per zone benessere e ristoro"
+              onChange={(e)=>setForm({...form, description:e.target.value})}/>
           </div>
         </CardContent>
       </Card>
@@ -105,12 +128,14 @@ function Page() {
       <Card><CardContent className="p-0">
         <table className="w-full text-sm">
           <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
-            <tr><th className="px-4 py-2">Priorità</th><th className="px-4 py-2">Tipologia</th><th className="px-4 py-2">Struttura</th><th className="px-4 py-2">Ack (min)</th><th className="px-4 py-2">Resolve (min)</th><th></th></tr>
+            <tr><th className="px-4 py-2">Nome</th><th className="px-4 py-2">Priorità</th><th className="px-4 py-2">Area</th><th className="px-4 py-2">Tipologia</th><th className="px-4 py-2">Struttura</th><th className="px-4 py-2">Ack</th><th className="px-4 py-2">Resolve</th><th></th></tr>
           </thead>
           <tbody>
             {(rules ?? []).map((r) => (
               <tr key={r.id} className="border-b border-border/60">
+                <td className="px-4 py-2">{(r as any).name ?? "—"}</td>
                 <td className="px-4 py-2">{r.priority}</td>
+                <td className="px-4 py-2">{(r as any).area ?? "Tutte"}</td>
                 <td className="px-4 py-2">{(r as { asset_categories?: { name?: string } }).asset_categories?.name ?? "Tutte"}</td>
                 <td className="px-4 py-2">{(r as { structures?: { name?: string } }).structures?.name ?? "Globale"}</td>
                 <td className="px-4 py-2">{r.ack_minutes}</td>
