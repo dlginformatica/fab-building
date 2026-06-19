@@ -3,12 +3,13 @@ import {
   LayoutDashboard, Building2, Wrench, Ticket, Settings, FileText, Users, Bell,
   Truck, FileSignature, ClipboardList, CalendarClock, Package, ShoppingCart,
   Gauge, Receipt, MessageSquare, BarChart3, ScrollText, ExternalLink,
-  ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity, TrendingUp, Workflow, Mail,
+  ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity, TrendingUp, Workflow, Mail, Sparkles,
 } from "lucide-react";
 
 const groups: Array<{ label: string; items: Array<{ to: string; label: string; icon: any; exact?: boolean }> }> = [
   { label: "Operativo", items: [
     { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
+    { to: "/app/onboarding", label: "Setup guidato", icon: Sparkles },
     { to: "/app/structure-kpi", label: "KPI struttura", icon: BarChart3 },
     { to: "/app/tickets", label: "Ticket", icon: Ticket },
     { to: "/app/messages", label: "Messaggi", icon: MessageSquare },
