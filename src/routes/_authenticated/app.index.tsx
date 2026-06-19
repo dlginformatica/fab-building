@@ -189,6 +189,39 @@ function EmptyStructure() {
           <CardTitle className="font-display flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary"/>Benvenuto in HotelOps</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm text-muted-foreground">
+          <p>Configura la tua struttura in 5 minuti con il wizard guidato.</p>
+          <Link to="/app/onboarding"><Button className="w-full"><Rocket className="mr-2 h-4 w-4"/>Avvia setup guidato</Button></Link>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+function OnboardingBanner() {
+  return (
+    <Card className="border-primary/40 bg-primary/5">
+      <CardContent className="flex flex-wrap items-center justify-between gap-3 p-4">
+        <div className="flex items-center gap-3">
+          <span className="grid h-10 w-10 place-items-center rounded-md bg-primary/15 text-primary"><Sparkles className="h-5 w-5"/></span>
+          <div>
+            <div className="font-semibold">Completa il setup in 5 minuti</div>
+            <p className="text-xs text-muted-foreground">Genera piani, camere, categorie asset e regole SLA con il wizard guidato.</p>
+          </div>
+        </div>
+        <Link to="/app/onboarding"><Button size="sm"><Rocket className="mr-2 h-4 w-4"/>Avvia wizard</Button></Link>
+      </CardContent>
+    </Card>
+  );
+}
+
+function _EmptyStructureLegacy() {
+  return (
+    <div className="grid h-[60vh] place-items-center">
+      <Card className="max-w-md">
+        <CardHeader>
+          <CardTitle className="font-display flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary"/>Benvenuto in HotelOps</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm text-muted-foreground">
           <p>Configura la tua struttura in 5 minuti con il wizard guidato: nome, dimensioni, piani, camere, SLA, categorie asset — tutto pronto al primo accesso.</p>
           <Link to="/app/onboarding"><Button className="w-full"><Rocket className="mr-2 h-4 w-4"/>Avvia setup guidato</Button></Link>
           <p className="text-xs">Oppure vai a <Link to="/app/structures" className="text-primary underline">Strutture</Link> e <Link to="/app/users" className="text-primary underline">Utenti & Ruoli</Link> per la configurazione manuale.</p>
