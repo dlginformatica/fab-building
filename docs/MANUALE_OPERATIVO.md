@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.3 Asset avanzati
+Nuova scheda asset con tre tab in fondo alla pagina (`/app/assets/:id`):
+- **Storico modifiche**: traccia automatica di ogni cambio sui campi principali (nome, codice, marca/modello, stato, stanza, area, foto, garanzia, note). Registrata data, attore, valore precedente e nuovo.
+- **Manutenzioni**: timeline combinata di manutenzioni preventive (da piani) e ticket correttivi, con stato, data chiusura e ore consuntivate.
+- **KPI affidabilità**: guasti totali, MTBF (Mean Time Between Failures) e MTTR (Mean Time To Repair) in ore, ultimo guasto e ultima riparazione.
+
 ### 2026-06-19 — Fase 8.2 SLA guidata
 **Escalation** (`/app/sla-escalations`):
 - Aggiungi livelli (L1/L2/L3) indicando minuti di ritardo dopo la scadenza e destinatario:

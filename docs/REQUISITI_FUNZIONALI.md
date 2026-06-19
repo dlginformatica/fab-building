@@ -4,6 +4,11 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.3 Asset avanzati
+- RF-ASSET-12 Storico modifiche asset con tracciamento automatico campi principali (nome, codice, stato, stanza, area, garanzia, foto, note, marca/modello/seriale).
+- RF-ASSET-13 Timeline manutenzioni asset: unione interventi preventivi (piani) e correttivi (ticket) ordinati cronologicamente.
+- RF-ASSET-14 KPI affidabilità per asset: MTBF, MTTR, conteggi guasti/riparazioni, date ultimo guasto/riparazione.
+
 ### 2026-06-19 — Fase 8.2 SLA guidata (escalation + conformità)
 - Nuova tabella `sla_escalation_rules`: catena multi-livello (L1–L5) per regola SLA o struttura, con `after_minutes`, destinatario per ruolo / utente / canale, evento dedicato (`sla_escalation_l1/l2/l3`), abilitabile.
 - Nuove colonne `last_escalation_level`, `last_escalation_at` su `sla_violations` per idempotenza.

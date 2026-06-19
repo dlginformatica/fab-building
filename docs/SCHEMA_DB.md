@@ -4,6 +4,14 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.3
+**Tabelle**
+- `asset_history(id, asset_id→assets, structure_id, actor_id, field, old_value jsonb, new_value jsonb, created_at)` — trigger `tg_asset_history` after update su `assets`.
+
+**Funzioni**
+- `asset_maintenance_log(_asset uuid) → (kind, ref_id, title, status, occurred_at, closed_at, hours, notes)` — unione preventive + correttive.
+- `asset_maintenance_kpi(_asset uuid) → (total_failures, total_repairs, mtbf_hours, mttr_hours, last_failure_at, last_repair_at)`.
+
 ### 2026-06-19 — Fase 8.2 SLA escalation & conformità
 - Nuova tabella `sla_escalation_rules` (id, sla_rule_id FK, structure_id FK, level CHECK 1-5, after_minutes, notify_role app_role, notify_user_id, notify_channel_id, event notification_event, enabled, notes) + UNIQUE(sla_rule_id, level) + RLS (read: has_structure_access, manage: is_admin).
 - `sla_violations`: nuove colonne `last_escalation_level INT NOT NULL DEFAULT 0`, `last_escalation_at TIMESTAMPTZ`.

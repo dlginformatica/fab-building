@@ -4,6 +4,10 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.3
+- RNF-AUDIT-04 Storico asset alimentato da trigger DB `tg_asset_history` (SECURITY DEFINER, search_path fissato) — non bypassabile da scritture client.
+- RNF-RBAC-09 Lettura `asset_history` e funzioni `asset_maintenance_log` / `asset_maintenance_kpi` filtrate via `has_structure_access(auth.uid(), structure_id)`.
+
 ### 2026-06-19 — Fase 8.2 SLA
 - `sla_compliance_report` SECURITY DEFINER, `EXECUTE` revocato ad anon e filtrato internamente da `has_structure_access(auth.uid(),...)` per evitare leak di ticket di strutture non accessibili.
 - `sla_pending_escalations` SECURITY DEFINER, `EXECUTE` revocato ad anon e authenticated (solo service role via cron).
