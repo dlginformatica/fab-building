@@ -19,6 +19,7 @@ import { Route as AuthenticatedAppWorkOrdersRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppUtilitiesRouteImport } from './routes/_authenticated/app.utilities'
 import { Route as AuthenticatedAppUsersRouteImport } from './routes/_authenticated/app.users'
 import { Route as AuthenticatedAppTicketsRouteImport } from './routes/_authenticated/app.tickets'
+import { Route as AuthenticatedAppSuppliersComplianceRouteImport } from './routes/_authenticated/app.suppliers-compliance'
 import { Route as AuthenticatedAppSuppliersRouteImport } from './routes/_authenticated/app.suppliers'
 import { Route as AuthenticatedAppStructuresRouteImport } from './routes/_authenticated/app.structures'
 import { Route as AuthenticatedAppStatisticsRouteImport } from './routes/_authenticated/app.statistics'
@@ -26,6 +27,7 @@ import { Route as AuthenticatedAppSlaRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
 import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated/app.reports'
 import { Route as AuthenticatedAppReportBuilderRouteImport } from './routes/_authenticated/app.report-builder'
+import { Route as AuthenticatedAppReordersRouteImport } from './routes/_authenticated/app.reorders'
 import { Route as AuthenticatedAppPurchaseOrdersRouteImport } from './routes/_authenticated/app.purchase-orders'
 import { Route as AuthenticatedAppPermissionsRouteImport } from './routes/_authenticated/app.permissions'
 import { Route as AuthenticatedAppPenaltiesRouteImport } from './routes/_authenticated/app.penalties'
@@ -38,6 +40,7 @@ import { Route as AuthenticatedAppDeliveryQueueRouteImport } from './routes/_aut
 import { Route as AuthenticatedAppDelegationsHistoryRouteImport } from './routes/_authenticated/app.delegations-history'
 import { Route as AuthenticatedAppDelegationsRouteImport } from './routes/_authenticated/app.delegations'
 import { Route as AuthenticatedAppDelegationAuditRouteImport } from './routes/_authenticated/app.delegation-audit'
+import { Route as AuthenticatedAppCostAnalyticsRouteImport } from './routes/_authenticated/app.cost-analytics'
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
@@ -45,6 +48,7 @@ import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/
 import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
 import { Route as AuthenticatedAppDeliveryQueueIdRouteImport } from './routes/_authenticated/app.delivery-queue.$id'
 import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
+import { Route as AuthenticatedAppAQrRouteImport } from './routes/_authenticated/app.a.$qr'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -97,6 +101,12 @@ const AuthenticatedAppTicketsRoute = AuthenticatedAppTicketsRouteImport.update({
   path: '/app/tickets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppSuppliersComplianceRoute =
+  AuthenticatedAppSuppliersComplianceRouteImport.update({
+    id: '/app/suppliers-compliance',
+    path: '/app/suppliers-compliance',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppSuppliersRoute =
   AuthenticatedAppSuppliersRouteImport.update({
     id: '/app/suppliers',
@@ -135,6 +145,12 @@ const AuthenticatedAppReportBuilderRoute =
   AuthenticatedAppReportBuilderRouteImport.update({
     id: '/app/report-builder',
     path: '/app/report-builder',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppReordersRoute =
+  AuthenticatedAppReordersRouteImport.update({
+    id: '/app/reorders',
+    path: '/app/reorders',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppPurchaseOrdersRoute =
@@ -208,6 +224,12 @@ const AuthenticatedAppDelegationAuditRoute =
     path: '/app/delegation-audit',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppCostAnalyticsRoute =
+  AuthenticatedAppCostAnalyticsRouteImport.update({
+    id: '/app/cost-analytics',
+    path: '/app/cost-analytics',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppContractsRoute =
   AuthenticatedAppContractsRouteImport.update({
     id: '/app/contracts',
@@ -248,6 +270,11 @@ const AuthenticatedAppAssetsIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedAppAssetsRoute,
   } as any)
+const AuthenticatedAppAQrRoute = AuthenticatedAppAQrRouteImport.update({
+  id: '/app/a/$qr',
+  path: '/app/a/$qr',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -256,6 +283,7 @@ export interface FileRoutesByFullPath {
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
+  '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
@@ -268,6 +296,7 @@ export interface FileRoutesByFullPath {
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
+  '/app/reorders': typeof AuthenticatedAppReordersRoute
   '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -275,12 +304,14 @@ export interface FileRoutesByFullPath {
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
+  '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/app/': typeof AuthenticatedAppIndexRoute
+  '/app/a/$qr': typeof AuthenticatedAppAQrRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
@@ -293,6 +324,7 @@ export interface FileRoutesByTo {
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
+  '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
@@ -305,6 +337,7 @@ export interface FileRoutesByTo {
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
+  '/app/reorders': typeof AuthenticatedAppReordersRoute
   '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -312,12 +345,14 @@ export interface FileRoutesByTo {
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
+  '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/app': typeof AuthenticatedAppIndexRoute
+  '/app/a/$qr': typeof AuthenticatedAppAQrRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
@@ -332,6 +367,7 @@ export interface FileRoutesById {
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
+  '/_authenticated/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
   '/_authenticated/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
   '/_authenticated/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/_authenticated/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
@@ -344,6 +380,7 @@ export interface FileRoutesById {
   '/_authenticated/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/_authenticated/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/_authenticated/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
+  '/_authenticated/app/reorders': typeof AuthenticatedAppReordersRoute
   '/_authenticated/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -351,12 +388,14 @@ export interface FileRoutesById {
   '/_authenticated/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/_authenticated/app/structures': typeof AuthenticatedAppStructuresRoute
   '/_authenticated/app/suppliers': typeof AuthenticatedAppSuppliersRoute
+  '/_authenticated/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/_authenticated/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/_authenticated/app/users': typeof AuthenticatedAppUsersRoute
   '/_authenticated/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/_authenticated/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
   '/api/tts/speak': typeof ApiTtsSpeakRoute
   '/_authenticated/app/': typeof AuthenticatedAppIndexRoute
+  '/_authenticated/app/a/$qr': typeof AuthenticatedAppAQrRoute
   '/_authenticated/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/_authenticated/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/_authenticated/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
@@ -371,6 +410,7 @@ export interface FileRouteTypes {
     | '/app/assets'
     | '/app/audit'
     | '/app/contracts'
+    | '/app/cost-analytics'
     | '/app/delegation-audit'
     | '/app/delegations'
     | '/app/delegations-history'
@@ -383,6 +423,7 @@ export interface FileRouteTypes {
     | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
+    | '/app/reorders'
     | '/app/report-builder'
     | '/app/reports'
     | '/app/settings'
@@ -390,12 +431,14 @@ export interface FileRouteTypes {
     | '/app/statistics'
     | '/app/structures'
     | '/app/suppliers'
+    | '/app/suppliers-compliance'
     | '/app/tickets'
     | '/app/users'
     | '/app/utilities'
     | '/app/work-orders'
     | '/api/tts/speak'
     | '/app/'
+    | '/app/a/$qr'
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
     | '/app/tickets/$id'
@@ -408,6 +451,7 @@ export interface FileRouteTypes {
     | '/app/assets'
     | '/app/audit'
     | '/app/contracts'
+    | '/app/cost-analytics'
     | '/app/delegation-audit'
     | '/app/delegations'
     | '/app/delegations-history'
@@ -420,6 +464,7 @@ export interface FileRouteTypes {
     | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
+    | '/app/reorders'
     | '/app/report-builder'
     | '/app/reports'
     | '/app/settings'
@@ -427,12 +472,14 @@ export interface FileRouteTypes {
     | '/app/statistics'
     | '/app/structures'
     | '/app/suppliers'
+    | '/app/suppliers-compliance'
     | '/app/tickets'
     | '/app/users'
     | '/app/utilities'
     | '/app/work-orders'
     | '/api/tts/speak'
     | '/app'
+    | '/app/a/$qr'
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
     | '/app/tickets/$id'
@@ -446,6 +493,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/assets'
     | '/_authenticated/app/audit'
     | '/_authenticated/app/contracts'
+    | '/_authenticated/app/cost-analytics'
     | '/_authenticated/app/delegation-audit'
     | '/_authenticated/app/delegations'
     | '/_authenticated/app/delegations-history'
@@ -458,6 +506,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/penalties'
     | '/_authenticated/app/permissions'
     | '/_authenticated/app/purchase-orders'
+    | '/_authenticated/app/reorders'
     | '/_authenticated/app/report-builder'
     | '/_authenticated/app/reports'
     | '/_authenticated/app/settings'
@@ -465,12 +514,14 @@ export interface FileRouteTypes {
     | '/_authenticated/app/statistics'
     | '/_authenticated/app/structures'
     | '/_authenticated/app/suppliers'
+    | '/_authenticated/app/suppliers-compliance'
     | '/_authenticated/app/tickets'
     | '/_authenticated/app/users'
     | '/_authenticated/app/utilities'
     | '/_authenticated/app/work-orders'
     | '/api/tts/speak'
     | '/_authenticated/app/'
+    | '/_authenticated/app/a/$qr'
     | '/_authenticated/app/assets/$id'
     | '/_authenticated/app/delivery-queue/$id'
     | '/_authenticated/app/tickets/$id'
@@ -557,6 +608,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTicketsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/suppliers-compliance': {
+      id: '/_authenticated/app/suppliers-compliance'
+      path: '/app/suppliers-compliance'
+      fullPath: '/app/suppliers-compliance'
+      preLoaderRoute: typeof AuthenticatedAppSuppliersComplianceRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/suppliers': {
       id: '/_authenticated/app/suppliers'
       path: '/app/suppliers'
@@ -604,6 +662,13 @@ declare module '@tanstack/react-router' {
       path: '/app/report-builder'
       fullPath: '/app/report-builder'
       preLoaderRoute: typeof AuthenticatedAppReportBuilderRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/reorders': {
+      id: '/_authenticated/app/reorders'
+      path: '/app/reorders'
+      fullPath: '/app/reorders'
+      preLoaderRoute: typeof AuthenticatedAppReordersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/purchase-orders': {
@@ -690,6 +755,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppDelegationAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/cost-analytics': {
+      id: '/_authenticated/app/cost-analytics'
+      path: '/app/cost-analytics'
+      fullPath: '/app/cost-analytics'
+      preLoaderRoute: typeof AuthenticatedAppCostAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/contracts': {
       id: '/_authenticated/app/contracts'
       path: '/app/contracts'
@@ -738,6 +810,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/assets/$id'
       preLoaderRoute: typeof AuthenticatedAppAssetsIdRouteImport
       parentRoute: typeof AuthenticatedAppAssetsRoute
+    }
+    '/_authenticated/app/a/$qr': {
+      id: '/_authenticated/app/a/$qr'
+      path: '/app/a/$qr'
+      fullPath: '/app/a/$qr'
+      preLoaderRoute: typeof AuthenticatedAppAQrRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
@@ -789,6 +868,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
+  AuthenticatedAppCostAnalyticsRoute: typeof AuthenticatedAppCostAnalyticsRoute
   AuthenticatedAppDelegationAuditRoute: typeof AuthenticatedAppDelegationAuditRoute
   AuthenticatedAppDelegationsRoute: typeof AuthenticatedAppDelegationsRoute
   AuthenticatedAppDelegationsHistoryRoute: typeof AuthenticatedAppDelegationsHistoryRoute
@@ -801,6 +881,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppPenaltiesRoute: typeof AuthenticatedAppPenaltiesRoute
   AuthenticatedAppPermissionsRoute: typeof AuthenticatedAppPermissionsRoute
   AuthenticatedAppPurchaseOrdersRoute: typeof AuthenticatedAppPurchaseOrdersRoute
+  AuthenticatedAppReordersRoute: typeof AuthenticatedAppReordersRoute
   AuthenticatedAppReportBuilderRoute: typeof AuthenticatedAppReportBuilderRoute
   AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
@@ -808,11 +889,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppStatisticsRoute: typeof AuthenticatedAppStatisticsRoute
   AuthenticatedAppStructuresRoute: typeof AuthenticatedAppStructuresRoute
   AuthenticatedAppSuppliersRoute: typeof AuthenticatedAppSuppliersRoute
+  AuthenticatedAppSuppliersComplianceRoute: typeof AuthenticatedAppSuppliersComplianceRoute
   AuthenticatedAppTicketsRoute: typeof AuthenticatedAppTicketsRouteWithChildren
   AuthenticatedAppUsersRoute: typeof AuthenticatedAppUsersRoute
   AuthenticatedAppUtilitiesRoute: typeof AuthenticatedAppUtilitiesRoute
   AuthenticatedAppWorkOrdersRoute: typeof AuthenticatedAppWorkOrdersRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
+  AuthenticatedAppAQrRoute: typeof AuthenticatedAppAQrRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -820,6 +903,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
+  AuthenticatedAppCostAnalyticsRoute: AuthenticatedAppCostAnalyticsRoute,
   AuthenticatedAppDelegationAuditRoute: AuthenticatedAppDelegationAuditRoute,
   AuthenticatedAppDelegationsRoute: AuthenticatedAppDelegationsRoute,
   AuthenticatedAppDelegationsHistoryRoute:
@@ -834,6 +918,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppPenaltiesRoute: AuthenticatedAppPenaltiesRoute,
   AuthenticatedAppPermissionsRoute: AuthenticatedAppPermissionsRoute,
   AuthenticatedAppPurchaseOrdersRoute: AuthenticatedAppPurchaseOrdersRoute,
+  AuthenticatedAppReordersRoute: AuthenticatedAppReordersRoute,
   AuthenticatedAppReportBuilderRoute: AuthenticatedAppReportBuilderRoute,
   AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
@@ -841,11 +926,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppStatisticsRoute: AuthenticatedAppStatisticsRoute,
   AuthenticatedAppStructuresRoute: AuthenticatedAppStructuresRoute,
   AuthenticatedAppSuppliersRoute: AuthenticatedAppSuppliersRoute,
+  AuthenticatedAppSuppliersComplianceRoute:
+    AuthenticatedAppSuppliersComplianceRoute,
   AuthenticatedAppTicketsRoute: AuthenticatedAppTicketsRouteWithChildren,
   AuthenticatedAppUsersRoute: AuthenticatedAppUsersRoute,
   AuthenticatedAppUtilitiesRoute: AuthenticatedAppUtilitiesRoute,
   AuthenticatedAppWorkOrdersRoute: AuthenticatedAppWorkOrdersRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
+  AuthenticatedAppAQrRoute: AuthenticatedAppAQrRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
@@ -861,13 +949,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

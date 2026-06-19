@@ -35,8 +35,54 @@ export type Database = {
         }
         Relationships: []
       }
+      asset_scans: {
+        Row: {
+          asset_id: string
+          created_at: string
+          id: string
+          note: string | null
+          scanned_by: string | null
+          structure_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          asset_id: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          scanned_by?: string | null
+          structure_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          asset_id?: string
+          created_at?: string
+          id?: string
+          note?: string | null
+          scanned_by?: string | null
+          structure_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_scans_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_scans_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assets: {
         Row: {
+          area: Database["public"]["Enums"]["cost_area"] | null
           brand: string | null
           category_id: string | null
           code: string
@@ -58,6 +104,7 @@ export type Database = {
           warranty_until: string | null
         }
         Insert: {
+          area?: Database["public"]["Enums"]["cost_area"] | null
           brand?: string | null
           category_id?: string | null
           code: string
@@ -79,6 +126,7 @@ export type Database = {
           warranty_until?: string | null
         }
         Update: {
+          area?: Database["public"]["Enums"]["cost_area"] | null
           brand?: string | null
           category_id?: string | null
           code?: string
@@ -247,6 +295,13 @@ export type Database = {
             foreignKeyName: "contracts_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contracts_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
@@ -283,6 +338,13 @@ export type Database = {
             columns: ["conversation_id"]
             isOneToOne: false
             referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "conversation_participants_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_compliance"
             referencedColumns: ["id"]
           },
           {
@@ -574,6 +636,13 @@ export type Database = {
             foreignKeyName: "inventory_items_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_items_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
@@ -622,6 +691,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "inventory_movements_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "low_stock_items"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "inventory_movements_ticket_id_fkey"
             columns: ["ticket_id"]
             isOneToOne: false
@@ -641,6 +717,7 @@ export type Database = {
         Row: {
           amount_net: number | null
           amount_total: number
+          area: Database["public"]["Enums"]["cost_area"] | null
           contract_id: string | null
           cost_center_id: string | null
           created_at: string
@@ -663,6 +740,7 @@ export type Database = {
         Insert: {
           amount_net?: number | null
           amount_total: number
+          area?: Database["public"]["Enums"]["cost_area"] | null
           contract_id?: string | null
           cost_center_id?: string | null
           created_at?: string
@@ -685,6 +763,7 @@ export type Database = {
         Update: {
           amount_net?: number | null
           amount_total?: number
+          area?: Database["public"]["Enums"]["cost_area"] | null
           contract_id?: string | null
           cost_center_id?: string | null
           created_at?: string
@@ -724,6 +803,13 @@ export type Database = {
             columns: ["structure_id"]
             isOneToOne: false
             referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_compliance"
             referencedColumns: ["id"]
           },
           {
@@ -807,6 +893,13 @@ export type Database = {
             columns: ["structure_id"]
             isOneToOne: false
             referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "maintenance_plans_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_compliance"
             referencedColumns: ["id"]
           },
           {
@@ -1044,6 +1137,13 @@ export type Database = {
             foreignKeyName: "penalty_rules_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "penalty_rules_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
@@ -1081,6 +1181,7 @@ export type Database = {
       }
       purchase_orders: {
         Row: {
+          area: Database["public"]["Enums"]["cost_area"] | null
           created_at: string
           created_by: string | null
           expected_delivery: string | null
@@ -1096,6 +1197,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          area?: Database["public"]["Enums"]["cost_area"] | null
           created_at?: string
           created_by?: string | null
           expected_delivery?: string | null
@@ -1111,6 +1213,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          area?: Database["public"]["Enums"]["cost_area"] | null
           created_at?: string
           created_by?: string | null
           expected_delivery?: string | null
@@ -1135,6 +1238,88 @@ export type Database = {
           },
           {
             foreignKeyName: "purchase_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "purchase_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reorder_requests: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          item_id: string
+          notes: string | null
+          quantity: number
+          status: Database["public"]["Enums"]["reorder_status"]
+          structure_id: string
+          supplier_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          item_id: string
+          notes?: string | null
+          quantity: number
+          status?: Database["public"]["Enums"]["reorder_status"]
+          structure_id: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          item_id?: string
+          notes?: string | null
+          quantity?: number
+          status?: Database["public"]["Enums"]["reorder_status"]
+          structure_id?: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reorder_requests_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "inventory_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reorder_requests_item_id_fkey"
+            columns: ["item_id"]
+            isOneToOne: false
+            referencedRelation: "low_stock_items"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reorder_requests_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reorder_requests_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reorder_requests_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
             referencedRelation: "suppliers"
@@ -1621,6 +1806,13 @@ export type Database = {
             foreignKeyName: "sla_violations_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_violations_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
@@ -1678,54 +1870,69 @@ export type Database = {
       suppliers: {
         Row: {
           address: string | null
+          blocked: boolean
           category: string | null
+          certifications: Json
           contact_person: string | null
           created_at: string
           durc_expiry: string | null
           email: string | null
+          haccp_expiry: string | null
           id: string
           insurance_expiry: string | null
           name: string
           notes: string | null
           phone: string | null
+          rating: number | null
           status: Database["public"]["Enums"]["supplier_status"]
           structure_id: string | null
           updated_at: string
           vat_number: string | null
+          visura_expiry: string | null
         }
         Insert: {
           address?: string | null
+          blocked?: boolean
           category?: string | null
+          certifications?: Json
           contact_person?: string | null
           created_at?: string
           durc_expiry?: string | null
           email?: string | null
+          haccp_expiry?: string | null
           id?: string
           insurance_expiry?: string | null
           name: string
           notes?: string | null
           phone?: string | null
+          rating?: number | null
           status?: Database["public"]["Enums"]["supplier_status"]
           structure_id?: string | null
           updated_at?: string
           vat_number?: string | null
+          visura_expiry?: string | null
         }
         Update: {
           address?: string | null
+          blocked?: boolean
           category?: string | null
+          certifications?: Json
           contact_person?: string | null
           created_at?: string
           durc_expiry?: string | null
           email?: string | null
+          haccp_expiry?: string | null
           id?: string
           insurance_expiry?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
+          rating?: number | null
           status?: Database["public"]["Enums"]["supplier_status"]
           structure_id?: string | null
           updated_at?: string
           vat_number?: string | null
+          visura_expiry?: string | null
         }
         Relationships: [
           {
@@ -1864,6 +2071,7 @@ export type Database = {
         Row: {
           ack_at: string | null
           ack_due_at: string | null
+          area: Database["public"]["Enums"]["cost_area"] | null
           asset_id: string | null
           assigned_to: string | null
           category_id: string | null
@@ -1887,6 +2095,7 @@ export type Database = {
         Insert: {
           ack_at?: string | null
           ack_due_at?: string | null
+          area?: Database["public"]["Enums"]["cost_area"] | null
           asset_id?: string | null
           assigned_to?: string | null
           category_id?: string | null
@@ -1910,6 +2119,7 @@ export type Database = {
         Update: {
           ack_at?: string | null
           ack_due_at?: string | null
+          area?: Database["public"]["Enums"]["cost_area"] | null
           asset_id?: string | null
           assigned_to?: string | null
           category_id?: string | null
@@ -2092,6 +2302,13 @@ export type Database = {
             foreignKeyName: "utility_meters_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "utility_meters_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
@@ -2147,6 +2364,7 @@ export type Database = {
       }
       work_orders: {
         Row: {
+          area: Database["public"]["Enums"]["cost_area"] | null
           asset_id: string | null
           completed_at: string | null
           contract_id: string | null
@@ -2167,6 +2385,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          area?: Database["public"]["Enums"]["cost_area"] | null
           asset_id?: string | null
           completed_at?: string | null
           contract_id?: string | null
@@ -2187,6 +2406,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          area?: Database["public"]["Enums"]["cost_area"] | null
           asset_id?: string | null
           completed_at?: string | null
           contract_id?: string | null
@@ -2232,6 +2452,13 @@ export type Database = {
             foreignKeyName: "work_orders_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "work_orders_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
             referencedRelation: "suppliers"
             referencedColumns: ["id"]
           },
@@ -2246,7 +2473,153 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      low_stock_items: {
+        Row: {
+          estimated_cost: number | null
+          id: string | null
+          min_quantity: number | null
+          name: string | null
+          quantity: number | null
+          shortage: number | null
+          sku: string | null
+          structure_id: string | null
+          supplier_id: string | null
+          unit: string | null
+          unit_cost: number | null
+        }
+        Insert: {
+          estimated_cost?: never
+          id?: string | null
+          min_quantity?: number | null
+          name?: string | null
+          quantity?: number | null
+          shortage?: never
+          sku?: string | null
+          structure_id?: string | null
+          supplier_id?: string | null
+          unit?: string | null
+          unit_cost?: number | null
+        }
+        Update: {
+          estimated_cost?: never
+          id?: string | null
+          min_quantity?: number | null
+          name?: string | null
+          quantity?: number | null
+          shortage?: never
+          sku?: string | null
+          structure_id?: string | null
+          supplier_id?: string | null
+          unit?: string | null
+          unit_cost?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_items_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_items_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_items_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      supplier_compliance: {
+        Row: {
+          address: string | null
+          blocked: boolean | null
+          category: string | null
+          certifications: Json | null
+          compliance_status: string | null
+          contact_person: string | null
+          created_at: string | null
+          durc_expiry: string | null
+          email: string | null
+          haccp_expiry: string | null
+          id: string | null
+          insurance_expiry: string | null
+          name: string | null
+          next_expiry: string | null
+          notes: string | null
+          phone: string | null
+          rating: number | null
+          status: Database["public"]["Enums"]["supplier_status"] | null
+          structure_id: string | null
+          updated_at: string | null
+          vat_number: string | null
+          visura_expiry: string | null
+        }
+        Insert: {
+          address?: string | null
+          blocked?: boolean | null
+          category?: string | null
+          certifications?: Json | null
+          compliance_status?: never
+          contact_person?: string | null
+          created_at?: string | null
+          durc_expiry?: string | null
+          email?: string | null
+          haccp_expiry?: string | null
+          id?: string | null
+          insurance_expiry?: string | null
+          name?: string | null
+          next_expiry?: never
+          notes?: string | null
+          phone?: string | null
+          rating?: number | null
+          status?: Database["public"]["Enums"]["supplier_status"] | null
+          structure_id?: string | null
+          updated_at?: string | null
+          vat_number?: string | null
+          visura_expiry?: string | null
+        }
+        Update: {
+          address?: string | null
+          blocked?: boolean | null
+          category?: string | null
+          certifications?: Json | null
+          compliance_status?: never
+          contact_person?: string | null
+          created_at?: string | null
+          durc_expiry?: string | null
+          email?: string | null
+          haccp_expiry?: string | null
+          id?: string | null
+          insurance_expiry?: string | null
+          name?: string | null
+          next_expiry?: never
+          notes?: string | null
+          phone?: string | null
+          rating?: number | null
+          status?: Database["public"]["Enums"]["supplier_status"] | null
+          structure_id?: string | null
+          updated_at?: string | null
+          vat_number?: string | null
+          visura_expiry?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "suppliers_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       can_manage_template: {
@@ -2292,6 +2665,15 @@ export type Database = {
       asset_status: "attivo" | "in_manutenzione" | "guasto" | "dismesso"
       contract_status: "bozza" | "attivo" | "scaduto" | "disdetto"
       contract_type: "canone" | "consumo" | "intervento" | "misto"
+      cost_area:
+        | "camere"
+        | "spa"
+        | "ristorante"
+        | "cucina"
+        | "aree_comuni"
+        | "esterno"
+        | "uffici"
+        | "altro"
       invoice_status:
         | "da_pagare"
         | "pagata"
@@ -2306,6 +2688,12 @@ export type Database = {
         | "semestrale"
         | "annuale"
         | "custom"
+      reorder_status:
+        | "da_approvare"
+        | "approvato"
+        | "ordinato"
+        | "ricevuto"
+        | "annullato"
       supplier_status: "attivo" | "sospeso" | "dismesso"
       ticket_priority: "bassa" | "media" | "alta" | "critica"
       ticket_status:
@@ -2468,6 +2856,16 @@ export const Constants = {
       asset_status: ["attivo", "in_manutenzione", "guasto", "dismesso"],
       contract_status: ["bozza", "attivo", "scaduto", "disdetto"],
       contract_type: ["canone", "consumo", "intervento", "misto"],
+      cost_area: [
+        "camere",
+        "spa",
+        "ristorante",
+        "cucina",
+        "aree_comuni",
+        "esterno",
+        "uffici",
+        "altro",
+      ],
       invoice_status: [
         "da_pagare",
         "pagata",
@@ -2483,6 +2881,13 @@ export const Constants = {
         "semestrale",
         "annuale",
         "custom",
+      ],
+      reorder_status: [
+        "da_approvare",
+        "approvato",
+        "ordinato",
+        "ricevuto",
+        "annullato",
       ],
       supplier_status: ["attivo", "sospeso", "dismesso"],
       ticket_priority: ["bassa", "media", "alta", "critica"],
