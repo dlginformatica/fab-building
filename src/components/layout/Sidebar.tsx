@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Building2, Wrench, Ticket, Settings, FileText, Users, Bell,
   Truck, FileSignature, ClipboardList, CalendarClock, Package, ShoppingCart,
   Gauge, Receipt, MessageSquare, BarChart3, ScrollText, ExternalLink,
-  ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity,
+  ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity, TrendingUp,
 } from "lucide-react";
 
 const groups: Array<{ label: string; items: Array<{ to: string; label: string; icon: any; exact?: boolean }> }> = [
@@ -18,9 +18,11 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app/assets", label: "Asset & Impianti", icon: Wrench },
     { to: "/app/maintenance", label: "Manutenzione", icon: CalendarClock },
     { to: "/app/inventory", label: "Magazzino", icon: Package },
+    { to: "/app/reorders", label: "Riordini & sotto-scorta", icon: ShoppingCart },
   ]},
   { label: "Fornitori & Acquisti", items: [
     { to: "/app/suppliers", label: "Fornitori", icon: Truck },
+    { to: "/app/suppliers-compliance", label: "Compliance fornitori", icon: ShieldCheck },
     { to: "/app/contracts", label: "Contratti", icon: FileSignature },
     { to: "/app/work-orders", label: "Ordini di Lavoro", icon: ClipboardList },
     { to: "/app/purchase-orders", label: "Ordini d'Acquisto", icon: ShoppingCart },
@@ -31,6 +33,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app/reports", label: "Report", icon: BarChart3 },
     { to: "/app/report-builder", label: "Report Builder", icon: FileBarChart },
     { to: "/app/statistics", label: "Statistiche", icon: Activity },
+    { to: "/app/cost-analytics", label: "Costi per area (5★)", icon: TrendingUp },
   ]},
   { label: "Amministrazione", items: [
     { to: "/app/sla", label: "Regole SLA", icon: Bell },
@@ -77,7 +80,7 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
-      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.11 • PDF per destinatario · Coda invii · Audit deleghe</div>
+      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.12 • Costi per area · QR mobile · Compliance · Riordini</div>
     </aside>
   );
 }

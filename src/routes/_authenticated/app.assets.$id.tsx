@@ -20,7 +20,8 @@ function Page() {
     },
   });
   if (!a) return <div className="text-sm text-muted-foreground">Caricamento…</div>;
-  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent((typeof window !== "undefined" ? window.location.origin : "") + "/app/assets/" + a.id)}`;
+  const scanUrl = (typeof window !== "undefined" ? window.location.origin : "") + "/app/a/" + (a.qr_token ?? a.id);
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(scanUrl)}`;
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
@@ -43,7 +44,8 @@ function Page() {
           <CardHeader><CardTitle className="font-display text-base">QR code</CardTitle></CardHeader>
           <CardContent className="space-y-3 text-center">
             <img src={qrUrl} alt="QR" className="mx-auto rounded-md bg-white p-2" />
-            <p className="text-xs text-muted-foreground">Stampa e applica all'impianto. Lo scan apre questa scheda.</p>
+            <p className="text-xs text-muted-foreground">Stampa e applica all'impianto. Lo scan apre la scheda mobile con storico interventi.</p>
+            <code className="block text-[10px] text-muted-foreground break-all">{scanUrl}</code>
             <Button className="w-full" onClick={() => navigate({ to: "/app/tickets", search: { asset: a.id } as never })}><TicketIcon className="mr-1 h-4 w-4" />Apri ticket per questo asset</Button>
           </CardContent>
         </Card>
