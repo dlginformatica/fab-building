@@ -35,6 +35,148 @@ export type Database = {
         }
         Relationships: []
       }
+      asset_documents: {
+        Row: {
+          asset_id: string
+          category: string
+          created_at: string
+          description: string | null
+          expires_at: string | null
+          file_path: string
+          file_size_kb: number | null
+          id: string
+          issued_at: string | null
+          mime: string | null
+          structure_id: string | null
+          superseded_by: string | null
+          title: string
+          updated_at: string
+          uploaded_by: string | null
+          version: number
+        }
+        Insert: {
+          asset_id: string
+          category?: string
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          file_path: string
+          file_size_kb?: number | null
+          id?: string
+          issued_at?: string | null
+          mime?: string | null
+          structure_id?: string | null
+          superseded_by?: string | null
+          title: string
+          updated_at?: string
+          uploaded_by?: string | null
+          version?: number
+        }
+        Update: {
+          asset_id?: string
+          category?: string
+          created_at?: string
+          description?: string | null
+          expires_at?: string | null
+          file_path?: string
+          file_size_kb?: number | null
+          id?: string
+          issued_at?: string | null
+          mime?: string | null
+          structure_id?: string | null
+          superseded_by?: string | null
+          title?: string
+          updated_at?: string
+          uploaded_by?: string | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_documents_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_documents_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_documents_superseded_by_fkey"
+            columns: ["superseded_by"]
+            isOneToOne: false
+            referencedRelation: "asset_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      asset_media: {
+        Row: {
+          asset_id: string
+          caption: string | null
+          created_at: string
+          file_path: string
+          file_size_kb: number | null
+          id: string
+          kind: string
+          mime: string | null
+          structure_id: string | null
+          taken_at: string | null
+          thumbnail_path: string | null
+          title: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          asset_id: string
+          caption?: string | null
+          created_at?: string
+          file_path: string
+          file_size_kb?: number | null
+          id?: string
+          kind: string
+          mime?: string | null
+          structure_id?: string | null
+          taken_at?: string | null
+          thumbnail_path?: string | null
+          title?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          asset_id?: string
+          caption?: string | null
+          created_at?: string
+          file_path?: string
+          file_size_kb?: number | null
+          id?: string
+          kind?: string
+          mime?: string | null
+          structure_id?: string | null
+          taken_at?: string | null
+          thumbnail_path?: string | null
+          title?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_media_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "asset_media_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_qr_audit: {
         Row: {
           action: string
@@ -1834,6 +1976,63 @@ export type Database = {
           },
         ]
       }
+      sla_notifications: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          channel: string
+          created_at: string
+          delay_minutes: number | null
+          due_at: string | null
+          id: string
+          kind: string
+          payload: Json
+          structure_id: string | null
+          ticket_id: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          channel?: string
+          created_at?: string
+          delay_minutes?: number | null
+          due_at?: string | null
+          id?: string
+          kind: string
+          payload?: Json
+          structure_id?: string | null
+          ticket_id: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          channel?: string
+          created_at?: string
+          delay_minutes?: number | null
+          due_at?: string | null
+          id?: string
+          kind?: string
+          payload?: Json
+          structure_id?: string | null
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sla_notifications_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sla_notifications_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sla_rules: {
         Row: {
           ack_minutes: number
@@ -2787,6 +2986,10 @@ export type Database = {
       can_manage_template: {
         Args: { _template: string; _user: string }
         Returns: boolean
+      }
+      enqueue_sla_warnings: {
+        Args: { p_threshold_minutes?: number }
+        Returns: number
       }
       has_permission: {
         Args: {

@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Ticket as TicketIcon, RefreshCw, ShieldOff, ShieldCheck, History } from "lucide-react";
 import { fmtDate } from "@/lib/format";
 import { toast } from "sonner";
+import { AssetDocuments } from "@/components/assets/AssetDocuments";
+import { AssetMedia } from "@/components/assets/AssetMedia";
 
 export const Route = createFileRoute("/_authenticated/app/assets/$id")({ component: Page });
 
@@ -118,6 +120,9 @@ function Page() {
           </table>
           </CardContent>
         </Card>
+
+      <AssetMedia assetId={id} structureId={(a as any).structure_id ?? null} />
+      <AssetDocuments assetId={id} structureId={(a as any).structure_id ?? null} />
     </div>
   );
 }

@@ -38,6 +38,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
   ]},
   { label: "Amministrazione", items: [
     { to: "/app/sla", label: "Regole SLA", icon: Bell },
+    { to: "/app/sla-notifications", label: "Notifiche SLA", icon: Bell },
     { to: "/app/penalties", label: "Penali & Violazioni", icon: AlertTriangle },
     { to: "/app/users", label: "Utenti & Ruoli", icon: Users },
     { to: "/app/permissions", label: "Permessi funzioni", icon: ShieldCheck },
@@ -81,7 +82,7 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
-      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.15 • SLA per area · Aree mapping · Timeline riordini · QR lifecycle</div>
+      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.16 • Notifiche SLA · Documentazione impianti · Foto/video asset</div>
     </aside>
   );
 }
