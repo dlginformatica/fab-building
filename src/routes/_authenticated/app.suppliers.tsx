@@ -20,7 +20,13 @@ function Page() {
   const qc = useQueryClient();
   const { activeStructureId } = useActiveStructure();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", vat_number: "", category: "", email: "", phone: "", contact_person: "", durc_expiry: "", insurance_expiry: "", status: "attivo", notes: "" });
+  const [form, setForm] = useState({
+    name: "", vat_number: "", tax_code: "", sdi_code: "", pec: "",
+    category: "", email: "", phone: "", website: "", contact_person: "",
+    billing_address: "", city: "", province: "", postal_code: "", country: "IT",
+    iban: "", rea_number: "",
+    durc_expiry: "", insurance_expiry: "", status: "attivo", notes: "",
+  });
   const { data: items = [] } = useQuery({
     queryKey: ["suppliers", activeStructureId],
     queryFn: async () => {
@@ -48,31 +54,70 @@ function Page() {
       header={
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button><Plus className="mr-1 h-4 w-4" />Nuovo fornitore</Button></DialogTrigger>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
             <DialogHeader><DialogTitle>Nuovo fornitore</DialogTitle></DialogHeader>
-            <div className="space-y-3">
+            <div className="space-y-4">
+              <section className="space-y-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Anagrafica</h3>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1"><Label>Ragione sociale *</Label><Input value={form.name} onChange={(e)=>setForm({...form,name:e.target.value})}/></div>
-                <div className="space-y-1"><Label>P. IVA</Label><Input value={form.vat_number} onChange={(e)=>setForm({...form,vat_number:e.target.value})}/></div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1"><Label>Categoria servizio</Label><Input placeholder="HVAC, Idraulico…" value={form.category} onChange={(e)=>setForm({...form,category:e.target.value})}/></div>
+                  <div className="space-y-1"><Label>Categoria servizio</Label><Input placeholder="HVAC, Idraulico…" value={form.category} onChange={(e)=>setForm({...form,category:e.target.value})}/></div>
+                </div>
+              </section>
+
+              <section className="space-y-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Dati fiscali</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1"><Label>Partita IVA</Label><Input value={form.vat_number} onChange={(e)=>setForm({...form,vat_number:e.target.value})}/></div>
+                  <div className="space-y-1"><Label>Codice Fiscale</Label><Input value={form.tax_code} onChange={(e)=>setForm({...form,tax_code:e.target.value})}/></div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="space-y-1"><Label>Codice SDI</Label><Input maxLength={7} placeholder="7 caratteri" value={form.sdi_code} onChange={(e)=>setForm({...form,sdi_code:e.target.value.toUpperCase()})}/></div>
+                  <div className="space-y-1 col-span-2"><Label>PEC</Label><Input type="email" placeholder="pec@legalmail.it" value={form.pec} onChange={(e)=>setForm({...form,pec:e.target.value})}/></div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1"><Label>IBAN</Label><Input value={form.iban} onChange={(e)=>setForm({...form,iban:e.target.value.toUpperCase().replace(/\s/g,"")})}/></div>
+                  <div className="space-y-1"><Label>REA</Label><Input placeholder="MI-123456" value={form.rea_number} onChange={(e)=>setForm({...form,rea_number:e.target.value})}/></div>
+                </div>
+              </section>
+
+              <section className="space-y-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Contatti</h3>
+                <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1"><Label>Referente</Label><Input value={form.contact_person} onChange={(e)=>setForm({...form,contact_person:e.target.value})}/></div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1"><Label>Sito web</Label><Input type="url" placeholder="https://" value={form.website} onChange={(e)=>setForm({...form,website:e.target.value})}/></div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1"><Label>Email</Label><Input type="email" value={form.email} onChange={(e)=>setForm({...form,email:e.target.value})}/></div>
                 <div className="space-y-1"><Label>Telefono</Label><Input value={form.phone} onChange={(e)=>setForm({...form,phone:e.target.value})}/></div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+                </div>
+              </section>
+
+              <section className="space-y-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Sede legale</h3>
+                <div className="space-y-1"><Label>Indirizzo</Label><Input placeholder="Via Roma 10" value={form.billing_address} onChange={(e)=>setForm({...form,billing_address:e.target.value})}/></div>
+                <div className="grid grid-cols-4 gap-3">
+                  <div className="space-y-1 col-span-2"><Label>Città</Label><Input value={form.city} onChange={(e)=>setForm({...form,city:e.target.value})}/></div>
+                  <div className="space-y-1"><Label>Prov.</Label><Input maxLength={2} value={form.province} onChange={(e)=>setForm({...form,province:e.target.value.toUpperCase()})}/></div>
+                  <div className="space-y-1"><Label>CAP</Label><Input maxLength={5} value={form.postal_code} onChange={(e)=>setForm({...form,postal_code:e.target.value})}/></div>
+                </div>
+                <div className="space-y-1"><Label>Paese</Label><Input maxLength={2} value={form.country} onChange={(e)=>setForm({...form,country:e.target.value.toUpperCase()})}/></div>
+              </section>
+
+              <section className="space-y-2">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Compliance</h3>
+                <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1"><Label>Scadenza DURC</Label><Input type="date" value={form.durc_expiry} onChange={(e)=>setForm({...form,durc_expiry:e.target.value})}/></div>
                 <div className="space-y-1"><Label>Scadenza assicurazione</Label><Input type="date" value={form.insurance_expiry} onChange={(e)=>setForm({...form,insurance_expiry:e.target.value})}/></div>
-              </div>
-              <div className="space-y-1"><Label>Stato</Label>
+                </div>
+                <div className="space-y-1"><Label>Stato</Label>
                 <Select value={form.status} onValueChange={(v)=>setForm({...form,status:v})}>
                   <SelectTrigger><SelectValue/></SelectTrigger>
                   <SelectContent><SelectItem value="attivo">Attivo</SelectItem><SelectItem value="sospeso">Sospeso</SelectItem><SelectItem value="dismesso">Dismesso</SelectItem></SelectContent>
                 </Select>
-              </div>
+                </div>
+              </section>
+
               <div className="space-y-1"><Label>Note</Label><Textarea rows={2} value={form.notes} onChange={(e)=>setForm({...form,notes:e.target.value})}/></div>
               <Button disabled={!form.name || mut.isPending} className="w-full" onClick={()=>mut.mutate()}>Crea</Button>
             </div>
@@ -82,12 +127,15 @@ function Page() {
       renderItem={(s: any) => (
         <ListCard
           title={s.name}
-          meta={<>{s.category ?? "—"} · {s.vat_number ?? ""}</>}
+          meta={<>{s.category ?? "—"} {s.vat_number ? `· P.IVA ${s.vat_number}` : ""} {s.city ? `· ${s.city}${s.province?` (${s.province})`:""}` : ""}</>}
           badges={<Badge variant={s.status==="attivo"?"default":"outline"}>{s.status}</Badge>}
           footer={<div className="space-y-0.5">
             {s.contact_person && <div>👤 {s.contact_person}</div>}
             {s.email && <div>✉ {s.email}</div>}
+            {s.pec && <div>🛡 PEC: {s.pec}</div>}
+            {s.sdi_code && <div>📨 SDI: <code>{s.sdi_code}</code></div>}
             {s.phone && <div>📞 {s.phone}</div>}
+            {s.iban && <div>🏦 {s.iban}</div>}
             {s.durc_expiry && <div>DURC scade: <b>{s.durc_expiry}</b></div>}
           </div>}
         />
