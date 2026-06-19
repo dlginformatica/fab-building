@@ -9,6 +9,7 @@ import { LogOut, Volume2, VolumeX } from "lucide-react";
 import { useSpeaker } from "@/components/tts/SpeakerProvider";
 import { SpeakerPanel } from "@/components/tts/SpeakerPanel";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { NotificationsBell } from "@/components/layout/NotificationsBell";
 
 export function Topbar() {
   const navigate = useNavigate();
@@ -58,6 +59,7 @@ export function Topbar() {
         </Select>
       </div>
       <div className="flex items-center gap-2">
+        <NotificationsBell />
         <Popover>
           <PopoverTrigger asChild>
             <Button variant="outline" size="icon" className={isSpeaking ? "sla-pulse" : ""}>
