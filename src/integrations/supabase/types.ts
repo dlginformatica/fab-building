@@ -114,6 +114,47 @@ export type Database = {
           },
         ]
       }
+      asset_history: {
+        Row: {
+          actor_id: string | null
+          asset_id: string
+          created_at: string
+          field: string
+          id: string
+          new_value: Json | null
+          old_value: Json | null
+          structure_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          asset_id: string
+          created_at?: string
+          field: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          structure_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          asset_id?: string
+          created_at?: string
+          field?: string
+          id?: string
+          new_value?: Json | null
+          old_value?: Json | null
+          structure_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_history_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_media: {
         Row: {
           asset_id: string
@@ -3611,6 +3652,30 @@ export type Database = {
       }
     }
     Functions: {
+      asset_maintenance_kpi: {
+        Args: { _asset: string }
+        Returns: {
+          last_failure_at: string
+          last_repair_at: string
+          mtbf_hours: number
+          mttr_hours: number
+          total_failures: number
+          total_repairs: number
+        }[]
+      }
+      asset_maintenance_log: {
+        Args: { _asset: string }
+        Returns: {
+          closed_at: string
+          hours: number
+          kind: string
+          notes: string
+          occurred_at: string
+          ref_id: string
+          status: string
+          title: string
+        }[]
+      }
       can_manage_template: {
         Args: { _template: string; _user: string }
         Returns: boolean
