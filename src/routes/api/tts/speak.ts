@@ -1,9 +1,25 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { createClient } from "@supabase/supabase-js";
 
 export const Route = createFileRoute("/api/tts/speak")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+        // Require authenticated Supabase session to prevent unauthenticated
+        // consumption of AI gateway credits.
+        const authHeader = request.headers.get("authorization") ?? "";
+        const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : "";
+        if (!token) return new Response("Unauthorized", { status: 401 });
+        try {
+          const sb = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+            auth: { persistSession: false, autoRefreshToken: false },
+            global: { headers: { Authorization: `Bearer ${token}` } },
+          });
+          const { data, error } = await sb.auth.getUser(token);
+          if (error || !data.user) return new Response("Unauthorized", { status: 401 });
+        } catch {
+          return new Response("Unauthorized", { status: 401 });
+        }
         const key = process.env.LOVABLE_API_KEY;
         if (!key) return new Response("Missing LOVABLE_API_KEY", { status: 500 });
         let body: { text?: string; voice?: string };
