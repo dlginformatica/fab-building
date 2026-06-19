@@ -213,20 +213,3 @@ function OnboardingBanner() {
     </Card>
   );
 }
-
-function _EmptyStructureLegacy() {
-  return (
-    <div className="grid h-[60vh] place-items-center">
-      <Card className="max-w-md">
-        <CardHeader>
-          <CardTitle className="font-display flex items-center gap-2"><Sparkles className="h-5 w-5 text-primary"/>Benvenuto in HotelOps</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm text-muted-foreground">
-          <p>Configura la tua struttura in 5 minuti con il wizard guidato: nome, dimensioni, piani, camere, SLA, categorie asset — tutto pronto al primo accesso.</p>
-          <Link to="/app/onboarding"><Button className="w-full"><Rocket className="mr-2 h-4 w-4"/>Avvia setup guidato</Button></Link>
-          <p className="text-xs">Oppure vai a <Link to="/app/structures" className="text-primary underline">Strutture</Link> e <Link to="/app/users" className="text-primary underline">Utenti & Ruoli</Link> per la configurazione manuale.</p>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
