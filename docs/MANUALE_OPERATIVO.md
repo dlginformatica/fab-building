@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### 2026-06-19 — Anagrafica fornitori estesa
+Form nuovo fornitore riorganizzato in sezioni (Anagrafica, Dati fiscali, Contatti, Sede legale, Compliance) con i campi richiesti per la fatturazione elettronica italiana:
+- **Dati fiscali**: P.IVA, Codice Fiscale, Codice SDI (7 caratteri), PEC, IBAN, REA.
+- **Contatti**: aggiunto Sito web.
+- **Sede legale**: indirizzo, città, provincia (2 lettere), CAP, paese (ISO).
+- Card fornitore mostra città/provincia, PEC, codice SDI e IBAN quando presenti.
+
 ### 2026-06-19 — Fase 8.5 Dashboard KPI struttura
 Nuova pagina `/app/structure-kpi` con selettore struttura e:
 - 7 KPI card cliccabili: ticket aperti, ticket in ritardo (rosso se >0), % SLA risolti on time (30g), contratti in scadenza 90g, totale bollette ultimi 30g, asset totali, manutenzioni pending.

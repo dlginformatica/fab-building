@@ -4,6 +4,9 @@
 
 ## Changelog
 
+### 2026-06-19 — Fornitori: dati fiscali
+- RF-SUP-05 Anagrafica fornitori con campi obbligatori per fatturazione elettronica IT: P.IVA, Codice Fiscale, Codice SDI, PEC, IBAN, REA, sito web, sede legale strutturata (indirizzo, città, prov., CAP, paese).
+
 ### 2026-06-19 — Fase 8.5 Dashboard KPI struttura
 - RF-DASH-01 Selettore struttura + 7 KPI cliccabili (ticket aperti/in ritardo, % SLA 30g, contratti scadenza 90g, bollette 30g, asset, manutenzioni pending).
 - RF-DASH-02 Trend settimanale ticket aperti/risolti (12 settimane).
