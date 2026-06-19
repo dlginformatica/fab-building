@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.2 SLA
+- `sla_compliance_report` SECURITY DEFINER, `EXECUTE` revocato ad anon e filtrato internamente da `has_structure_access(auth.uid(),...)` per evitare leak di ticket di strutture non accessibili.
+- `sla_pending_escalations` SECURITY DEFINER, `EXECUTE` revocato ad anon e authenticated (solo service role via cron).
+- Indici `idx_sla_escalation_rule (sla_rule_id, level)` e `idx_sla_escalation_struct (structure_id)` per dispatch O(rules × violations) → O(matched).
+- Unicità `(sla_rule_id, level)` su `sla_escalation_rules` per prevenire dupliciti L1 multipli sulla stessa regola.
+- Cron orario `/api/public/hooks/sla-escalations` autenticato con `SCHEDULER_SECRET`; aggiorna `last_escalation_level` per evitare riemissioni.
+
 ### 2026-06-19 — Fase 8.1 Contratti
 - Allegati contratti su bucket privato Supabase Storage `contracts`; accesso solo via URL firmati (300 s) e RLS che incrocia `storage_path` con `contract_attachments.structure_id`.
 - Trigger `tg_contract_attachments_count` e `tg_contract_apply_renewal` SECURITY DEFINER con search_path bloccato a `public`.

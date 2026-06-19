@@ -4,6 +4,13 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.2 SLA escalation & conformità
+- Nuova tabella `sla_escalation_rules` (id, sla_rule_id FK, structure_id FK, level CHECK 1-5, after_minutes, notify_role app_role, notify_user_id, notify_channel_id, event notification_event, enabled, notes) + UNIQUE(sla_rule_id, level) + RLS (read: has_structure_access, manage: is_admin).
+- `sla_violations`: nuove colonne `last_escalation_level INT NOT NULL DEFAULT 0`, `last_escalation_at TIMESTAMPTZ`.
+- Nuova funzione `sla_compliance_report(_from,_to,_structure)` (SECURITY DEFINER, EXECUTE revocato ad anon).
+- Nuova funzione `sla_pending_escalations()` (SECURITY DEFINER, EXECUTE revocato ad anon/authenticated).
+- Enum `notification_event` esteso con `sla_escalation_l1`, `sla_escalation_l2`, `sla_escalation_l3`, `compliance_report_ready`.
+
 ### 2026-06-19 — Fase 8.1 Contratti
 - `contracts`: nuovi campi `notice_period_days INT NOT NULL DEFAULT 30`, `renewal_terms TEXT`, `next_review_at DATE`, `attachments_count INT NOT NULL DEFAULT 0`, `last_notified_at TIMESTAMPTZ`.
 - Nuova tabella `contract_renewals` (id, contract_id FK, structure_id FK, previous_end_date, new_end_date, amount, notes, renewed_by, renewed_at, created_at) + RLS `has_structure_access`.
