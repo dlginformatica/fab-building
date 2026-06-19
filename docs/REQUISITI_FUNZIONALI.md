@@ -4,6 +4,16 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.2 SLA guidata (escalation + conformità)
+- Nuova tabella `sla_escalation_rules`: catena multi-livello (L1–L5) per regola SLA o struttura, con `after_minutes`, destinatario per ruolo / utente / canale, evento dedicato (`sla_escalation_l1/l2/l3`), abilitabile.
+- Nuove colonne `last_escalation_level`, `last_escalation_at` su `sla_violations` per idempotenza.
+- Funzione DB `sla_pending_escalations()` (service role) usata dal cron orario per emettere escalation non ancora processate.
+- Funzione DB `sla_compliance_report(_from,_to,_structure)` con conteggi ack/resolve on time, violazioni, % compliance e tempo medio di risoluzione, filtrata da `has_structure_access`.
+- Nuova pagina `/app/sla-escalations`: editor catena escalation (livello, minuti, ruolo o canale, evento) con tabella tabellare attivabile/disattivabile.
+- Nuova pagina `/app/sla-compliance`: KPI globali (Ack on time %, Risolti on time %, Violazioni), filtro periodo + struttura, tabella per priorità, export CSV.
+- Nuovo cron route `/api/public/hooks/sla-escalations` (auth `apikey: SCHEDULER_SECRET`) — invocazione oraria suggerita.
+- Eventi notifica aggiunti: `sla_escalation_l1`, `sla_escalation_l2`, `sla_escalation_l3`, `compliance_report_ready`.
+
 ### 2026-06-19 — Fase 8.1 Contratti completi (rinnovi, allegati, scadenziario)
 - Estesa tabella `contracts` con `notice_period_days`, `renewal_terms`, `next_review_at`, `attachments_count`, `last_notified_at`.
 - Nuova tabella `contract_renewals`: storico rinnovi con previous_end_date → new_end_date, importo, note e autore. Trigger applica automaticamente il rinnovo al contratto (aggiorna end_date, riapre stato attivo, reset last_notified_at).

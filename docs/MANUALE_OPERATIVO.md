@@ -4,6 +4,21 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.2 SLA guidata
+**Escalation** (`/app/sla-escalations`):
+- Aggiungi livelli (L1/L2/L3) indicando minuti di ritardo dopo la scadenza e destinatario:
+  - **Canale**: invia direttamente al canale Teams/Email indicato.
+  - **Auto**: usa i canali sottoscritti all'evento (es. `sla_escalation_l1`).
+- Disattiva temporaneamente un livello dal toggle; elimina con il cestino.
+- Lo scheduler orario `/api/public/hooks/sla-escalations` processa tutte le violazioni aperte e marca il livello inviato.
+
+**Conformità** (`/app/sla-compliance`):
+- Seleziona periodo (default ultimi 30 giorni) e struttura per ottenere KPI Ack/Risoluzione on time e tabella per priorità.
+- Esporta in CSV per condivisione con direzione o auditor.
+
+**Cron suggerito** (super_admin lato DB):
+`SELECT cron.schedule('hotelops-sla-escalations-hourly','15 * * * *', $$SELECT net.http_post(url:='https://project--83b017ab-cb1a-4977-a89e-bc32522b4ed2.lovable.app/api/public/hooks/sla-escalations', headers:=jsonb_build_object('Content-Type','application/json','apikey','<SCHEDULER_SECRET>'), body:='{}'::jsonb);$$);`
+
 ### 2026-06-19 — Fase 8.1 Contratti completi
 **Gestione contratti** (`/app/contracts`):
 - Tab **Tutti**: card con codice, fornitore, periodo, importo, badge stato, indicatore allegati e auto-rinnovo. Pulsanti **Rinnova** e **Allegati** su ogni card.
