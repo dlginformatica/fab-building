@@ -9,6 +9,7 @@ import {
 const groups: Array<{ label: string; items: Array<{ to: string; label: string; icon: any; exact?: boolean }> }> = [
   { label: "Operativo", items: [
     { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
+    { to: "/app/structure-kpi", label: "KPI struttura", icon: BarChart3 },
     { to: "/app/tickets", label: "Ticket", icon: Ticket },
     { to: "/app/messages", label: "Messaggi", icon: MessageSquare },
     { to: "/portal", label: "Portale Agenti", icon: ExternalLink },
