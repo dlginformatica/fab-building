@@ -2594,69 +2594,102 @@ export type Database = {
       suppliers: {
         Row: {
           address: string | null
+          billing_address: string | null
           blocked: boolean
           category: string | null
           certifications: Json
+          city: string | null
           contact_person: string | null
+          country: string | null
           created_at: string
           durc_expiry: string | null
           email: string | null
           haccp_expiry: string | null
+          iban: string | null
           id: string
           insurance_expiry: string | null
           name: string
           notes: string | null
+          pec: string | null
           phone: string | null
+          postal_code: string | null
+          province: string | null
           rating: number | null
+          rea_number: string | null
+          sdi_code: string | null
           status: Database["public"]["Enums"]["supplier_status"]
           structure_id: string | null
+          tax_code: string | null
           updated_at: string
           vat_number: string | null
           visura_expiry: string | null
+          website: string | null
         }
         Insert: {
           address?: string | null
+          billing_address?: string | null
           blocked?: boolean
           category?: string | null
           certifications?: Json
+          city?: string | null
           contact_person?: string | null
+          country?: string | null
           created_at?: string
           durc_expiry?: string | null
           email?: string | null
           haccp_expiry?: string | null
+          iban?: string | null
           id?: string
           insurance_expiry?: string | null
           name: string
           notes?: string | null
+          pec?: string | null
           phone?: string | null
+          postal_code?: string | null
+          province?: string | null
           rating?: number | null
+          rea_number?: string | null
+          sdi_code?: string | null
           status?: Database["public"]["Enums"]["supplier_status"]
           structure_id?: string | null
+          tax_code?: string | null
           updated_at?: string
           vat_number?: string | null
           visura_expiry?: string | null
+          website?: string | null
         }
         Update: {
           address?: string | null
+          billing_address?: string | null
           blocked?: boolean
           category?: string | null
           certifications?: Json
+          city?: string | null
           contact_person?: string | null
+          country?: string | null
           created_at?: string
           durc_expiry?: string | null
           email?: string | null
           haccp_expiry?: string | null
+          iban?: string | null
           id?: string
           insurance_expiry?: string | null
           name?: string
           notes?: string | null
+          pec?: string | null
           phone?: string | null
+          postal_code?: string | null
+          province?: string | null
           rating?: number | null
+          rea_number?: string | null
+          sdi_code?: string | null
           status?: Database["public"]["Enums"]["supplier_status"]
           structure_id?: string | null
+          tax_code?: string | null
           updated_at?: string
           vat_number?: string | null
           visura_expiry?: string | null
+          website?: string | null
         }
         Relationships: [
           {

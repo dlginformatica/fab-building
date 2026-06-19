@@ -4,6 +4,9 @@
 
 ## Changelog
 
+### 2026-06-19 — suppliers (estensione)
+Aggiunti campi: `tax_code`, `sdi_code`, `pec`, `iban`, `rea_number`, `website`, `billing_address`, `city`, `province`, `postal_code`, `country` (default `IT`). Indici su `tax_code` e `vat_number`.
+
 ### 2026-06-19 — Fase 8.5
 **Funzioni dashboard**
 - `dashboard_structure_kpi(_structure)` → open_tickets, overdue_tickets, sla_resolve_30d_pct, expiring_contracts_90d, invoice_total_30d, total_assets, pending_maintenance.
