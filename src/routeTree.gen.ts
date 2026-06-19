@@ -47,6 +47,7 @@ import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
 import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
 import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
+import { Route as AuthenticatedAppReordersIdRouteImport } from './routes/_authenticated/app.reorders.$id'
 import { Route as AuthenticatedAppDeliveryQueueIdRouteImport } from './routes/_authenticated/app.delivery-queue.$id'
 import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
 import { Route as AuthenticatedAppAQrRouteImport } from './routes/_authenticated/app.a.$qr'
@@ -265,6 +266,12 @@ const AuthenticatedAppTicketsIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedAppTicketsRoute,
   } as any)
+const AuthenticatedAppReordersIdRoute =
+  AuthenticatedAppReordersIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAppReordersRoute,
+  } as any)
 const AuthenticatedAppDeliveryQueueIdRoute =
   AuthenticatedAppDeliveryQueueIdRouteImport.update({
     id: '/$id',
@@ -304,7 +311,7 @@ export interface FileRoutesByFullPath {
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
-  '/app/reorders': typeof AuthenticatedAppReordersRoute
+  '/app/reorders': typeof AuthenticatedAppReordersRouteWithChildren
   '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -322,6 +329,7 @@ export interface FileRoutesByFullPath {
   '/app/a/$qr': typeof AuthenticatedAppAQrRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
+  '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
@@ -346,7 +354,7 @@ export interface FileRoutesByTo {
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
-  '/app/reorders': typeof AuthenticatedAppReordersRoute
+  '/app/reorders': typeof AuthenticatedAppReordersRouteWithChildren
   '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -364,6 +372,7 @@ export interface FileRoutesByTo {
   '/app/a/$qr': typeof AuthenticatedAppAQrRoute
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
+  '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
@@ -390,7 +399,7 @@ export interface FileRoutesById {
   '/_authenticated/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/_authenticated/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/_authenticated/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
-  '/_authenticated/app/reorders': typeof AuthenticatedAppReordersRoute
+  '/_authenticated/app/reorders': typeof AuthenticatedAppReordersRouteWithChildren
   '/_authenticated/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
@@ -408,6 +417,7 @@ export interface FileRoutesById {
   '/_authenticated/app/a/$qr': typeof AuthenticatedAppAQrRoute
   '/_authenticated/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/_authenticated/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
+  '/_authenticated/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
   '/_authenticated/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
 }
@@ -452,6 +462,7 @@ export interface FileRouteTypes {
     | '/app/a/$qr'
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
+    | '/app/reorders/$id'
     | '/app/tickets/$id'
     | '/api/public/hooks/report-scheduler'
   fileRoutesByTo: FileRoutesByTo
@@ -494,6 +505,7 @@ export interface FileRouteTypes {
     | '/app/a/$qr'
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
+    | '/app/reorders/$id'
     | '/app/tickets/$id'
     | '/api/public/hooks/report-scheduler'
   id:
@@ -537,6 +549,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/a/$qr'
     | '/_authenticated/app/assets/$id'
     | '/_authenticated/app/delivery-queue/$id'
+    | '/_authenticated/app/reorders/$id'
     | '/_authenticated/app/tickets/$id'
     | '/api/public/hooks/report-scheduler'
   fileRoutesById: FileRoutesById
@@ -817,6 +830,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTicketsIdRouteImport
       parentRoute: typeof AuthenticatedAppTicketsRoute
     }
+    '/_authenticated/app/reorders/$id': {
+      id: '/_authenticated/app/reorders/$id'
+      path: '/$id'
+      fullPath: '/app/reorders/$id'
+      preLoaderRoute: typeof AuthenticatedAppReordersIdRouteImport
+      parentRoute: typeof AuthenticatedAppReordersRoute
+    }
     '/_authenticated/app/delivery-queue/$id': {
       id: '/_authenticated/app/delivery-queue/$id'
       path: '/$id'
@@ -869,6 +889,20 @@ const AuthenticatedAppDeliveryQueueRouteWithChildren =
     AuthenticatedAppDeliveryQueueRouteChildren,
   )
 
+interface AuthenticatedAppReordersRouteChildren {
+  AuthenticatedAppReordersIdRoute: typeof AuthenticatedAppReordersIdRoute
+}
+
+const AuthenticatedAppReordersRouteChildren: AuthenticatedAppReordersRouteChildren =
+  {
+    AuthenticatedAppReordersIdRoute: AuthenticatedAppReordersIdRoute,
+  }
+
+const AuthenticatedAppReordersRouteWithChildren =
+  AuthenticatedAppReordersRoute._addFileChildren(
+    AuthenticatedAppReordersRouteChildren,
+  )
+
 interface AuthenticatedAppTicketsRouteChildren {
   AuthenticatedAppTicketsIdRoute: typeof AuthenticatedAppTicketsIdRoute
 }
@@ -902,7 +936,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppPenaltiesRoute: typeof AuthenticatedAppPenaltiesRoute
   AuthenticatedAppPermissionsRoute: typeof AuthenticatedAppPermissionsRoute
   AuthenticatedAppPurchaseOrdersRoute: typeof AuthenticatedAppPurchaseOrdersRoute
-  AuthenticatedAppReordersRoute: typeof AuthenticatedAppReordersRoute
+  AuthenticatedAppReordersRoute: typeof AuthenticatedAppReordersRouteWithChildren
   AuthenticatedAppReportBuilderRoute: typeof AuthenticatedAppReportBuilderRoute
   AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
@@ -940,7 +974,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppPenaltiesRoute: AuthenticatedAppPenaltiesRoute,
   AuthenticatedAppPermissionsRoute: AuthenticatedAppPermissionsRoute,
   AuthenticatedAppPurchaseOrdersRoute: AuthenticatedAppPurchaseOrdersRoute,
-  AuthenticatedAppReordersRoute: AuthenticatedAppReordersRoute,
+  AuthenticatedAppReordersRoute: AuthenticatedAppReordersRouteWithChildren,
   AuthenticatedAppReportBuilderRoute: AuthenticatedAppReportBuilderRoute,
   AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
