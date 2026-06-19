@@ -4,6 +4,14 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.4 PWA offline + sync
+HotelOps è ora installabile come app (icona home, splash, manifest) e funziona offline.
+- **Installazione**: dal browser mobile usa "Aggiungi a schermata Home" / "Installa app". L'icona apre direttamente la pagina ticket.
+- **Offline**: l'app shell (HTML/CSS/JS/font) è cachata. Quando la rete cade, le pagine già visitate restano navigabili.
+- **Outbox**: ticket, commenti e scansioni QR creati offline vengono salvati in IndexedDB e inviati automaticamente al ritorno della rete.
+- **Badge**: in basso a destra appare lo stato (Offline / N in coda). Pulsante "Sync" per forzare l'invio.
+- **Editor Lovable**: il service worker NON si registra in preview/dev (evita stale cache). Funziona solo sul dominio pubblicato. Usare `?sw=off` come kill-switch.
+
 ### 2026-06-19 — Fase 8.3 Asset avanzati
 Nuova scheda asset con tre tab in fondo alla pagina (`/app/assets/:id`):
 - **Storico modifiche**: traccia automatica di ogni cambio sui campi principali (nome, codice, marca/modello, stato, stanza, area, foto, garanzia, note). Registrata data, attore, valore precedente e nuovo.

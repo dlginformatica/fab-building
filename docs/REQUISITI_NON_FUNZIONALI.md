@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.4
+- RNF-PWA-01 Service worker generato da `vite-plugin-pwa` (Workbox) con `injectRegister: null` — registrazione solo dal wrapper guardato `src/lib/pwa/register.ts`.
+- RNF-PWA-02 Nessuna registrazione in dev, iframe, host Lovable preview, beta o quando `?sw=off`. In quei contesti viene fatto `unregister()` dei SW esistenti.
+- RNF-PWA-03 `navigateFallbackDenylist` esclude `/~oauth` e `/api/*` dal fallback offline (callback OAuth e hook server-side non vengono dirottati).
+- RNF-PWA-04 Outbox IndexedDB con retry per voce; nessun dato sensibile esce dal device finché non torna online (RLS applicate al flush).
+
 ### 2026-06-19 — Fase 8.3
 - RNF-AUDIT-04 Storico asset alimentato da trigger DB `tg_asset_history` (SECURITY DEFINER, search_path fissato) — non bypassabile da scritture client.
 - RNF-RBAC-09 Lettura `asset_history` e funzioni `asset_maintenance_log` / `asset_maintenance_kpi` filtrate via `has_structure_access(auth.uid(), structure_id)`.
