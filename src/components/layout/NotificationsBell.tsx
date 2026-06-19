@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -8,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Bell } from "lucide-react";
 import { fmtDateTime } from "@/lib/format";
 import { useActiveStructure } from "@/lib/structure-context";
-import { useQueryClient } from "@tanstack/react-query";
 
 const LABEL: Record<string,{txt:string;tone:string}> = {
   warning_ack: { txt:"SLA presa in carico in scadenza", tone:"text-warning" },
@@ -19,7 +17,6 @@ const LABEL: Record<string,{txt:string;tone:string}> = {
 
 export function NotificationsBell() {
   const { activeStructureId } = useActiveStructure();
-  const qc = useQueryClient();
   const { data: notifs = [] } = useQuery({
     queryKey: ["sla_notifications", activeStructureId],
     queryFn: async () => {
@@ -29,14 +26,6 @@ export function NotificationsBell() {
     },
     refetchInterval: 60_000,
   });
-
-  useEffect(() => {
-    const ch = supabase.channel("sla_notifications_realtime")
-      .on("postgres_changes", { event:"INSERT", schema:"public", table:"sla_notifications" }, () => {
-        qc.invalidateQueries({ queryKey: ["sla_notifications"] });
-      }).subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [qc]);
 
   const count = notifs.length;
   return (
