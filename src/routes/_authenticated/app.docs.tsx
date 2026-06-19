@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import funzionaliMd from "@/../docs/REQUISITI_FUNZIONALI.md?raw";
 import nonFunzionaliMd from "@/../docs/REQUISITI_NON_FUNZIONALI.md?raw";
 import manualeMd from "@/../docs/MANUALE_OPERATIVO.md?raw";
+import schemaMd from "@/../docs/SCHEMA_DB.md?raw";
 
 export const Route = createFileRoute("/_authenticated/app/docs")({ component: Page });
 
@@ -15,6 +16,7 @@ function Page() {
     { key: "rf", title: "Requisiti Funzionali", body: funzionaliMd },
     { key: "rnf", title: "Requisiti Non Funzionali", body: nonFunzionaliMd },
     { key: "man", title: "Manuale Operativo", body: manualeMd },
+    { key: "db", title: "Schema DB", body: schemaMd },
   ];
   return (
     <div className="space-y-6">
