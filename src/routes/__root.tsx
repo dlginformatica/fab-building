@@ -14,6 +14,9 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SpeakerProvider } from "@/components/tts/SpeakerProvider";
+import { OfflineBadge } from "@/components/pwa/OfflineBadge";
+import { registerPWA } from "@/lib/pwa/register";
+import { flushOutbox } from "@/lib/pwa/outbox";
 
 function NotFoundComponent() {
   return (
@@ -94,6 +97,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: appCss,
       },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "icon", href: "/icon-192.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/icon-192.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" },
@@ -132,10 +138,18 @@ function RootComponent() {
     return () => subscription.unsubscribe();
   }, [router, queryClient]);
 
+  useEffect(() => {
+    registerPWA();
+    if (typeof navigator !== "undefined" && navigator.onLine) {
+      flushOutbox().catch(() => {});
+    }
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <SpeakerProvider>
         <Outlet />
+        <OfflineBadge />
         <Toaster richColors position="top-right" />
       </SpeakerProvider>
     </QueryClientProvider>
