@@ -10,9 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ShieldCheck, Star, AlertTriangle, Lock, Unlock } from "lucide-react";
+import { ShieldCheck, Star, AlertTriangle, Lock, Unlock, FileDown } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDate } from "@/lib/format";
+import jsPDF from "jspdf";
 
 export const Route = createFileRoute("/_authenticated/app/suppliers-compliance")({ component: Page });
 
@@ -97,6 +98,7 @@ function Page() {
 
       <div className="flex gap-2">
         <Input placeholder="Cerca fornitore, P.IVA, referente…" value={search} onChange={(e)=>setSearch(e.target.value)} className="max-w-sm"/>
+        <Button variant="outline" onClick={()=>exportCompliancePdf(filtered, counts)}><FileDown className="h-4 w-4 mr-1"/>Esporta PDF executive</Button>
       </div>
 
       <Card>
