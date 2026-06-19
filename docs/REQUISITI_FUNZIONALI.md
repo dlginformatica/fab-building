@@ -4,6 +4,14 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 8.1 Contratti completi (rinnovi, allegati, scadenziario)
+- Estesa tabella `contracts` con `notice_period_days`, `renewal_terms`, `next_review_at`, `attachments_count`, `last_notified_at`.
+- Nuova tabella `contract_renewals`: storico rinnovi con previous_end_date → new_end_date, importo, note e autore. Trigger applica automaticamente il rinnovo al contratto (aggiorna end_date, riapre stato attivo, reset last_notified_at).
+- Nuova tabella `contract_attachments` + bucket privato `contracts`: upload/download/elimina con URL firmati a 5 minuti; trigger mantiene `attachments_count`.
+- Pagina `/app/contracts` rivista con due tab: **Tutti** (card con badge stato, scadenza, allegati, azioni Rinnova/Allegati) e **Scadenzario** (KPI Scaduti / ≤30 / 31–60 / 61–90 gg + tabella ordinata per scadenza).
+- Nuovo evento notifica `contract_expiring` e route cron `/api/public/hooks/contracts-notify` (auth via SCHEDULER_SECRET) che invia notifiche giornaliere ai canali Teams/Email configurati per i contratti in scadenza entro il periodo di preavviso.
+- RLS: accesso a rinnovi e allegati riservato a chi ha accesso alla struttura del contratto.
+
 ### 2026-06-19 — Fase 7.4 Notifiche Email & Microsoft Teams
 - Nuove tabelle `notification_channels` (canale per struttura: tipo email/teams, destinazione, eventi sottoscritti, attivo) e `notification_log` (storico invii con esito).
 - Eventi supportati: ticket_created, ticket_assigned, sla_warning, sla_violated, workflow_step, invoice_due, maintenance_due.
