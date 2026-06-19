@@ -3,7 +3,7 @@ import {
   LayoutDashboard, Building2, Wrench, Ticket, Settings, FileText, Users, Bell,
   Truck, FileSignature, ClipboardList, CalendarClock, Package, ShoppingCart,
   Gauge, Receipt, MessageSquare, BarChart3, ScrollText, ExternalLink,
-  ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity, TrendingUp,
+  ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity, TrendingUp, Workflow,
 } from "lucide-react";
 
 const groups: Array<{ label: string; items: Array<{ to: string; label: string; icon: any; exact?: boolean }> }> = [
@@ -40,6 +40,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app/sla", label: "Regole SLA", icon: Bell },
     { to: "/app/sla-notifications", label: "Notifiche SLA", icon: Bell },
     { to: "/app/penalties", label: "Penali & Violazioni", icon: AlertTriangle },
+    { to: "/app/workflows", label: "Workflow & procedure", icon: Workflow },
     { to: "/app/users", label: "Utenti & Ruoli", icon: Users },
     { to: "/app/permissions", label: "Permessi funzioni", icon: ShieldCheck },
     { to: "/app/delegations", label: "Deleghe", icon: UserCog },

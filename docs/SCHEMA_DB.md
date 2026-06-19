@@ -4,6 +4,16 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 7.2 Workflow Engine
+- Nuove tabelle: workflows, workflow_steps, workflow_instances, workflow_transitions (append-only).
+- Editor procedure multi-step con tipi: approval, action, notification, wait, condition, form.
+- Assegnatario per ruolo/utente, SLA per step in minuti, escalation su timeout (config).
+- Istanze collegabili a ticket/asset/fornitore/fattura; transizioni con outcome (approved, rejected, completed, skipped, timeout, escalated, cancelled).
+- RLS scoped per struttura; admin (super_admin/direttore/facility_manager) gestiscono definizioni; membri struttura avviano/avanzano istanze.
+- Audit automatico via tg_audit_log su workflows e workflow_instances.
+- UI: /app/workflows con tabs Procedure / Esecuzioni, editor step inline, dialog di avanzamento.
+
+
 ### 2026-06-19 — Fase 7.1
 - Estesa `maintenance_tasks` (assigned_to, hours, outcome, photos, signature_url, signed_at, ticket_report_id, scheduled_for, updated_at).
 - Nuova funzione `generate_maintenance_tasks(from,to)`.
@@ -1041,3 +1051,22 @@
 - `reorders` — privato
 - `report-previews` — privato
 - `tickets` — privato
+
+## Tabelle Fase 7.2 — Workflow Engine
+
+### workflows
+Definizione procedure. Colonne: structure_id (FK structures), name, description, trigger_type (enum: manual, ticket_opened, ticket_resolved, contract_expiring, invoice_received, asset_created, maintenance_due, custom), trigger_config (jsonb), active, version, created_by.
+RLS: SELECT membri struttura · INSERT/UPDATE/DELETE solo is_admin().
+Trigger: tg_set_updated_at, tg_audit_log.
+
+### workflow_steps
+Step ordinati di una procedura. Colonne: workflow_id, position (UNIQUE per workflow), name, step_type (enum: approval, action, notification, wait, condition, form), config (jsonb), assignee_role (app_role), assignee_user, sla_minutes, on_timeout, next_step_id.
+RLS: SELECT membri struttura del workflow · ALL solo is_admin().
+
+### workflow_instances
+Esecuzione di una procedura. Colonne: workflow_id, structure_id, status (enum: running, completed, cancelled, failed, waiting), current_step_id, context (jsonb), ticket_id, asset_id, supplier_id, invoice_id, started_by, started_at, due_at, completed_at.
+RLS scoped per struttura. Indici su (status), (structure_id), (ticket_id). Trigger audit.
+
+### workflow_transitions (append-only)
+Storico transizioni. Colonne: instance_id, from_step_id, to_step_id, actor_id, outcome (enum: approved, rejected, completed, skipped, timeout, escalated, cancelled), note, duration_seconds, payload (jsonb).
+RLS: SELECT/INSERT solo membri struttura. No UPDATE/DELETE.

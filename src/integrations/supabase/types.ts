@@ -2851,6 +2851,294 @@ export type Database = {
           },
         ]
       }
+      workflow_instances: {
+        Row: {
+          asset_id: string | null
+          completed_at: string | null
+          context: Json
+          created_at: string
+          current_step_id: string | null
+          due_at: string | null
+          id: string
+          invoice_id: string | null
+          started_at: string
+          started_by: string | null
+          status: Database["public"]["Enums"]["workflow_instance_status"]
+          structure_id: string | null
+          supplier_id: string | null
+          ticket_id: string | null
+          updated_at: string
+          workflow_id: string
+        }
+        Insert: {
+          asset_id?: string | null
+          completed_at?: string | null
+          context?: Json
+          created_at?: string
+          current_step_id?: string | null
+          due_at?: string | null
+          id?: string
+          invoice_id?: string | null
+          started_at?: string
+          started_by?: string | null
+          status?: Database["public"]["Enums"]["workflow_instance_status"]
+          structure_id?: string | null
+          supplier_id?: string | null
+          ticket_id?: string | null
+          updated_at?: string
+          workflow_id: string
+        }
+        Update: {
+          asset_id?: string | null
+          completed_at?: string | null
+          context?: Json
+          created_at?: string
+          current_step_id?: string | null
+          due_at?: string | null
+          id?: string
+          invoice_id?: string | null
+          started_at?: string
+          started_by?: string | null
+          status?: Database["public"]["Enums"]["workflow_instance_status"]
+          structure_id?: string | null
+          supplier_id?: string | null
+          ticket_id?: string | null
+          updated_at?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_instances_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_instances_current_step_id_fkey"
+            columns: ["current_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_instances_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_instances_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_instances_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_instances_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_instances_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_instances_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workflow_steps: {
+        Row: {
+          assignee_role: Database["public"]["Enums"]["app_role"] | null
+          assignee_user: string | null
+          config: Json
+          created_at: string
+          id: string
+          name: string
+          next_step_id: string | null
+          on_timeout: string
+          position: number
+          sla_minutes: number | null
+          step_type: Database["public"]["Enums"]["workflow_step_type"]
+          updated_at: string
+          workflow_id: string
+        }
+        Insert: {
+          assignee_role?: Database["public"]["Enums"]["app_role"] | null
+          assignee_user?: string | null
+          config?: Json
+          created_at?: string
+          id?: string
+          name: string
+          next_step_id?: string | null
+          on_timeout?: string
+          position: number
+          sla_minutes?: number | null
+          step_type: Database["public"]["Enums"]["workflow_step_type"]
+          updated_at?: string
+          workflow_id: string
+        }
+        Update: {
+          assignee_role?: Database["public"]["Enums"]["app_role"] | null
+          assignee_user?: string | null
+          config?: Json
+          created_at?: string
+          id?: string
+          name?: string
+          next_step_id?: string | null
+          on_timeout?: string
+          position?: number
+          sla_minutes?: number | null
+          step_type?: Database["public"]["Enums"]["workflow_step_type"]
+          updated_at?: string
+          workflow_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_steps_next_step_id_fkey"
+            columns: ["next_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_steps_workflow_id_fkey"
+            columns: ["workflow_id"]
+            isOneToOne: false
+            referencedRelation: "workflows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workflow_transitions: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          duration_seconds: number | null
+          from_step_id: string | null
+          id: string
+          instance_id: string
+          note: string | null
+          outcome: Database["public"]["Enums"]["workflow_transition_outcome"]
+          payload: Json
+          to_step_id: string | null
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          from_step_id?: string | null
+          id?: string
+          instance_id: string
+          note?: string | null
+          outcome: Database["public"]["Enums"]["workflow_transition_outcome"]
+          payload?: Json
+          to_step_id?: string | null
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          from_step_id?: string | null
+          id?: string
+          instance_id?: string
+          note?: string | null
+          outcome?: Database["public"]["Enums"]["workflow_transition_outcome"]
+          payload?: Json
+          to_step_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_transitions_from_step_id_fkey"
+            columns: ["from_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_transitions_instance_id_fkey"
+            columns: ["instance_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_instances"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_transitions_to_step_id_fkey"
+            columns: ["to_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workflows: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          name: string
+          structure_id: string | null
+          trigger_config: Json
+          trigger_type: Database["public"]["Enums"]["workflow_trigger"]
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          structure_id?: string | null
+          trigger_config?: Json
+          trigger_type?: Database["public"]["Enums"]["workflow_trigger"]
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          structure_id?: string | null
+          trigger_config?: Json
+          trigger_type?: Database["public"]["Enums"]["workflow_trigger"]
+          updated_at?: string
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflows_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       low_stock_items: {
@@ -3127,6 +3415,36 @@ export type Database = {
         | "in_corso"
         | "completato"
         | "annullato"
+      workflow_instance_status:
+        | "running"
+        | "completed"
+        | "cancelled"
+        | "failed"
+        | "waiting"
+      workflow_step_type:
+        | "approval"
+        | "action"
+        | "notification"
+        | "wait"
+        | "condition"
+        | "form"
+      workflow_transition_outcome:
+        | "approved"
+        | "rejected"
+        | "completed"
+        | "skipped"
+        | "timeout"
+        | "escalated"
+        | "cancelled"
+      workflow_trigger:
+        | "manual"
+        | "ticket_opened"
+        | "ticket_resolved"
+        | "contract_expiring"
+        | "invoice_received"
+        | "asset_created"
+        | "maintenance_due"
+        | "custom"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3324,6 +3642,40 @@ export const Constants = {
         "in_corso",
         "completato",
         "annullato",
+      ],
+      workflow_instance_status: [
+        "running",
+        "completed",
+        "cancelled",
+        "failed",
+        "waiting",
+      ],
+      workflow_step_type: [
+        "approval",
+        "action",
+        "notification",
+        "wait",
+        "condition",
+        "form",
+      ],
+      workflow_transition_outcome: [
+        "approved",
+        "rejected",
+        "completed",
+        "skipped",
+        "timeout",
+        "escalated",
+        "cancelled",
+      ],
+      workflow_trigger: [
+        "manual",
+        "ticket_opened",
+        "ticket_resolved",
+        "contract_expiring",
+        "invoice_received",
+        "asset_created",
+        "maintenance_due",
+        "custom",
       ],
     },
   },
