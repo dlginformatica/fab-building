@@ -16,6 +16,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
   { label: "Strutture & Asset", items: [
     { to: "/app/structures", label: "Strutture", icon: Building2 },
     { to: "/app/assets", label: "Asset & Impianti", icon: Wrench },
+    { to: "/app/area-mapping", label: "Aree & reparti", icon: Building2 },
     { to: "/app/maintenance", label: "Manutenzione", icon: CalendarClock },
     { to: "/app/inventory", label: "Magazzino", icon: Package },
     { to: "/app/reorders", label: "Riordini & sotto-scorta", icon: ShoppingCart },
@@ -80,7 +81,7 @@ export function Sidebar() {
           </div>
         ))}
       </nav>
-      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.12 • Costi per area · QR mobile · Compliance · Riordini</div>
+      <div className="mt-auto px-2 py-3 text-[10px] text-sidebar-foreground/50">v0.15 • SLA per area · Aree mapping · Timeline riordini · QR lifecycle</div>
     </aside>
   );
 }

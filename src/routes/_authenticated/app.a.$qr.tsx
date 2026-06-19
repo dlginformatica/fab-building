@@ -62,6 +62,15 @@ function Page() {
     </div>
   );
 
+  if ((asset as any).qr_revoked_at) return (
+    <div className="p-10 text-center space-y-3 max-w-md mx-auto">
+      <ScanLine className="h-10 w-10 mx-auto text-destructive"/>
+      <h2 className="font-display text-xl">QR revocato</h2>
+      <p className="text-sm text-muted-foreground">Questo QR è stato revocato il {fmtDateTime((asset as any).qr_revoked_at)}. Contatta il facility manager per ottenere il QR aggiornato dell'asset.</p>
+      <Button asChild variant="outline"><Link to="/app/assets">Torna agli asset</Link></Button>
+    </div>
+  );
+
   return (
     <div className="space-y-6 max-w-3xl mx-auto">
       <div className="rounded-md border border-primary/30 bg-primary/5 p-3 flex items-center gap-2 text-sm">

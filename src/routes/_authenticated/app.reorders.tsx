@@ -10,7 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Package, ShoppingCart, AlertTriangle, CheckCircle2, Truck } from "lucide-react";
+import { Package, ShoppingCart, AlertTriangle, CheckCircle2, Truck, ListTree } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/app/reorders")({ component: Page });
@@ -137,6 +138,9 @@ function Page() {
                   <td className="px-4 py-2"><Badge variant="outline">{STATUS_LABEL[r.status]}</Badge></td>
                   <td className="px-4 py-2 text-xs">{r.notes ?? ""}</td>
                   <td className="px-4 py-2 text-right space-x-1">
+                    <Button size="sm" variant="outline" asChild>
+                      <Link to="/app/reorders/$id" params={{ id: r.id }}><ListTree className="h-3 w-3 mr-1"/>Dettaglio</Link>
+                    </Button>
                     {NEXT_STATUS[r.status] && <Button size="sm" onClick={()=>advance.mutate(r)}>
                       {r.status==="ordinato" ? <><Truck className="h-3 w-3 mr-1"/>Ricevi</> :
                        r.status==="approvato" ? <><ShoppingCart className="h-3 w-3 mr-1"/>Ordina</> :

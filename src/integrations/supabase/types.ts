@@ -35,6 +35,47 @@ export type Database = {
         }
         Relationships: []
       }
+      asset_qr_audit: {
+        Row: {
+          action: string
+          actor_id: string | null
+          asset_id: string
+          created_at: string
+          id: string
+          new_token: string | null
+          old_token: string | null
+          structure_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          asset_id: string
+          created_at?: string
+          id?: string
+          new_token?: string | null
+          old_token?: string | null
+          structure_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          asset_id?: string
+          created_at?: string
+          id?: string
+          new_token?: string | null
+          old_token?: string | null
+          structure_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "asset_qr_audit_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_scans: {
         Row: {
           asset_id: string
@@ -95,6 +136,8 @@ export type Database = {
           name: string
           notes: string | null
           photo_url: string | null
+          qr_generated_at: string | null
+          qr_revoked_at: string | null
           qr_token: string | null
           room_id: string | null
           serial_number: string | null
@@ -117,6 +160,8 @@ export type Database = {
           name: string
           notes?: string | null
           photo_url?: string | null
+          qr_generated_at?: string | null
+          qr_revoked_at?: string | null
           qr_token?: string | null
           room_id?: string | null
           serial_number?: string | null
@@ -139,6 +184,8 @@ export type Database = {
           name?: string
           notes?: string | null
           photo_url?: string | null
+          qr_generated_at?: string | null
+          qr_revoked_at?: string | null
           qr_token?: string | null
           room_id?: string | null
           serial_number?: string | null
@@ -419,6 +466,7 @@ export type Database = {
       }
       cost_centers: {
         Row: {
+          area: Database["public"]["Enums"]["cost_area"] | null
           code: string
           created_at: string
           id: string
@@ -427,6 +475,7 @@ export type Database = {
           structure_id: string
         }
         Insert: {
+          area?: Database["public"]["Enums"]["cost_area"] | null
           code: string
           created_at?: string
           id?: string
@@ -435,6 +484,7 @@ export type Database = {
           structure_id: string
         }
         Update: {
+          area?: Database["public"]["Enums"]["cost_area"] | null
           code?: string
           created_at?: string
           id?: string
@@ -1252,6 +1302,88 @@ export type Database = {
           },
         ]
       }
+      reorder_attachments: {
+        Row: {
+          created_at: string
+          file_name: string | null
+          file_path: string
+          id: string
+          kind: string
+          mime_type: string | null
+          reorder_id: string
+          structure_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          file_name?: string | null
+          file_path: string
+          id?: string
+          kind: string
+          mime_type?: string | null
+          reorder_id: string
+          structure_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          file_name?: string | null
+          file_path?: string
+          id?: string
+          kind?: string
+          mime_type?: string | null
+          reorder_id?: string
+          structure_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reorder_attachments_reorder_id_fkey"
+            columns: ["reorder_id"]
+            isOneToOne: false
+            referencedRelation: "reorder_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reorder_events: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          from_status: Database["public"]["Enums"]["reorder_status"] | null
+          id: string
+          note: string | null
+          reorder_id: string
+          to_status: Database["public"]["Enums"]["reorder_status"]
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["reorder_status"] | null
+          id?: string
+          note?: string | null
+          reorder_id: string
+          to_status: Database["public"]["Enums"]["reorder_status"]
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          from_status?: Database["public"]["Enums"]["reorder_status"] | null
+          id?: string
+          note?: string | null
+          reorder_id?: string
+          to_status?: Database["public"]["Enums"]["reorder_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reorder_events_reorder_id_fkey"
+            columns: ["reorder_id"]
+            isOneToOne: false
+            referencedRelation: "reorder_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       reorder_requests: {
         Row: {
           created_at: string
@@ -1705,27 +1837,39 @@ export type Database = {
       sla_rules: {
         Row: {
           ack_minutes: number
+          area: Database["public"]["Enums"]["cost_area"] | null
           category_id: string | null
           created_at: string
+          description: string | null
+          enabled: boolean
           id: string
+          name: string | null
           priority: Database["public"]["Enums"]["ticket_priority"]
           resolve_minutes: number
           structure_id: string | null
         }
         Insert: {
           ack_minutes: number
+          area?: Database["public"]["Enums"]["cost_area"] | null
           category_id?: string | null
           created_at?: string
+          description?: string | null
+          enabled?: boolean
           id?: string
+          name?: string | null
           priority: Database["public"]["Enums"]["ticket_priority"]
           resolve_minutes: number
           structure_id?: string | null
         }
         Update: {
           ack_minutes?: number
+          area?: Database["public"]["Enums"]["cost_area"] | null
           category_id?: string | null
           created_at?: string
+          description?: string | null
+          enabled?: boolean
           id?: string
+          name?: string | null
           priority?: Database["public"]["Enums"]["ticket_priority"]
           resolve_minutes?: number
           structure_id?: string | null
