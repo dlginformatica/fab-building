@@ -188,3 +188,42 @@ function StatusBadge({ s }: { s: string }) {
   const c = STATUS_LABELS[s] ?? STATUS_LABELS.ok;
   return <Badge className={c.cls} variant="outline">{c.label}</Badge>;
 }
+
+function exportCompliancePdf(rows: any[], counts: Record<string, number>) {
+  const doc = new jsPDF();
+  const now = new Date().toLocaleString("it-IT");
+  doc.setFontSize(16); doc.text("HotelOps — Compliance fornitori", 14, 18);
+  doc.setFontSize(9); doc.setTextColor(120);
+  doc.text(`Generato il ${now}`, 14, 24);
+  doc.setDrawColor(15,58,74); doc.line(14, 27, 196, 27);
+  doc.setTextColor(0); doc.setFontSize(10);
+  doc.text(`Totali — Conformi: ${counts.ok||0}  ·  In scadenza: ${counts.in_scadenza||0}  ·  DURC scaduto: ${counts.durc_scaduto||0}  ·  Bloccati: ${counts.bloccato||0}`, 14, 34);
+  let y = 44;
+  doc.setFontSize(9); doc.setFont("helvetica","bold");
+  doc.text("Fornitore", 14, y); doc.text("Categoria", 70, y); doc.text("DURC", 110, y);
+  doc.text("Assicur.", 132, y); doc.text("HACCP", 154, y); doc.text("Stato", 176, y);
+  doc.setFont("helvetica","normal"); y += 4; doc.line(14, y, 196, y); y += 4;
+  rows.forEach((r:any) => {
+    if (y > 270) { doc.addPage(); y = 20; }
+    doc.text(String(r.name||"").slice(0,30), 14, y);
+    doc.text(String(r.category||"—").slice(0,18), 70, y);
+    doc.text(r.durc_expiry || "—", 110, y);
+    doc.text(r.insurance_expiry || "—", 132, y);
+    doc.text(r.haccp_expiry || "—", 154, y);
+    doc.text(STATUS_LABELS[r.compliance_status]?.label || "—", 176, y);
+    y += 6;
+  });
+  // Firma / footer / QR (header/footer/firma/QR per destinatario)
+  const pages = doc.getNumberOfPages();
+  for (let i = 1; i <= pages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8); doc.setTextColor(120);
+    doc.text("HotelOps · documento riservato · uso interno", 14, 290);
+    doc.text(`pag. ${i}/${pages}`, 180, 290);
+    doc.text("Firma Direttore: ____________________", 14, 283);
+    // QR via API
+    const qrData = encodeURIComponent(`hotelops://compliance/${Date.now()}/${i}`);
+    doc.addImage(`https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=${qrData}`, "PNG", 170, 270, 18, 18, undefined, "FAST");
+  }
+  doc.save(`compliance-fornitori-${new Date().toISOString().slice(0,10)}.pdf`);
+}
