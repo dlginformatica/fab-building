@@ -1304,6 +1304,110 @@ export type Database = {
           },
         ]
       }
+      notification_channels: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          events: Database["public"]["Enums"]["notification_event"][]
+          id: string
+          name: string
+          structure_id: string | null
+          target: string
+          type: Database["public"]["Enums"]["notification_channel_type"]
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          events?: Database["public"]["Enums"]["notification_event"][]
+          id?: string
+          name: string
+          structure_id?: string | null
+          target: string
+          type: Database["public"]["Enums"]["notification_channel_type"]
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          events?: Database["public"]["Enums"]["notification_event"][]
+          id?: string
+          name?: string
+          structure_id?: string | null
+          target?: string
+          type?: Database["public"]["Enums"]["notification_channel_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_channels_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notification_log: {
+        Row: {
+          channel_id: string | null
+          channel_type: Database["public"]["Enums"]["notification_channel_type"]
+          created_at: string
+          error: string | null
+          event: Database["public"]["Enums"]["notification_event"]
+          id: string
+          payload: Json
+          status: string
+          structure_id: string | null
+          subject: string | null
+          target: string
+        }
+        Insert: {
+          channel_id?: string | null
+          channel_type: Database["public"]["Enums"]["notification_channel_type"]
+          created_at?: string
+          error?: string | null
+          event: Database["public"]["Enums"]["notification_event"]
+          id?: string
+          payload?: Json
+          status?: string
+          structure_id?: string | null
+          subject?: string | null
+          target: string
+        }
+        Update: {
+          channel_id?: string | null
+          channel_type?: Database["public"]["Enums"]["notification_channel_type"]
+          created_at?: string
+          error?: string | null
+          event?: Database["public"]["Enums"]["notification_event"]
+          id?: string
+          payload?: Json
+          status?: string
+          structure_id?: string | null
+          subject?: string | null
+          target?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_log_channel_id_fkey"
+            columns: ["channel_id"]
+            isOneToOne: false
+            referencedRelation: "notification_channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_log_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       penalty_rules: {
         Row: {
           active: boolean
@@ -3386,6 +3490,15 @@ export type Database = {
         | "semestrale"
         | "annuale"
         | "custom"
+      notification_channel_type: "email" | "teams"
+      notification_event:
+        | "ticket_created"
+        | "ticket_assigned"
+        | "sla_warning"
+        | "sla_violated"
+        | "workflow_step"
+        | "invoice_due"
+        | "maintenance_due"
       reorder_status:
         | "da_approvare"
         | "approvato"
@@ -3609,6 +3722,16 @@ export const Constants = {
         "semestrale",
         "annuale",
         "custom",
+      ],
+      notification_channel_type: ["email", "teams"],
+      notification_event: [
+        "ticket_created",
+        "ticket_assigned",
+        "sla_warning",
+        "sla_violated",
+        "workflow_step",
+        "invoice_due",
+        "maintenance_due",
       ],
       reorder_status: [
         "da_approvare",

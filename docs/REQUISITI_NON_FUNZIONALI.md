@@ -4,6 +4,11 @@
 
 ## Changelog
 
+### 2026-06-19 — Fase 7.4
+- Notifiche outbound: chiamate HTTP POST verso webhook Teams con timeout breve; errori loggati in `notification_log` (status=error) senza bloccare il flusso applicativo.
+- Email: integrazione opzionale con Lovable Emails (queue + retry gestiti dall'infrastruttura email Lovable quando attivata).
+- Sicurezza: webhook Teams trattati come segreti operativi — visibili solo agli admin di struttura (RLS).
+
 ### 2026-06-19 — Fase 7.3 OCR fatture + scadenzario
 - Server function extractInvoice (createServerFn protetta da requireSupabaseAuth) che invia PDF/immagine a Lovable AI Gateway (google/gemini-2.5-flash) con response_format json_object e prompt strutturato.
 - Estrazione automatica: fornitore, P.IVA, IBAN, numero fattura, date emissione/scadenza, imponibile, IVA, totale, valuta, tipo utenza, righe di dettaglio, note.
