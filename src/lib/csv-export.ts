@@ -1,12 +1,14 @@
 /** Esporta un array di oggetti in CSV scaricabile. */
 import * as XLSX from "xlsx";
 import { downloadBlob } from "@/lib/backup";
+import { BUILD_VERSION } from "@/lib/build-version";
 
 export function exportRowsAsCsv(rows: any[], filename: string) {
-  if (!rows?.length) { downloadBlob(new Blob([""], { type: "text/csv" }), filename); return; }
+  const footer = `\n\n# HotelOps · build ${BUILD_VERSION} · esportato ${new Date().toISOString()}\n`;
+  if (!rows?.length) { downloadBlob(new Blob([footer], { type: "text/csv" }), filename); return; }
   const ws = XLSX.utils.json_to_sheet(rows);
   const csv = XLSX.utils.sheet_to_csv(ws);
-  downloadBlob(new Blob([csv], { type: "text/csv;charset=utf-8" }), filename);
+  downloadBlob(new Blob([csv + footer], { type: "text/csv;charset=utf-8" }), filename);
 }
 
 /** Apre una finestra di stampa con HTML del report — l'utente sceglie "Salva come PDF". */
@@ -22,6 +24,10 @@ export function printableHtmlAsPdf(title: string, columns: string[], rows: any[]
     thead{background:#f1f5f9}@media print{button{display:none}}</style></head>
     <body><h1>${title}</h1><p>Generato il ${new Date().toLocaleString("it-IT")} — HotelOps</p>
     <button onclick="window.print()" style="margin:8px 0;padding:6px 12px">Stampa / Salva PDF</button>
-    <table>${head}${body}</table></body></html>`);
+    <table>${head}${body}</table>
+    <footer style="position:fixed;bottom:8px;left:24px;right:24px;display:flex;justify-content:space-between;font-size:10px;color:#64748b;border-top:1px solid #cbd5e1;padding-top:4px">
+      <span>HotelOps · ${title}</span><span>build ${BUILD_VERSION}</span>
+    </footer>
+    </body></html>`);
   w.document.close();
 }
