@@ -1,3 +1,8 @@
+### Sincronizzazione robusta + audit abbonamenti (2026-06-20)
+- Lock cooperativo sulla sincronizzazione automatica/manuale, coda visibile con stato e tasto Retry.
+- Notifiche in-app a fine trial / scadenza abbonamento con link diretto alla pagina di gestione piano.
+- Pagina di audit dedicata: ogni forzatura/proroga registrata (chi, quando, vecchio→nuovo, motivo).
+- Trial personalizzato per organizzazione (0..3650 giorni) impostabile dal super admin con aggiornamento istantaneo del banner.
 # HotelOps — Brochure commerciale (sorgente)
 
 > Documento sorgente per la brochure. La versione HTML stampabile e PDF è disponibile su `/brochure`.
