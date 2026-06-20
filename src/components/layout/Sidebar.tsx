@@ -52,6 +52,7 @@ const groups: Array<{ label: string; items: Item[] }> = [
   { label: "Abbonamento", items: [
     { to: "/app/billing", label: "Abbonamento & piano", icon: CreditCard },
     { to: "/app/super-admin/plans", label: "Piani (super admin)", icon: Crown, superOnly: true },
+    { to: "/app/super-admin/subscription-audit", label: "Audit abbonamenti (super admin)", icon: ScrollText, superOnly: true },
     { to: "/app/backup", label: "Backup, Restore & Import", icon: DatabaseBackup },
     { to: "/app/super-admin/backup", label: "Backup globale (super admin)", icon: DatabaseBackup, superOnly: true },
   ]},

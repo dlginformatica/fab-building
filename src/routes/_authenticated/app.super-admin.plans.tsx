@@ -11,7 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { AlertTriangle, Save, Crown, Building2, Users, Calendar } from "lucide-react";
+import { AlertTriangle, Save, Crown, Building2, Users, Calendar, RefreshCw, ListChecks, Lock, CheckCircle2, XCircle, Timer } from "lucide-react";
 import { usePlans, type PlanRow, type Tier } from "@/lib/use-subscription";
 
 export const Route = createFileRoute("/_authenticated/app/super-admin/plans")({
@@ -81,6 +81,7 @@ function Page() {
         ))}
       </Tabs>
       <OrgSubscriptionsAdmin />
+      <SyncJobsPanel />
     </div>
   );
 }
@@ -238,10 +239,28 @@ function OrgSubscriptionsAdmin() {
   });
   const syncNow = useMutation({
     mutationFn: async () => {
-      const { error } = await (supabase as any).rpc("subscriptions_sync_expired");
+      const { data, error } = await (supabase as any).rpc("subscriptions_sync_run", { _source: "manual", _parent: null });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (job: any) => {
+      if (job?.status === "skipped_locked") toast.warning("Un'altra sincronizzazione è in corso — saltata.");
+      else if (job?.status === "failed") toast.error(`Sync fallita: ${job?.error_message ?? "errore sconosciuto"}`);
+      else toast.success(`Sincronizzazione OK — ${job?.processed_count ?? 0} organizzazioni aggiornate`);
+      qc.invalidateQueries({ queryKey: ["all-org-subs"] });
+      qc.invalidateQueries({ queryKey: ["my-subscription"] });
+      qc.invalidateQueries({ queryKey: ["sync-jobs"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const setTrial = useMutation({
+    mutationFn: async (payload: { org_id: string; days: number; note?: string }) => {
+      const { error } = await (supabase as any).rpc("super_admin_set_trial_days", {
+        _org: payload.org_id, _days: payload.days, _note: payload.note ?? null,
+      });
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Sincronizzazione eseguita"); qc.invalidateQueries({ queryKey: ["all-org-subs"] }); qc.invalidateQueries({ queryKey: ["my-subscription"] }); },
+    onSuccess: () => { toast.success("Durata trial aggiornata"); qc.invalidateQueries({ queryKey: ["all-org-subs"] }); qc.invalidateQueries({ queryKey: ["my-subscription"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -262,7 +281,7 @@ function OrgSubscriptionsAdmin() {
           </thead>
           <tbody>
             {(subs ?? []).map((s: any) => (
-              <tr key={s.id} className="border-b border-border/60">
+              <tr key={s.id} className="border-b border-border/60 align-top">
                 <td className="px-4 py-2">{s.organizations?.name ?? s.org_id}</td>
                 <td className="px-4 py-2"><Badge variant="outline">{s.tier}</Badge></td>
                 <td className="px-4 py-2"><Badge>{s.status}</Badge></td>
@@ -276,6 +295,95 @@ function OrgSubscriptionsAdmin() {
                   <select className="ml-2 rounded border bg-background px-2 py-1 text-xs" value={s.tier} onChange={(e) => force.mutate({ org_id: s.org_id, tier: e.target.value as Tier, note: "Cambio tier" })}>
                     <option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
                   </select>
+                  <TrialDaysControl orgId={s.org_id} onSubmit={(d, n) => setTrial.mutate({ org_id: s.org_id, days: d, note: n })} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
+  );
+}
+
+function TrialDaysControl({ orgId, onSubmit }: { orgId: string; onSubmit: (days: number, note?: string) => void }) {
+  const [days, setDays] = useState<number>(30);
+  const [note, setNote] = useState<string>("");
+  return (
+    <div className="mt-2 inline-flex items-center gap-1 rounded border border-border/60 bg-muted/20 px-2 py-1 align-middle" title={`Trial custom per org ${orgId.slice(0,8)}`}>
+      <Timer className="h-3 w-3 text-muted-foreground" />
+      <Input className="h-7 w-16 px-1 py-0 text-xs" type="number" min={0} max={3650} value={days} onChange={(e) => setDays(parseInt(e.target.value || "0", 10))} />
+      <span className="text-[10px] text-muted-foreground">gg</span>
+      <Input className="h-7 w-32 px-1 py-0 text-xs" placeholder="motivo (opz.)" value={note} onChange={(e) => setNote(e.target.value)} />
+      <Button size="sm" variant="outline" className="h-7" onClick={() => onSubmit(days, note || undefined)}>Trial</Button>
+    </div>
+  );
+}
+
+function SyncJobsPanel() {
+  const qc = useQueryClient();
+  const { data: jobs } = useQuery({
+    queryKey: ["sync-jobs"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from("subscription_sync_jobs")
+        .select("*").order("started_at", { ascending: false }).limit(50);
+      if (error) throw error;
+      return data ?? [];
+    },
+    refetchInterval: 30_000,
+  });
+  const retry = useMutation({
+    mutationFn: async (id: string) => {
+      const { data, error } = await (supabase as any).rpc("subscriptions_sync_retry", { _job: id });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (job: any) => {
+      if (job?.status === "success") toast.success(`Retry OK — ${job.processed_count} aggiornamenti`);
+      else if (job?.status === "skipped_locked") toast.warning("Lock attivo — retry saltato");
+      else toast.error(`Retry fallito: ${job?.error_message ?? "errore"}`);
+      qc.invalidateQueries({ queryKey: ["sync-jobs"] });
+      qc.invalidateQueries({ queryKey: ["all-org-subs"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const icon = (s: string) => s === "success" ? <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+    : s === "failed" ? <XCircle className="h-4 w-4 text-destructive" />
+    : s === "skipped_locked" ? <Lock className="h-4 w-4 text-amber-500" />
+    : <RefreshCw className="h-4 w-4 animate-spin text-primary" />;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="font-display text-base flex items-center gap-2"><ListChecks className="h-4 w-4" /> Coda & storico sincronizzazioni ({jobs?.length ?? 0})</CardTitle>
+        <p className="text-xs text-muted-foreground">Le esecuzioni manuali e quelle del cron usano un <strong>lock cooperativo</strong>: se è già in corso un run, il successivo viene marcato <code>skipped_locked</code>. Dai job falliti puoi lanciare un retry.</p>
+      </CardHeader>
+      <CardContent className="p-0">
+        <table className="w-full text-sm">
+          <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
+            <tr>
+              <th className="px-4 py-2">Stato</th><th className="px-4 py-2">Quando</th>
+              <th className="px-4 py-2">Origine</th><th className="px-4 py-2">Aggiornati</th>
+              <th className="px-4 py-2">Tentativi</th><th className="px-4 py-2">Errore</th>
+              <th className="px-4 py-2 text-right">Azioni</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(jobs ?? []).map((j: any) => (
+              <tr key={j.id} className="border-b border-border/60">
+                <td className="px-4 py-2"><div className="flex items-center gap-2">{icon(j.status)}<span className="text-xs">{j.status}</span></div></td>
+                <td className="px-4 py-2 text-xs">{new Date(j.started_at).toLocaleString("it-IT")}</td>
+                <td className="px-4 py-2"><Badge variant="outline">{j.trigger_source}</Badge></td>
+                <td className="px-4 py-2 tabular-nums">{j.processed_count}</td>
+                <td className="px-4 py-2 tabular-nums">{j.attempts}</td>
+                <td className="px-4 py-2 text-xs text-destructive max-w-[260px] truncate" title={j.error_message ?? ""}>{j.error_message ?? "—"}</td>
+                <td className="px-4 py-2 text-right">
+                  {(j.status === "failed" || j.status === "skipped_locked") && (
+                    <Button size="sm" variant="outline" disabled={retry.isPending} onClick={() => retry.mutate(j.id)}>
+                      <RefreshCw className="mr-1 h-3 w-3" /> Retry
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))}

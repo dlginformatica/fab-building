@@ -3,6 +3,15 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-20 — Fase 21.1 · Sync robusta, notifiche, audit, trial custom**
+  - Nuova tabella `public.subscription_sync_jobs` (status: `queued|running|success|failed|skipped_locked`, `attempts`, `processed_count`, `error_message`, `details jsonb`, `parent_job_id`, `trigger_source`). GRANT SELECT solo a `authenticated` con policy `has_role(auth.uid(),'super_admin')`.
+  - Funzione `subscriptions_sync_run(_source, _parent)` con `pg_try_advisory_xact_lock(894231007)`: se il lock è occupato, il job diventa `skipped_locked` e ritorna senza errore. Aggiorna `org_subscriptions` impostando `readonly` per trial/active scaduti e inserisce contestualmente `admin_alerts` (`kind='trial_ended'|'subscription_expired'`, payload include `billing_url='/app/billing'`) per owner/admin dell'org via `org_memberships`.
+  - Funzione `subscriptions_sync_retry(_job)` (super_admin only): rilancia un job `failed`/`skipped_locked` creando un nuovo run linked via `parent_job_id` e `attempts+1`.
+  - Cron pianificato: `cron.unschedule('subscriptions-sync-expired-hourly')` + `cron.schedule('subscriptions-sync-run-5min','*/5 * * * *', subscriptions_sync_run('cron', NULL))`.
+  - Funzione `super_admin_set_trial_days(_org, _days, _note)` (super_admin only) con validazione 0..3650 gg; upsert su `org_subscriptions` (status `trial`, `trial_ends_at = now() + _days`); traccia su `permission_audit` con `entity='org_subscription'`, `action='set_trial_days'`.
+  - Vista `v_subscription_audit` (security_invoker = true) su `permission_audit` filtrata per `entity='org_subscription'`, con join su `org_subscriptions`, `organizations`, `profiles`; estrae `old_tier/new_tier/old_status/new_status` da `before/after`.
+  - UI: in `/app/super-admin/plans` aggiunti il nuovo pannello "Coda & storico sincronizzazioni" (auto-refresh 30s) con badge stato e tasto Retry, e per ogni org un controllo inline "Trial Xgg + motivo" che chiama `super_admin_set_trial_days`. Il bottone "Sincronizza ora" usa il nuovo RPC `subscriptions_sync_run('manual', NULL)` e mostra toast distinto per `success`/`skipped_locked`/`failed`.
+  - Nuova pagina `/app/super-admin/subscription-audit` (gated da `has_role super_admin` in `beforeLoad`) con ricerca full-text lato client su autore/org/motivo/tier/stato e tabella delle modifiche `force_override` + `set_trial_days`.
 - **2026-06-20 — Fase 21 · Backup, Restore & Import wizard**
   - Nuovo modulo `src/lib/backup.ts`: lista tabelle org-scoped, `exportOrgSnapshot(orgId)` produce uno snapshot tipato `{ meta, data }` interrogando tutte le tabelle filtrate per `structure_id` (via lookup `structures.organization_id`) o per `org_id`/`organization_id` diretto. Conversione a JSON, ZIP-di-CSV (JSZip + `XLSX.sheet_to_csv`) e Excel multi-foglio (`XLSX.book_append_sheet`).
   - `restoreOrgSnapshot(orgId, snapshot, mode)`: in modalità **replace** elimina prima le righe collegate alle strutture dell'org; in entrambi i modi esegue `upsert` per `id`. Verifica che lo snapshot appartenga all'org corrente.

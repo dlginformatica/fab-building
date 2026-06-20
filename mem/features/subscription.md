@@ -1,3 +1,10 @@
+## Fase 21.1 — Sync robusta, notifiche, audit, trial custom
+- `subscription_sync_jobs` traccia ogni run (lock cooperativo `pg_try_advisory_xact_lock`).
+- `subscriptions_sync_run(_source,_parent)` sostituisce il vecchio `subscriptions_sync_expired` come ingresso (cron `*/5 * * * *` + manual + retry); emette `admin_alerts` (`trial_ended` / `subscription_expired`) con `billing_url=/app/billing` per owner/admin via `org_memberships`.
+- `subscriptions_sync_retry(_job)` (super_admin) rilancia job `failed`/`skipped_locked`.
+- `super_admin_set_trial_days(_org,_days,_note)` con validazione 0..3650 gg, audit su `permission_audit` (`action='set_trial_days'`).
+- Vista `v_subscription_audit` (security_invoker) → pagina `/app/super-admin/subscription-audit`.
+- UI: pannello "Coda & storico sincronizzazioni" + controllo Trial inline in `/app/super-admin/plans`.
 ---
 name: Subscription tiers & trial
 description: Piani Small/Medium/Large configurabili dal super admin con trial 30gg Large, gate moduli per tier e read-only post-scadenza

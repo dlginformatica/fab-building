@@ -3552,6 +3552,56 @@ export type Database = {
         }
         Relationships: []
       }
+      subscription_sync_jobs: {
+        Row: {
+          attempts: number
+          details: Json | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          parent_job_id: string | null
+          processed_count: number
+          started_at: string
+          status: string
+          trigger_source: string
+          triggered_by: string | null
+        }
+        Insert: {
+          attempts?: number
+          details?: Json | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          parent_job_id?: string | null
+          processed_count?: number
+          started_at?: string
+          status?: string
+          trigger_source?: string
+          triggered_by?: string | null
+        }
+        Update: {
+          attempts?: number
+          details?: Json | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          parent_job_id?: string | null
+          processed_count?: number
+          started_at?: string
+          status?: string
+          trigger_source?: string
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_sync_jobs_parent_job_id_fkey"
+            columns: ["parent_job_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_sync_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       supplier_documents: {
         Row: {
           confirmed_at: string | null
@@ -4728,6 +4778,35 @@ export type Database = {
           },
         ]
       }
+      v_subscription_audit: {
+        Row: {
+          action: string | null
+          actor_email: string | null
+          actor_id: string | null
+          actor_name: string | null
+          after: Json | null
+          before: Json | null
+          created_at: string | null
+          id: string | null
+          new_status: string | null
+          new_tier: string | null
+          old_status: string | null
+          old_tier: string | null
+          org_id: string | null
+          org_name: string | null
+          reason: string | null
+          sub_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_subscriptions_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       accept_org_invitation: { Args: { _token: string }; Returns: string }
@@ -4993,6 +5072,50 @@ export type Database = {
           updated_org_id: string
         }[]
       }
+      subscriptions_sync_retry: {
+        Args: { _job: string }
+        Returns: {
+          attempts: number
+          details: Json | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          parent_job_id: string | null
+          processed_count: number
+          started_at: string
+          status: string
+          trigger_source: string
+          triggered_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "subscription_sync_jobs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      subscriptions_sync_run: {
+        Args: { _parent?: string; _source?: string }
+        Returns: {
+          attempts: number
+          details: Json | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          parent_job_id: string | null
+          processed_count: number
+          started_at: string
+          status: string
+          trigger_source: string
+          triggered_by: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "subscription_sync_jobs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       super_admin_force_subscription: {
         Args: {
           _extend_days?: number
@@ -5001,6 +5124,31 @@ export type Database = {
           _status?: Database["public"]["Enums"]["subscription_status"]
           _tier?: Database["public"]["Enums"]["subscription_tier"]
         }
+        Returns: {
+          activated_at: string | null
+          activated_by: string | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          manual_payment_notes: string | null
+          manual_payment_ref: string | null
+          org_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          trial_ends_at: string
+          trial_started_at: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "org_subscriptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      super_admin_set_trial_days: {
+        Args: { _days: number; _note?: string; _org: string }
         Returns: {
           activated_at: string | null
           activated_by: string | null
