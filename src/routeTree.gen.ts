@@ -44,6 +44,7 @@ import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppInvoicesRouteImport } from './routes/_authenticated/app.invoices'
 import { Route as AuthenticatedAppInventoryRouteImport } from './routes/_authenticated/app.inventory'
 import { Route as AuthenticatedAppHousekeepingRouteImport } from './routes/_authenticated/app.housekeeping'
+import { Route as AuthenticatedAppGuestIssuesRouteImport } from './routes/_authenticated/app.guest-issues'
 import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
 import { Route as AuthenticatedAppDeliveryQueueRouteImport } from './routes/_authenticated/app.delivery-queue'
 import { Route as AuthenticatedAppDelegationsHistoryRouteImport } from './routes/_authenticated/app.delegations-history'
@@ -261,6 +262,12 @@ const AuthenticatedAppHousekeepingRoute =
     path: '/app/housekeeping',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppGuestIssuesRoute =
+  AuthenticatedAppGuestIssuesRouteImport.update({
+    id: '/app/guest-issues',
+    path: '/app/guest-issues',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
   id: '/app/docs',
   path: '/app/docs',
@@ -381,6 +388,7 @@ export interface FileRoutesByFullPath {
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/guest-issues': typeof AuthenticatedAppGuestIssuesRoute
   '/app/housekeeping': typeof AuthenticatedAppHousekeepingRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -435,6 +443,7 @@ export interface FileRoutesByTo {
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/guest-issues': typeof AuthenticatedAppGuestIssuesRoute
   '/app/housekeeping': typeof AuthenticatedAppHousekeepingRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -491,6 +500,7 @@ export interface FileRoutesById {
   '/_authenticated/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/_authenticated/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
+  '/_authenticated/app/guest-issues': typeof AuthenticatedAppGuestIssuesRoute
   '/_authenticated/app/housekeeping': typeof AuthenticatedAppHousekeepingRoute
   '/_authenticated/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/_authenticated/app/invoices': typeof AuthenticatedAppInvoicesRoute
@@ -547,6 +557,7 @@ export interface FileRouteTypes {
     | '/app/delegations-history'
     | '/app/delivery-queue'
     | '/app/docs'
+    | '/app/guest-issues'
     | '/app/housekeeping'
     | '/app/inventory'
     | '/app/invoices'
@@ -601,6 +612,7 @@ export interface FileRouteTypes {
     | '/app/delegations-history'
     | '/app/delivery-queue'
     | '/app/docs'
+    | '/app/guest-issues'
     | '/app/housekeeping'
     | '/app/inventory'
     | '/app/invoices'
@@ -656,6 +668,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/delegations-history'
     | '/_authenticated/app/delivery-queue'
     | '/_authenticated/app/docs'
+    | '/_authenticated/app/guest-issues'
     | '/_authenticated/app/housekeeping'
     | '/_authenticated/app/inventory'
     | '/_authenticated/app/invoices'
@@ -954,6 +967,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppHousekeepingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/guest-issues': {
+      id: '/_authenticated/app/guest-issues'
+      path: '/app/guest-issues'
+      fullPath: '/app/guest-issues'
+      preLoaderRoute: typeof AuthenticatedAppGuestIssuesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/docs': {
       id: '/_authenticated/app/docs'
       path: '/app/docs'
@@ -1151,6 +1171,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppDelegationsHistoryRoute: typeof AuthenticatedAppDelegationsHistoryRoute
   AuthenticatedAppDeliveryQueueRoute: typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
+  AuthenticatedAppGuestIssuesRoute: typeof AuthenticatedAppGuestIssuesRoute
   AuthenticatedAppHousekeepingRoute: typeof AuthenticatedAppHousekeepingRoute
   AuthenticatedAppInventoryRoute: typeof AuthenticatedAppInventoryRoute
   AuthenticatedAppInvoicesRoute: typeof AuthenticatedAppInvoicesRoute
@@ -1197,6 +1218,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppDeliveryQueueRoute:
     AuthenticatedAppDeliveryQueueRouteWithChildren,
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
+  AuthenticatedAppGuestIssuesRoute: AuthenticatedAppGuestIssuesRoute,
   AuthenticatedAppHousekeepingRoute: AuthenticatedAppHousekeepingRoute,
   AuthenticatedAppInventoryRoute: AuthenticatedAppInventoryRoute,
   AuthenticatedAppInvoicesRoute: AuthenticatedAppInvoicesRoute,
