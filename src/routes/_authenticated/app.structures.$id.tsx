@@ -10,11 +10,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Trash2, MapPin, Upload } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, MapPin, Upload, Pencil, LayoutGrid } from "lucide-react";
 import { toast } from "sonner";
 
 // Map is client-only (leaflet touches window). Lazy + Suspense + typeof window guard.
 const StructureMap = lazy(() => import("@/components/structures/StructureMap"));
+// Room detail dialog uses no SSR-incompatible deps but we keep it lazy for parity.
+const RoomDetailDialog = lazy(() => import("@/components/structures/RoomDetailDialog"));
 
 export const Route = createFileRoute("/_authenticated/app/structures/$id")({ component: Page });
 
