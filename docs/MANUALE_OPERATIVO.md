@@ -4,6 +4,15 @@
 
 ## Changelog
 
+### 2026-06-20 — Matrice permessi granulare con dipendenze obbligatorie
+- Aggiunta funzione SQL `has_module_access(user, module, structure)` — verifica server-authoritative (super_admin, owner organizzazione, direttore/facility_manager, delega attiva, permesso granulare).
+- Aggiunta funzione `missing_module_deps(modules[])` per anteprima dipendenze mancanti.
+- Trigger `user_delegations_expand_deps` su `user_delegations`: ogni delega viene espansa automaticamente con i moduli prerequisito, garantendo coerenza a livello DB.
+- Estesa la mappa `module_dependencies` (cashbook→invoices, smart_inbox→tickets, sustainability→utilities, scheduled_exports→reports, alerts→sla, overview→statistics, audit→settings, sla_settings→sla, notifications→sla, delegations→users, organization→users, integrations→settings, housekeeping/guest_issues→rooms, messages→users, workflows→tickets, rooms→structures).
+- Nuova RPC `permission_matrix(org)` restituisce per ciascun utente dell'organizzazione lo stato effettivo di ogni modulo (enabled + origine).
+- UI: pagina "Matrice permessi" (`/app/permissions-matrix`) con vista tabellare utenti×moduli, simulatore di selezione moduli con dipendenze auto-aggiunte e legenda fonte.
+- Aggiunti hook `useModuleAccess` e `useMissingDeps`, componente `ModuleGate` (gate UI in sincrono con il check server).
+
 ### 2026-06-20 — Fase 14 · Sistema multi-tenant (organizzazioni)
 - **Organizzazioni** (`/app/organization`): ogni utente che si registra crea automaticamente la propria organizzazione e ne è proprietario (owner). Limite **6 utenti per organizzazione** (1 owner + 5 membri).
 - **Inviti** con email destinatario, ruolo organizzazione (admin/member), ruolo applicativo, **moduli delegati** (con espansione automatica delle dipendenze obbligatorie — es. invitando `work_orders` vengono aggiunti `tickets`+`assets`+`suppliers`) e **strutture** specifiche o tutte. Link condivisibile `/invite/{token}`, scadenza 14 giorni, revocabile.
