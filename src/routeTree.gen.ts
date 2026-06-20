@@ -29,6 +29,7 @@ import { Route as AuthenticatedAppStructuresRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppStructureKpiRouteImport } from './routes/_authenticated/app.structure-kpi'
 import { Route as AuthenticatedAppStatisticsRouteImport } from './routes/_authenticated/app.statistics'
 import { Route as AuthenticatedAppSmartInboxRouteImport } from './routes/_authenticated/app.smart-inbox'
+import { Route as AuthenticatedAppSlaSettingsRouteImport } from './routes/_authenticated/app.sla-settings'
 import { Route as AuthenticatedAppSlaNotificationsRouteImport } from './routes/_authenticated/app.sla-notifications'
 import { Route as AuthenticatedAppSlaEscalationsRouteImport } from './routes/_authenticated/app.sla-escalations'
 import { Route as AuthenticatedAppSlaComplianceRouteImport } from './routes/_authenticated/app.sla-compliance'
@@ -178,6 +179,12 @@ const AuthenticatedAppSmartInboxRoute =
   AuthenticatedAppSmartInboxRouteImport.update({
     id: '/app/smart-inbox',
     path: '/app/smart-inbox',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppSlaSettingsRoute =
+  AuthenticatedAppSlaSettingsRouteImport.update({
+    id: '/app/sla-settings',
+    path: '/app/sla-settings',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppSlaNotificationsRoute =
@@ -458,6 +465,7 @@ export interface FileRoutesByFullPath {
   '/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
   '/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
+  '/app/sla-settings': typeof AuthenticatedAppSlaSettingsRoute
   '/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
@@ -520,6 +528,7 @@ export interface FileRoutesByTo {
   '/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
   '/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
+  '/app/sla-settings': typeof AuthenticatedAppSlaSettingsRoute
   '/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
@@ -584,6 +593,7 @@ export interface FileRoutesById {
   '/_authenticated/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
   '/_authenticated/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/_authenticated/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
+  '/_authenticated/app/sla-settings': typeof AuthenticatedAppSlaSettingsRoute
   '/_authenticated/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/_authenticated/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/_authenticated/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
@@ -648,6 +658,7 @@ export interface FileRouteTypes {
     | '/app/sla-compliance'
     | '/app/sla-escalations'
     | '/app/sla-notifications'
+    | '/app/sla-settings'
     | '/app/smart-inbox'
     | '/app/statistics'
     | '/app/structure-kpi'
@@ -710,6 +721,7 @@ export interface FileRouteTypes {
     | '/app/sla-compliance'
     | '/app/sla-escalations'
     | '/app/sla-notifications'
+    | '/app/sla-settings'
     | '/app/smart-inbox'
     | '/app/statistics'
     | '/app/structure-kpi'
@@ -773,6 +785,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/sla-compliance'
     | '/_authenticated/app/sla-escalations'
     | '/_authenticated/app/sla-notifications'
+    | '/_authenticated/app/sla-settings'
     | '/_authenticated/app/smart-inbox'
     | '/_authenticated/app/statistics'
     | '/_authenticated/app/structure-kpi'
@@ -949,6 +962,13 @@ declare module '@tanstack/react-router' {
       path: '/app/smart-inbox'
       fullPath: '/app/smart-inbox'
       preLoaderRoute: typeof AuthenticatedAppSmartInboxRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/sla-settings': {
+      id: '/_authenticated/app/sla-settings'
+      path: '/app/sla-settings'
+      fullPath: '/app/sla-settings'
+      preLoaderRoute: typeof AuthenticatedAppSlaSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/sla-notifications': {
@@ -1332,6 +1352,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppSlaComplianceRoute: typeof AuthenticatedAppSlaComplianceRoute
   AuthenticatedAppSlaEscalationsRoute: typeof AuthenticatedAppSlaEscalationsRoute
   AuthenticatedAppSlaNotificationsRoute: typeof AuthenticatedAppSlaNotificationsRoute
+  AuthenticatedAppSlaSettingsRoute: typeof AuthenticatedAppSlaSettingsRoute
   AuthenticatedAppSmartInboxRoute: typeof AuthenticatedAppSmartInboxRoute
   AuthenticatedAppStatisticsRoute: typeof AuthenticatedAppStatisticsRoute
   AuthenticatedAppStructureKpiRoute: typeof AuthenticatedAppStructureKpiRoute
@@ -1386,6 +1407,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppSlaComplianceRoute: AuthenticatedAppSlaComplianceRoute,
   AuthenticatedAppSlaEscalationsRoute: AuthenticatedAppSlaEscalationsRoute,
   AuthenticatedAppSlaNotificationsRoute: AuthenticatedAppSlaNotificationsRoute,
+  AuthenticatedAppSlaSettingsRoute: AuthenticatedAppSlaSettingsRoute,
   AuthenticatedAppSmartInboxRoute: AuthenticatedAppSmartInboxRoute,
   AuthenticatedAppStatisticsRoute: AuthenticatedAppStatisticsRoute,
   AuthenticatedAppStructureKpiRoute: AuthenticatedAppStructureKpiRoute,
