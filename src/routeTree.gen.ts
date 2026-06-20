@@ -69,6 +69,7 @@ import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
 import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/app.alerts'
+import { Route as AuthenticatedAppAdminAlertsRouteImport } from './routes/_authenticated/app.admin-alerts'
 import { Route as AuthenticatedAppAccessDeniedRouteImport } from './routes/_authenticated/app.access-denied'
 import { Route as ApiPublicHooksSlaNotifyRouteImport } from './routes/api/public/hooks/sla-notify'
 import { Route as ApiPublicHooksSlaEscalationsRouteImport } from './routes/api/public/hooks/sla-escalations'
@@ -422,6 +423,12 @@ const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
   path: '/app/alerts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppAdminAlertsRoute =
+  AuthenticatedAppAdminAlertsRouteImport.update({
+    id: '/app/admin-alerts',
+    path: '/app/admin-alerts',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppAccessDeniedRoute =
   AuthenticatedAppAccessDeniedRouteImport.update({
     id: '/app/access-denied',
@@ -488,6 +495,7 @@ export interface FileRoutesByFullPath {
   '/g/$qr': typeof GQrRoute
   '/invite/$token': typeof InviteTokenRoute
   '/app/access-denied': typeof AuthenticatedAppAccessDeniedRoute
+  '/app/admin-alerts': typeof AuthenticatedAppAdminAlertsRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -559,6 +567,7 @@ export interface FileRoutesByTo {
   '/g/$qr': typeof GQrRoute
   '/invite/$token': typeof InviteTokenRoute
   '/app/access-denied': typeof AuthenticatedAppAccessDeniedRoute
+  '/app/admin-alerts': typeof AuthenticatedAppAdminAlertsRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -632,6 +641,7 @@ export interface FileRoutesById {
   '/g/$qr': typeof GQrRoute
   '/invite/$token': typeof InviteTokenRoute
   '/_authenticated/app/access-denied': typeof AuthenticatedAppAccessDeniedRoute
+  '/_authenticated/app/admin-alerts': typeof AuthenticatedAppAdminAlertsRoute
   '/_authenticated/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -705,6 +715,7 @@ export interface FileRouteTypes {
     | '/g/$qr'
     | '/invite/$token'
     | '/app/access-denied'
+    | '/app/admin-alerts'
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
@@ -776,6 +787,7 @@ export interface FileRouteTypes {
     | '/g/$qr'
     | '/invite/$token'
     | '/app/access-denied'
+    | '/app/admin-alerts'
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
@@ -848,6 +860,7 @@ export interface FileRouteTypes {
     | '/g/$qr'
     | '/invite/$token'
     | '/_authenticated/app/access-denied'
+    | '/_authenticated/app/admin-alerts'
     | '/_authenticated/app/alerts'
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/assets'
@@ -1348,6 +1361,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/admin-alerts': {
+      id: '/_authenticated/app/admin-alerts'
+      path: '/app/admin-alerts'
+      fullPath: '/app/admin-alerts'
+      preLoaderRoute: typeof AuthenticatedAppAdminAlertsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/access-denied': {
       id: '/_authenticated/app/access-denied'
       path: '/app/access-denied'
@@ -1480,6 +1500,7 @@ const AuthenticatedAppTicketsRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
   AuthenticatedAppAccessDeniedRoute: typeof AuthenticatedAppAccessDeniedRoute
+  AuthenticatedAppAdminAlertsRoute: typeof AuthenticatedAppAdminAlertsRoute
   AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
   AuthenticatedAppAreaMappingRoute: typeof AuthenticatedAppAreaMappingRoute
   AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
@@ -1539,6 +1560,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
   AuthenticatedAppAccessDeniedRoute: AuthenticatedAppAccessDeniedRoute,
+  AuthenticatedAppAdminAlertsRoute: AuthenticatedAppAdminAlertsRoute,
   AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
   AuthenticatedAppAreaMappingRoute: AuthenticatedAppAreaMappingRoute,
   AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
