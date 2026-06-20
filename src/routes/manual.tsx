@@ -156,8 +156,7 @@ function ManualPage() {
           html, body { background: white !important; }
           header, footer, nav, aside, .print\\:hidden { display: none !important; }
           main { padding: 0 !important; }
-          main > *:not(.print-keep) { display: none !important; }
-          main .print-keep { display: block !important; }
+          .no-print { display: none !important; }
           #manual-article { border: 0 !important; padding: 0 !important; background: white !important; color: black !important; box-shadow: none !important; }
           #manual-article * { color: black !important; background: transparent !important; }
           #manual-article a { color: black !important; text-decoration: underline; }
