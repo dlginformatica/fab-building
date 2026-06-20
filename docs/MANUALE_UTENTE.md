@@ -1,4 +1,7 @@
 <!-- changelog 2026-06-20 -->
+- Numero di build (`yyyy.mm.dd.hh.mm`) ora presente anche nei footer di: CSV esportati (riga finale), PDF esportati (footer di ogni pagina), PDF Manuale Utente, anteprima HTML stampabile, e nuovo helper `emailFooterHtml/Text` per i template email.
+
+<!-- changelog 2026-06-20 -->
 - Nuova pagina **Notifiche backup** (/app/backup-notification-prefs): owner/admin gestiscono canali (email/in-app), eventi (start/success/failure/integrità), destinatari, frequenza (immediata/digest orario/giornaliero) e fascia oraria di silenzio.
 - Build number visibile in basso a destra di ogni schermata nel formato `yyyy.mm.dd.hh.mm` (UTC) per supporto e tracciabilità versioni.
 

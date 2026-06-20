@@ -6,6 +6,7 @@
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { marked, type Tokens } from "marked";
+import { BUILD_VERSION } from "@/lib/build-version";
 
 type Heading = { level: number; text: string; page: number };
 
@@ -130,7 +131,7 @@ function drawFooter(doc: jsPDF, page: number, total: number, title: string) {
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8.5);
   doc.setTextColor(...COLORS.muted);
-  doc.text(`HotelOps · ${title}`, M.left, FOOTER_Y);
+  doc.text(`HotelOps · ${title} · build ${BUILD_VERSION}`, M.left, FOOTER_Y);
   const label = `Pag. ${page} / ${total}`;
   const w = doc.getTextWidth(label);
   doc.text(label, PAGE.w - M.right - w, FOOTER_Y);
