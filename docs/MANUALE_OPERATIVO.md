@@ -1,4 +1,8 @@
 <!-- changelog 2026-06-20 -->
+- **Tipologie camere**: aggiunte colonne `category` e `description`; UI con form di modifica completo (crea/edita/elimina), categoria scelta da elenco predefinito modificabile (Standard, Deluxe, Junior Suite, Suite, Garden Suite, Monolocale, Bilocale) con possibilità di aggiungere nuovi valori liberi.
+- **Camere — Pianta & Arredi**: nuova scheda di dettaglio camera con upload pianta (bucket `structure-photos`, path `<structure_id>/rooms/<room_id>/...`), viewer con zoom/pan; nuova tabella `room_furnishings` (kind mobilio/arredo/accessorio, name, locale, quantity, notes, pos_x/pos_y) org-scoped via `has_structure_access`/`is_org_admin`; segnaposti percentuali sulla pianta, evidenziazione bidirezionale lista↔pianta.
+
+<!-- changelog 2026-06-20 -->
 - Nuova **gestione completa Strutture** (/app/structures/$id) con tab: Anagrafica editabile, Camere & Piani (CRUD + preset rapido), Tipologie camere (nuova tabella `room_types` org-scoped), Galleria foto (bucket privato `structure-photos`, RLS per struttura), Mappa OpenStreetMap (react-leaflet) con geocodifica Nominatim, marker draggable, salvataggio coordinate `lat`/`lng` su `structures`.
 
 ## Changelog 2026-06-20
