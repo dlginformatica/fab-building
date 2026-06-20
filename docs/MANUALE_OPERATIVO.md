@@ -4,6 +4,15 @@
 
 ## Changelog
 
+### 2026-06-20 — Fase 14 · Sistema multi-tenant (organizzazioni)
+- **Organizzazioni** (`/app/organization`): ogni utente che si registra crea automaticamente la propria organizzazione e ne è proprietario (owner). Limite **6 utenti per organizzazione** (1 owner + 5 membri).
+- **Inviti** con email destinatario, ruolo organizzazione (admin/member), ruolo applicativo, **moduli delegati** (con espansione automatica delle dipendenze obbligatorie — es. invitando `work_orders` vengono aggiunti `tickets`+`assets`+`suppliers`) e **strutture** specifiche o tutte. Link condivisibile `/invite/{token}`, scadenza 14 giorni, revocabile.
+- **Trasferimento proprietà** dall'owner verso un altro membro esistente (il precedente owner diventa admin).
+- **Tabelle nuove**: `organizations`, `org_memberships`, `org_invitations`, `module_dependencies`.
+- **RLS**: `structures` filtrate per `organization_id`; solo l'owner può creare/modificare strutture; inviti accettabili anche da non autenticati via token; ogni utente vede solo la propria organizzazione.
+- **Signup**: aggiunto campo "Nome organizzazione" nella registrazione; se l'email ha un invito pending la nuova org non viene creata.
+- **Funzioni DB**: `current_org_id`, `is_org_owner`, `is_org_member`, `org_user_count`, `expand_modules_with_deps`, `transfer_org_ownership`, `accept_org_invitation`. Trigger `tg_enforce_org_user_limit` blocca inserimenti oltre il limite.
+
 ### 2026-06-20 — Fase 13 · Notifiche SLA push/email con template editabili
 - **Template editabili** (`/app/notifications` → tab *Template*): subject + corpo markdown con placeholder `{{ticket_number}}`, `{{title}}`, `{{priority}}`, `{{due_at}}`, `{{delay_minutes}}`; scope globale o per struttura; canali supportati: email, Teams, push in-app.
 - **Dispatcher cron** `/api/public/hooks/sla-notify` (ogni minuto): scansiona `sla_notifications` non ancora dispatchate, risolve il template appropriato per evento+canale e invia via canali attivi configurati. Tracking `dispatched_at` + `dispatched_count`. Logga tutto in `notification_log`.
