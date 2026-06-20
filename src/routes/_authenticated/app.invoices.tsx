@@ -17,6 +17,7 @@ import { SimpleList, ListCard } from "@/components/SimpleList";
 import { Plus, Sparkles, Loader2, AlertTriangle, CalendarClock } from "lucide-react";
 import { toast } from "sonner";
 import { downloadFatturaPaXml } from "@/lib/sdi/fatturapa";
+import { fmtEUR } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/invoices")({ component: Page });
 
