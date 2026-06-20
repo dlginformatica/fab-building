@@ -347,7 +347,8 @@ export function buildImportRows(
 
 export async function commitImport(target: ImportTarget, rows: any[]): Promise<{ inserted: number; error?: string }> {
   if (!rows.length) return { inserted: 0 };
-  const { error, count } = await supabase.from(target.table as any).insert(rows, { count: "exact" } as any);
+  const sb: any = supabase;
+  const { error, count } = await sb.from(target.table).insert(rows, { count: "exact" });
   if (error) return { inserted: 0, error: error.message };
   return { inserted: count ?? rows.length };
 }
