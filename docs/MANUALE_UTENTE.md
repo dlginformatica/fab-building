@@ -4,6 +4,7 @@
 > Documento vivo: aggiornato ad ogni iterazione (regola permanente).
 
 ## Changelog
+- **2026-06-20** — Aggiunto capitolo **Abbonamenti e livelli (Small/Medium/Large)**: come funziona il trial 30 giorni, cosa cambia tra i tre piani, come gestire upgrade/downgrade, cosa succede alla scadenza (sola lettura), come l'admin di organizzazione consulta `/app/billing` e come il super_admin configura prezzi e moduli in `/app/super-admin/plans`.
 - **2026-06-20** — Il pulsante "Scarica PDF" in /manual produce ora un **PDF reale** con copertina, indice cliccabile, immagini e numerazione pagine. Nome file: `hotelops_manuale_utente_v{versione}_{data}.pdf`.
 - **2026-06-20** — Prima edizione del Manuale Utente: 10 capitoli, FAQ, screenshot reali. Affiancato al Manuale Operativo (tecnico) già esistente.
 
