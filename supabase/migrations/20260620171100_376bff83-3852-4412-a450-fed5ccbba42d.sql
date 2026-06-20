@@ -1,0 +1,1 @@
+ALTER VIEW public.v_subscription_audit SET (security_invoker = true);
