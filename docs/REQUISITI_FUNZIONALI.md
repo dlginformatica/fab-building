@@ -4,6 +4,17 @@
 
 ## Changelog
 
+### 2026-06-20 — Fasi 2-10 killer (rilancio piccole/medie strutture)
+- **RF-HK-01..05 Housekeeping** (`/app/housekeeping`): stato camera (clean/dirty/in_progress/inspected/out_of_order) e stato occupazione (vacant/occupied/arrival/departure/stayover); tabella `housekeeping_tasks` con tipo (pulizia/cambio_completo/rifacimento/ispezione/blocco), priorità, assegnazione, start/complete; generatore di turni dalle camere sporche; KPI giornaliero via `housekeeping_kpi(_structure,_date)`.
+- **RF-GUEST-01..04 QR ospite in camera** (`/g/:qr` pubblica, `/app/guest-issues` staff): ogni camera ha `qr_token` univoco; route pubblica con form (categoria/descrizione/contatto opzionali) lookup tramite RPC `room_by_qr`; staff converte segnalazione in ticket con un click; QR stampabile direttamente dal pannello.
+- **RF-INT-01 Integrazioni** (`/app/integrations`): catalogo provider (Fatture in Cloud, Octorate channel manager, PMS generico, WhatsApp Business, Energia); config JSON cifrato per provider con enabled/last_sync/last_sync_error; solo admin/direttore/facility_manager.
+- **RF-SDI-01 Export FatturaPA SDI**: pulsante "Export SDI XML" su ogni fattura genera XML schema FPR12 (CodiceDestinatario o PEC dal fornitore); struttura deve avere P.IVA, indirizzo, CAP, regime fiscale.
+- **RF-CASH-01..03 Prima Nota/Cassa** (`/app/cashbook`): movimenti entrata/uscita per data, categoria, metodo pagamento; KPI entrate/uscite/saldo del periodo; export CSV per commercialista; collegabile a fattura o fornitore.
+- **RF-INBOX-01 Smart Inbox** (`/app/smart-inbox`): vista unica con segnalazioni ospiti nuove + ticket urgenti (critica/alta) + conversazioni recenti; collegamenti diretti alle sezioni.
+- **RF-ESG-01 Consumi & Sostenibilità** (`/app/sustainability`): consumi ultimi 12 mesi normalizzati per camera, confronto con benchmark di settore (elettrica 3200 kWh, gas 380 Smc, acqua 130 mc per camera/anno) con badge sotto/in/sopra media e suggerimenti ESG operativi.
+- **RF-WA-01 WhatsApp Business**: provider integrazione preconfigurato (phone_number_id + access_token) pronto per notifiche outbound.
+- **RF-MOB-01 Mobile-first** già coperto da PWA Fase 8.4 (installabile + offline + outbox) + nuovi pannelli responsive (Housekeeping, Guest QR ottimizzati per uso a bordo letto).
+
 ### 2026-06-19 — Fase 1 (killer features): Onboarding 5 minuti
 - RF-ONB-01 Wizard guidato a 5 step (`/app/onboarding`): struttura → preset → piani/camere → riepilogo → completato.
 - RF-ONB-02 Tre preset operativi: B&B/Affittacamere, Hotel piccolo, Boutique/Resort, ciascuno con numero piani/camere consigliato precompilato.
