@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell, Legend } from "recharts";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { fmtEUR } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/statistics")({ component: Page });
 
@@ -65,12 +66,20 @@ function Page() {
     if (!data) return null;
     const t = data.tickets as any[];
     const closed = t.filter(x => x.resolved_at);
-    const inSla = closed.filter(x => x.resolve_due_at && new Date(x.resolved_at) <= new Date(x.resolve_due_at)).length;
     const mttr = closed.length ? closed.reduce((a,b)=>a+(new Date(b.resolved_at).getTime()-new Date(b.created_at).getTime()),0)/closed.length/3600000 : 0;
+    // SLA su tutti i ticket con scadenza definita nel periodo:
+    // un ticket è "fuori SLA" se chiuso oltre la scadenza oppure ancora aperto e già scaduto.
+    const now = Date.now();
+    const slaEligible = t.filter(x => x.resolve_due_at);
+    const slaViolated = slaEligible.filter(x => {
+      const due = new Date(x.resolve_due_at).getTime();
+      return x.resolved_at ? new Date(x.resolved_at).getTime() > due : now > due;
+    }).length;
     const totalPenalty = (data.viols as any[]).reduce((a:number,b:any)=>a+Number(b.penalty_eur||0),0);
     return {
       total: t.length, closed: closed.length,
-      slaPct: closed.length ? Math.round((inSla/closed.length)*100) : null,
+      slaPct: slaEligible.length ? Math.round(((slaEligible.length - slaViolated)/slaEligible.length)*100) : null,
+      slaViolated,
       mttr: mttr.toFixed(1),
       violations: (data.viols as any[]).length,
       totalPenalty,
@@ -88,8 +97,8 @@ function Page() {
       ["% SLA rispettati", kpis?.slaPct != null ? `${kpis.slaPct}%` : "—"],
       ["MTTR (ore)", String(kpis?.mttr ?? 0)],
       ["Violazioni SLA", String(kpis?.violations ?? 0)],
-      ["Totale penali", `€${(kpis?.totalPenalty ?? 0).toFixed(2)}`],
-      ["Totale fatture", `€${(kpis?.invTotal ?? 0).toFixed(2)}`],
+      ["Totale penali", fmtEUR(kpis?.totalPenalty ?? 0)],
+      ["Totale fatture", fmtEUR(kpis?.invTotal ?? 0)],
     ] });
     autoTable(doc, { head: [["Data","Ticket aperti","Risolti"]], body: series.byDay.map((d:any)=>[d.date,d.aperti,d.risolti]) });
     doc.save(`statistiche-${from}_${to}.pdf`);
@@ -112,21 +121,25 @@ function Page() {
           {t:"Ticket totali",v:kpis?.total??0},
           {t:"% SLA OK",v:kpis?.slaPct!=null?`${kpis.slaPct}%`:"—"},
           {t:"MTTR (h)",v:kpis?.mttr??0},
-          {t:"€ Penali",v:`€${(kpis?.totalPenalty??0).toFixed(2)}`},
+          {t:"Penali",v:fmtEUR(kpis?.totalPenalty??0)},
         ].map(c=>(<Card key={c.t}><CardHeader className="pb-1"><CardTitle className="text-xs text-muted-foreground">{c.t}</CardTitle></CardHeader><CardContent><div className="font-display text-2xl font-bold">{c.v}</div></CardContent></Card>))}
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <Card><CardHeader><CardTitle className="text-sm">Ticket per giorno</CardTitle></CardHeader><CardContent style={{height:260}}>
-          <ResponsiveContainer><LineChart data={series.byDay}><CartesianGrid strokeDasharray="3 3" opacity={0.2} /><XAxis dataKey="date" fontSize={10} /><YAxis fontSize={10} /><Tooltip /><Legend /><Line type="monotone" dataKey="aperti" stroke="#0891b2" /><Line type="monotone" dataKey="risolti" stroke="#10b981" /></LineChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height="100%"><LineChart data={series.byDay}><CartesianGrid strokeDasharray="3 3" opacity={0.2} /><XAxis dataKey="date" fontSize={10} /><YAxis fontSize={10} allowDecimals={false} /><Tooltip /><Legend /><Line type="monotone" dataKey="aperti" stroke="#0891b2" /><Line type="monotone" dataKey="risolti" stroke="#10b981" /></LineChart></ResponsiveContainer>
         </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-sm">Penali nel periodo (€)</CardTitle></CardHeader><CardContent style={{height:260}}>
-          <ResponsiveContainer><BarChart data={series.penaltyByDay}><CartesianGrid strokeDasharray="3 3" opacity={0.2} /><XAxis dataKey="date" fontSize={10} /><YAxis fontSize={10} /><Tooltip /><Bar dataKey="penali" fill="#f59e0b" /></BarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height="100%"><BarChart data={series.penaltyByDay}><CartesianGrid strokeDasharray="3 3" opacity={0.2} /><XAxis dataKey="date" fontSize={10} /><YAxis fontSize={10} /><Tooltip formatter={(v: any) => fmtEUR(Number(v))} /><Bar dataKey="penali" fill="#f59e0b" /></BarChart></ResponsiveContainer>
         </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-sm">Ticket per priorità</CardTitle></CardHeader><CardContent style={{height:260}}>
-          <ResponsiveContainer><PieChart><Pie data={series.byPriority} dataKey="value" nameKey="name" outerRadius={80} label>{series.byPriority.map((_,i)=>(<Cell key={i} fill={COLORS[i%COLORS.length]} />))}</Pie><Tooltip /><Legend /></PieChart></ResponsiveContainer>
+          {series.byPriority.length === 0 ? (
+            <div className="grid h-full place-items-center text-xs text-muted-foreground">Nessun dato nel periodo.</div>
+          ) : (
+            <ResponsiveContainer width="100%" height="100%"><PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}><Pie data={series.byPriority} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius="70%" label={(e: any) => `${e.name}: ${e.value}`} labelLine={false} isAnimationActive={false}>{series.byPriority.map((_,i)=>(<Cell key={i} fill={COLORS[i%COLORS.length]} />))}</Pie><Tooltip /><Legend verticalAlign="bottom" height={24} /></PieChart></ResponsiveContainer>
+          )}
         </CardContent></Card>
         <Card><CardHeader><CardTitle className="text-sm">Fatture per tipo (€)</CardTitle></CardHeader><CardContent style={{height:260}}>
-          <ResponsiveContainer><BarChart data={series.invByType}><CartesianGrid strokeDasharray="3 3" opacity={0.2} /><XAxis dataKey="name" fontSize={10} /><YAxis fontSize={10} /><Tooltip /><Bar dataKey="value" fill="#0891b2" /></BarChart></ResponsiveContainer>
+          <ResponsiveContainer width="100%" height="100%"><BarChart data={series.invByType}><CartesianGrid strokeDasharray="3 3" opacity={0.2} /><XAxis dataKey="name" fontSize={10} /><YAxis fontSize={10} /><Tooltip formatter={(v: any) => fmtEUR(Number(v))} /><Bar dataKey="value" fill="#0891b2" /></BarChart></ResponsiveContainer>
         </CardContent></Card>
       </div>
     </div>
