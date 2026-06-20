@@ -92,6 +92,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "HotelOps — Building & Facility Management" },
+      { name: "twitter:description", content: "Gestione impianti, asset, ticket, SLA, fornitori e bollette per strutture alberghiere." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1c4724be-7238-4837-af26-b4b429f3fbf1/id-preview-711e96b3--83b017ab-cb1a-4977-a89e-bc32522b4ed2.lovable.app-1781978732291.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1c4724be-7238-4837-af26-b4b429f3fbf1/id-preview-711e96b3--83b017ab-cb1a-4977-a89e-bc32522b4ed2.lovable.app-1781978732291.png" },
     ],
     links: [
       {
