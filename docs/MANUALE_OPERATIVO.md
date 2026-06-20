@@ -1,3 +1,10 @@
+## Changelog 2026-06-20
+- Hardening RLS: `is_org_admin`, `structure_org`, estensione di `has_structure_access` con membership org.
+- Drop policy `structures read accessible` e `structures admin manage` (bypass org).
+- Ticket/SLA/penali/audit/module_permissions/user_delegations: gestione limitata a super_admin o admin dell organizzazione della struttura della riga.
+- guest_issues: insert anonimo rimosso, sostituito da RPC `submit_guest_issue(_qr_token,...)`.
+- handle_new_user non crea più ruoli globali `direttore`; pulizia di eventuali ruoli residui non legati a struttura.
+
 <!-- changelog 2026-06-20 -->
 - Seed dati demo completo (2 organizzazioni Hotel Demo A/B isolate, 16 utenti uno per ruolo, strutture, asset, fornitori, contratti, magazzino, contatori, ticket con SLA, abbonamenti) e checklist passo-passo in `docs/CHECKLIST_TEST_UMANO.md` per il primo test umano. Password demo: `Demo1234!`.
 - Verificato isolamento multi-tenant via `has_structure_access`: ogni utente vede solo i dati della propria struttura/org; super admin vede tutto.
