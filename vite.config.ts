@@ -7,6 +7,11 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { VitePWA } from "vite-plugin-pwa";
 
+// Build version: yyyy.mm.dd.hh.mm (UTC) calcolato al momento del build
+const _d = new Date();
+const _pad = (n: number) => String(n).padStart(2, "0");
+const BUILD_VERSION = `${_d.getUTCFullYear()}.${_pad(_d.getUTCMonth() + 1)}.${_pad(_d.getUTCDate())}.${_pad(_d.getUTCHours())}.${_pad(_d.getUTCMinutes())}`;
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
@@ -14,6 +19,9 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    define: {
+      __BUILD_VERSION__: JSON.stringify(BUILD_VERSION),
+    },
     plugins: [
       VitePWA({
         registerType: "autoUpdate",
