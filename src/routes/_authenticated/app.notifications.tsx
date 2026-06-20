@@ -30,6 +30,49 @@ const EVENTS = [
   { value: "maintenance_due", label: "Manutenzione programmata" },
 ] as const;
 
+function TemplateEditor({ tpl, onSave, onDelete }: { tpl: any; onSave: (v: any) => void; onDelete: () => void }) {
+  const [v, setV] = useState({ id: tpl.id, name: tpl.name, event: tpl.event, channel_type: tpl.channel_type, subject: tpl.subject, body_md: tpl.body_md, active: tpl.active });
+  return (
+    <Card>
+      <CardContent className="pt-4 space-y-2">
+        <div className="grid gap-2 md:grid-cols-4">
+          <div><Label className="text-xs">Nome</Label><Input value={v.name} onChange={(e) => setV({ ...v, name: e.target.value })}/></div>
+          <div>
+            <Label className="text-xs">Evento</Label>
+            <Select value={v.event} onValueChange={(x) => setV({ ...v, event: x })}>
+              <SelectTrigger><SelectValue/></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="sla_warning">SLA in scadenza</SelectItem>
+                <SelectItem value="sla_violated">SLA violato</SelectItem>
+                <SelectItem value="ticket_created">Ticket creato</SelectItem>
+                <SelectItem value="ticket_assigned">Ticket assegnato</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs">Canale</Label>
+            <Select value={v.channel_type} onValueChange={(x) => setV({ ...v, channel_type: x })}>
+              <SelectTrigger><SelectValue/></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="email">Email</SelectItem>
+                <SelectItem value="teams">Teams</SelectItem>
+                <SelectItem value="push">Push in-app</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-2"><Switch checked={v.active} onCheckedChange={(x) => setV({ ...v, active: x })}/><Label>Attivo</Label></div>
+        </div>
+        <div><Label className="text-xs">Oggetto</Label><Input value={v.subject} onChange={(e) => setV({ ...v, subject: e.target.value })}/></div>
+        <div><Label className="text-xs">Corpo (markdown / placeholder)</Label><Textarea rows={4} value={v.body_md} onChange={(e) => setV({ ...v, body_md: e.target.value })}/></div>
+        <div className="flex gap-2 justify-end">
+          <Button size="sm" variant="ghost" onClick={onDelete}><Trash2 className="h-4 w-4"/></Button>
+          <Button size="sm" onClick={() => onSave(v)}><Save className="h-4 w-4 mr-1"/>Salva</Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function Page() {
   const qc = useQueryClient();
   const test = useServerFn(sendTestNotification);
