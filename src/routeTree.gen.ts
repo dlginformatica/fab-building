@@ -67,6 +67,7 @@ import { Route as AuthenticatedAppDelegationAuditRouteImport } from './routes/_a
 import { Route as AuthenticatedAppCostAnalyticsRouteImport } from './routes/_authenticated/app.cost-analytics'
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
 import { Route as AuthenticatedAppCashbookRouteImport } from './routes/_authenticated/app.cashbook'
+import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
 import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/app.alerts'
@@ -81,6 +82,7 @@ import { Route as ApiPublicHooksSlaEscalationsRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
 import { Route as ApiPublicHooksContractsNotifyRouteImport } from './routes/api/public/hooks/contracts-notify'
 import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
+import { Route as AuthenticatedAppSuperAdminPlansRouteImport } from './routes/_authenticated/app.super-admin.plans'
 import { Route as AuthenticatedAppReordersIdRouteImport } from './routes/_authenticated/app.reorders.$id'
 import { Route as AuthenticatedAppDeliveryQueueIdRouteImport } from './routes/_authenticated/app.delivery-queue.$id'
 import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
@@ -416,6 +418,11 @@ const AuthenticatedAppCashbookRoute =
     path: '/app/cashbook',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppBillingRoute = AuthenticatedAppBillingRouteImport.update({
+  id: '/app/billing',
+  path: '/app/billing',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAppAuditRoute = AuthenticatedAppAuditRouteImport.update({
   id: '/app/audit',
   path: '/app/audit',
@@ -497,6 +504,12 @@ const AuthenticatedAppTicketsIdRoute =
     path: '/app/tickets/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppSuperAdminPlansRoute =
+  AuthenticatedAppSuperAdminPlansRouteImport.update({
+    id: '/app/super-admin/plans',
+    path: '/app/super-admin/plans',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppReordersIdRoute =
   AuthenticatedAppReordersIdRouteImport.update({
     id: '/app/reorders/$id',
@@ -536,6 +549,7 @@ export interface FileRoutesByFullPath {
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/audit': typeof AuthenticatedAppAuditRoute
+  '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
@@ -588,6 +602,7 @@ export interface FileRoutesByFullPath {
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
+  '/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
@@ -613,6 +628,7 @@ export interface FileRoutesByTo {
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/audit': typeof AuthenticatedAppAuditRoute
+  '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
@@ -665,6 +681,7 @@ export interface FileRoutesByTo {
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
+  '/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
@@ -692,6 +709,7 @@ export interface FileRoutesById {
   '/_authenticated/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
+  '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
   '/_authenticated/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
@@ -744,6 +762,7 @@ export interface FileRoutesById {
   '/_authenticated/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/_authenticated/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/_authenticated/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
+  '/_authenticated/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
   '/_authenticated/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
@@ -771,6 +790,7 @@ export interface FileRouteTypes {
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/audit'
+    | '/app/billing'
     | '/app/cashbook'
     | '/app/contracts'
     | '/app/cost-analytics'
@@ -823,6 +843,7 @@ export interface FileRouteTypes {
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
     | '/app/reorders/$id'
+    | '/app/super-admin/plans'
     | '/app/tickets/$id'
     | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
@@ -848,6 +869,7 @@ export interface FileRouteTypes {
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/audit'
+    | '/app/billing'
     | '/app/cashbook'
     | '/app/contracts'
     | '/app/cost-analytics'
@@ -900,6 +922,7 @@ export interface FileRouteTypes {
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
     | '/app/reorders/$id'
+    | '/app/super-admin/plans'
     | '/app/tickets/$id'
     | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
@@ -926,6 +949,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/alerts'
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/audit'
+    | '/_authenticated/app/billing'
     | '/_authenticated/app/cashbook'
     | '/_authenticated/app/contracts'
     | '/_authenticated/app/cost-analytics'
@@ -978,6 +1002,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/assets/$id'
     | '/_authenticated/app/delivery-queue/$id'
     | '/_authenticated/app/reorders/$id'
+    | '/_authenticated/app/super-admin/plans'
     | '/_authenticated/app/tickets/$id'
     | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
@@ -1414,6 +1439,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppCashbookRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/billing': {
+      id: '/_authenticated/app/billing'
+      path: '/app/billing'
+      fullPath: '/app/billing'
+      preLoaderRoute: typeof AuthenticatedAppBillingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/audit': {
       id: '/_authenticated/app/audit'
       path: '/app/audit'
@@ -1512,6 +1544,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTicketsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/super-admin/plans': {
+      id: '/_authenticated/app/super-admin/plans'
+      path: '/app/super-admin/plans'
+      fullPath: '/app/super-admin/plans'
+      preLoaderRoute: typeof AuthenticatedAppSuperAdminPlansRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/reorders/$id': {
       id: '/_authenticated/app/reorders/$id'
       path: '/app/reorders/$id'
@@ -1550,6 +1589,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
   AuthenticatedAppAreaMappingRoute: typeof AuthenticatedAppAreaMappingRoute
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
+  AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
   AuthenticatedAppCashbookRoute: typeof AuthenticatedAppCashbookRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
   AuthenticatedAppCostAnalyticsRoute: typeof AuthenticatedAppCostAnalyticsRoute
@@ -1601,6 +1641,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAssetsIdRoute: typeof AuthenticatedAppAssetsIdRoute
   AuthenticatedAppDeliveryQueueIdRoute: typeof AuthenticatedAppDeliveryQueueIdRoute
   AuthenticatedAppReordersIdRoute: typeof AuthenticatedAppReordersIdRoute
+  AuthenticatedAppSuperAdminPlansRoute: typeof AuthenticatedAppSuperAdminPlansRoute
   AuthenticatedAppTicketsIdRoute: typeof AuthenticatedAppTicketsIdRoute
   AuthenticatedAppAssetsIndexRoute: typeof AuthenticatedAppAssetsIndexRoute
   AuthenticatedAppDeliveryQueueIndexRoute: typeof AuthenticatedAppDeliveryQueueIndexRoute
@@ -1615,6 +1656,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
   AuthenticatedAppAreaMappingRoute: AuthenticatedAppAreaMappingRoute,
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
+  AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
   AuthenticatedAppCashbookRoute: AuthenticatedAppCashbookRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
   AuthenticatedAppCostAnalyticsRoute: AuthenticatedAppCostAnalyticsRoute,
@@ -1671,6 +1713,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAssetsIdRoute: AuthenticatedAppAssetsIdRoute,
   AuthenticatedAppDeliveryQueueIdRoute: AuthenticatedAppDeliveryQueueIdRoute,
   AuthenticatedAppReordersIdRoute: AuthenticatedAppReordersIdRoute,
+  AuthenticatedAppSuperAdminPlansRoute: AuthenticatedAppSuperAdminPlansRoute,
   AuthenticatedAppTicketsIdRoute: AuthenticatedAppTicketsIdRoute,
   AuthenticatedAppAssetsIndexRoute: AuthenticatedAppAssetsIndexRoute,
   AuthenticatedAppDeliveryQueueIndexRoute:

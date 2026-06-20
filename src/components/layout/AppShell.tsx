@@ -1,6 +1,7 @@
 import { type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
+import { SubscriptionBanner } from "@/components/billing/SubscriptionBanner";
 
 export function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Sidebar />
         <div className="flex min-h-screen flex-col">
           <Topbar />
+          <SubscriptionBanner />
           <main className="flex-1 overflow-x-hidden p-6">{children}</main>
         </div>
       </div>

@@ -1,0 +1,270 @@
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
+import { AlertTriangle, Save, Crown, Building2, Users, Calendar } from "lucide-react";
+import { usePlans, type PlanRow, type Tier } from "@/lib/use-subscription";
+
+export const Route = createFileRoute("/_authenticated/app/super-admin/plans")({
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) throw redirect({ to: "/auth" });
+    const { data: isSuper } = await (supabase as any).rpc("has_role", { _user_id: data.user.id, _role: "super_admin" });
+    if (!isSuper) throw redirect({ to: "/app" });
+  },
+  component: Page,
+});
+
+const MODULE_GROUPS: Array<{ label: string; modules: Array<{ key: string; name: string }> }> = [
+  { label: "Operativo", modules: [
+    { key: "tickets", name: "Ticket" }, { key: "messages", name: "Messaggi" },
+    { key: "smart_inbox", name: "Smart Inbox" }, { key: "overview", name: "Overview" },
+    { key: "alerts", name: "Alert & Scadenze" }, { key: "guest_issues", name: "Segnalazioni ospiti" },
+    { key: "notifications", name: "Notifiche" },
+  ]},
+  { label: "Strutture & Asset", modules: [
+    { key: "rooms", name: "Strutture & camere" }, { key: "housekeeping", name: "Housekeeping" },
+    { key: "assets", name: "Asset & impianti" }, { key: "maintenance", name: "Manutenzione" },
+    { key: "inventory", name: "Magazzino" },
+  ]},
+  { label: "Fornitori & Acquisti", modules: [
+    { key: "suppliers", name: "Fornitori" }, { key: "contracts", name: "Contratti" },
+    { key: "work_orders", name: "Ordini di Lavoro" }, { key: "purchase_orders", name: "Ordini d'Acquisto" },
+  ]},
+  { label: "Economato & Analytics", modules: [
+    { key: "utilities", name: "Utenze" }, { key: "invoices", name: "Fatture & bollette" },
+    { key: "cashbook", name: "Prima nota" }, { key: "sustainability", name: "Sostenibilità / ESG" },
+    { key: "reports", name: "Report" }, { key: "statistics", name: "Statistiche & cost analytics" },
+    { key: "scheduled_exports", name: "Export schedulati" },
+  ]},
+  { label: "SLA & Penali", modules: [
+    { key: "sla", name: "SLA" }, { key: "sla_settings", name: "Preferenze SLA" },
+    { key: "penalties", name: "Penali" },
+  ]},
+  { label: "Governance", modules: [
+    { key: "users", name: "Utenti & ruoli" }, { key: "permissions", name: "Permessi granulari" },
+    { key: "delegations", name: "Deleghe" }, { key: "audit", name: "Audit log" },
+    { key: "organization", name: "Multi-tenant / workflow" }, { key: "integrations", name: "Integrazioni" },
+    { key: "docs", name: "Documenti" }, { key: "settings", name: "Impostazioni" },
+  ]},
+];
+
+function Page() {
+  const { data: plans } = usePlans();
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-bold flex items-center gap-2"><Crown className="h-6 w-6 text-amber-400" />Configurazione piani</h1>
+          <p className="text-sm text-muted-foreground">Imposta prezzi, limiti e moduli inclusi per Small/Medium/Large. Le dipendenze tra moduli vengono verificate al salvataggio.</p>
+        </div>
+      </div>
+      <Tabs defaultValue="small">
+        <TabsList className="grid w-full grid-cols-3 max-w-xl">
+          {(plans ?? []).map((p) => (
+            <TabsTrigger key={p.tier} value={p.tier}>{p.name} · €{p.price_monthly_eur}/mese</TabsTrigger>
+          ))}
+        </TabsList>
+        {(plans ?? []).map((p) => (
+          <TabsContent key={p.tier} value={p.tier} className="mt-6">
+            <PlanEditor plan={p} />
+          </TabsContent>
+        ))}
+      </Tabs>
+      <OrgSubscriptionsAdmin />
+    </div>
+  );
+}
+
+function PlanEditor({ plan }: { plan: PlanRow }) {
+  const qc = useQueryClient();
+  const [form, setForm] = useState({
+    name: plan.name, description: plan.description ?? "",
+    price_monthly_eur: plan.price_monthly_eur, price_yearly_eur: plan.price_yearly_eur ?? 0,
+    max_users: plan.max_users, max_structures: plan.max_structures,
+    trial_days: plan.trial_days, modules: [...plan.modules],
+    features_highlight: (plan.features_highlight ?? []).join("\n"),
+  });
+  useEffect(() => {
+    setForm({
+      name: plan.name, description: plan.description ?? "",
+      price_monthly_eur: plan.price_monthly_eur, price_yearly_eur: plan.price_yearly_eur ?? 0,
+      max_users: plan.max_users, max_structures: plan.max_structures,
+      trial_days: plan.trial_days, modules: [...plan.modules],
+      features_highlight: (plan.features_highlight ?? []).join("\n"),
+    });
+  }, [plan.id]);
+
+  const { data: missing } = useQuery<Array<{ module: string; missing_dependency: string }>>({
+    queryKey: ["validate-modules", form.modules.sort().join(",")],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).rpc("plan_validate_modules", { _modules: form.modules });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const hasMissing = (missing?.length ?? 0) > 0;
+
+  const toggle = (key: string, on: boolean) => {
+    setForm((f) => ({ ...f, modules: on ? Array.from(new Set([...f.modules, key])) : f.modules.filter((m) => m !== key) }));
+  };
+  const addMissing = () => {
+    if (!missing) return;
+    const add = missing.map((m) => m.missing_dependency);
+    setForm((f) => ({ ...f, modules: Array.from(new Set([...f.modules, ...add])) }));
+  };
+
+  const save = useMutation({
+    mutationFn: async () => {
+      if (hasMissing) throw new Error("Risolvi le dipendenze mancanti prima di salvare.");
+      const { error } = await (supabase as any).from("subscription_plans").update({
+        name: form.name, description: form.description || null,
+        price_monthly_eur: form.price_monthly_eur, price_yearly_eur: form.price_yearly_eur || null,
+        max_users: form.max_users, max_structures: form.max_structures,
+        trial_days: form.trial_days, modules: form.modules,
+        features_highlight: form.features_highlight.split("\n").map((x) => x.trim()).filter(Boolean),
+      }).eq("id", plan.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Piano salvato");
+      qc.invalidateQueries({ queryKey: ["subscription_plans"] });
+      qc.invalidateQueries({ queryKey: ["my-subscription"] });
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <div className="grid gap-6 lg:grid-cols-[1fr_2fr]">
+      <Card>
+        <CardHeader><CardTitle className="font-display text-base">Parametri piano {plan.tier.toUpperCase()}</CardTitle></CardHeader>
+        <CardContent className="space-y-3">
+          <div className="space-y-1"><Label>Nome commerciale</Label><Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} /></div>
+          <div className="space-y-1"><Label>Descrizione</Label><Textarea rows={2} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} /></div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1"><Label>Prezzo mensile (€)</Label><Input type="number" min={0} value={form.price_monthly_eur} onChange={(e) => setForm({ ...form, price_monthly_eur: parseFloat(e.target.value || "0") })} /></div>
+            <div className="space-y-1"><Label>Prezzo annuale (€)</Label><Input type="number" min={0} value={form.price_yearly_eur} onChange={(e) => setForm({ ...form, price_yearly_eur: parseFloat(e.target.value || "0") })} /></div>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="space-y-1"><Label className="text-xs flex items-center gap-1"><Users className="h-3 w-3" />Max utenti</Label><Input type="number" min={1} value={form.max_users} onChange={(e) => setForm({ ...form, max_users: parseInt(e.target.value || "1", 10) })} /></div>
+            <div className="space-y-1"><Label className="text-xs flex items-center gap-1"><Building2 className="h-3 w-3" />Max strutture</Label><Input type="number" min={1} value={form.max_structures} onChange={(e) => setForm({ ...form, max_structures: parseInt(e.target.value || "1", 10) })} /></div>
+            <div className="space-y-1"><Label className="text-xs flex items-center gap-1"><Calendar className="h-3 w-3" />Giorni trial</Label><Input type="number" min={0} value={form.trial_days} onChange={(e) => setForm({ ...form, trial_days: parseInt(e.target.value || "0", 10) })} /></div>
+          </div>
+          <div className="space-y-1">
+            <Label>Bullet di marketing (uno per riga)</Label>
+            <Textarea rows={4} value={form.features_highlight} onChange={(e) => setForm({ ...form, features_highlight: e.target.value })} />
+          </div>
+          <Button className="w-full" disabled={save.isPending || hasMissing} onClick={() => save.mutate()}>
+            <Save className="mr-2 h-4 w-4" />Salva piano
+          </Button>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-3">
+        {hasMissing && (
+          <Card className="border-amber-500/50 bg-amber-500/5">
+            <CardContent className="space-y-2 p-4">
+              <div className="flex items-center gap-2 text-amber-300"><AlertTriangle className="h-4 w-4" /><strong>Dipendenze mancanti</strong></div>
+              <ul className="text-xs text-amber-200/90">
+                {missing!.map((m, i) => (<li key={i}><code>{m.module}</code> richiede <code>{m.missing_dependency}</code></li>))}
+              </ul>
+              <Button size="sm" variant="outline" onClick={addMissing}>Aggiungi automaticamente le dipendenze</Button>
+            </CardContent>
+          </Card>
+        )}
+        <Card>
+          <CardHeader><CardTitle className="font-display text-base">Moduli inclusi ({form.modules.length})</CardTitle></CardHeader>
+          <CardContent className="space-y-4">
+            {MODULE_GROUPS.map((g) => (
+              <div key={g.label}>
+                <div className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">{g.label}</div>
+                <div className="grid grid-cols-2 gap-2 md:grid-cols-3">
+                  {g.modules.map((m) => {
+                    const on = form.modules.includes(m.key);
+                    const isMissingDep = (missing ?? []).some((x) => x.missing_dependency === m.key);
+                    return (
+                      <label key={m.key} className={`flex items-center gap-2 rounded-md border px-2 py-1.5 text-sm cursor-pointer ${
+                        on ? "border-primary/50 bg-primary/5" : "border-border hover:border-border/80"
+                      } ${isMissingDep ? "ring-1 ring-amber-500/60" : ""}`}>
+                        <Checkbox checked={on} onCheckedChange={(v) => toggle(m.key, !!v)} />
+                        <span className="flex-1">{m.name}</span>
+                        <code className="text-[10px] text-muted-foreground">{m.key}</code>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+function OrgSubscriptionsAdmin() {
+  const qc = useQueryClient();
+  const { data: subs } = useQuery({
+    queryKey: ["all-org-subs"],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from("org_subscriptions")
+        .select("*, organizations!inner(name)").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+  const update = useMutation({
+    mutationFn: async (payload: { id: string; tier?: Tier; status?: string; current_period_end?: string | null; manual_payment_ref?: string }) => {
+      const { id, ...rest } = payload;
+      const patch: any = { ...rest };
+      if (rest.status === "active" && !rest.current_period_end) patch.current_period_end = new Date(Date.now() + 30 * 86400000).toISOString();
+      if (rest.status === "active") { patch.activated_at = new Date().toISOString(); }
+      const { error } = await (supabase as any).from("org_subscriptions").update(patch).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Aggiornato"); qc.invalidateQueries({ queryKey: ["all-org-subs"] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  return (
+    <Card>
+      <CardHeader><CardTitle className="font-display text-base">Abbonamenti organizzazioni ({subs?.length ?? 0})</CardTitle></CardHeader>
+      <CardContent className="p-0">
+        <table className="w-full text-sm">
+          <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
+            <tr><th className="px-4 py-2">Organizzazione</th><th className="px-4 py-2">Piano</th><th className="px-4 py-2">Stato</th>
+              <th className="px-4 py-2">Trial fine</th><th className="px-4 py-2">Scadenza</th><th className="px-4 py-2 text-right">Azioni</th></tr>
+          </thead>
+          <tbody>
+            {(subs ?? []).map((s: any) => (
+              <tr key={s.id} className="border-b border-border/60">
+                <td className="px-4 py-2">{s.organizations?.name ?? s.org_id}</td>
+                <td className="px-4 py-2"><Badge variant="outline">{s.tier}</Badge></td>
+                <td className="px-4 py-2"><Badge>{s.status}</Badge></td>
+                <td className="px-4 py-2 text-xs">{s.trial_ends_at ? new Date(s.trial_ends_at).toLocaleDateString("it-IT") : "—"}</td>
+                <td className="px-4 py-2 text-xs">{s.current_period_end ? new Date(s.current_period_end).toLocaleDateString("it-IT") : "—"}</td>
+                <td className="px-4 py-2 text-right space-x-1">
+                  <Button size="sm" variant="outline" onClick={() => update.mutate({ id: s.id, status: "active", tier: s.tier, current_period_end: new Date(Date.now() + 30 * 86400000).toISOString() })}>+30gg attivo</Button>
+                  <Button size="sm" variant="outline" onClick={() => update.mutate({ id: s.id, status: "active", tier: s.tier, current_period_end: new Date(Date.now() + 365 * 86400000).toISOString() })}>+1 anno</Button>
+                  <Button size="sm" variant="ghost" onClick={() => update.mutate({ id: s.id, status: "readonly" })}>Blocca</Button>
+                  <select className="ml-2 rounded border bg-background px-2 py-1 text-xs" value={s.tier} onChange={(e) => update.mutate({ id: s.id, tier: e.target.value as Tier })}>
+                    <option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
+                  </select>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </CardContent>
+    </Card>
+  );
+}
