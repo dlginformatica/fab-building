@@ -31,7 +31,7 @@ function Page() {
     queryKey: ["audit_backup_runs", fromDate, toDate, orgFilter, isSuper, sub?.orgId],
     queryFn: async () => {
       let q: any = (supabase as any).from("backup_runs")
-        .select("id, org_id, actor_id, kind, format, storage_path, size_bytes, tables_count, rows_count, snapshot_taken_at, created_at, status, organizations(name)")
+        .select("id, org_id, actor_id, kind, format, storage_path, size_bytes, tables_count, rows_count, snapshot_taken_at, created_at, status, integrity_status, integrity_hash, verified_at, duration_ms, organizations(name)")
         .order("snapshot_taken_at", { ascending: false }).limit(2000);
       if (fromDate) q = q.gte("snapshot_taken_at", fromDate);
       if (toDate) q = q.lte("snapshot_taken_at", `${toDate}T23:59:59`);
@@ -45,7 +45,7 @@ function Page() {
     queryKey: ["audit_restore_runs", fromDate, toDate, orgFilter, isSuper, sub?.orgId],
     queryFn: async () => {
       let q: any = (supabase as any).from("restore_runs")
-        .select("id, org_id, actor_id, mode, pit_target, pit_resolved_to, source_filename, status, rows_inserted, errors_count, error_message, created_at, organizations(name)")
+        .select("id, org_id, actor_id, mode, pit_target, pit_resolved_to, source_filename, status, rows_inserted, errors_count, error_message, steps_total, steps_done, current_step, created_at, organizations(name)")
         .order("created_at", { ascending: false }).limit(2000);
       if (fromDate) q = q.gte("created_at", fromDate);
       if (toDate) q = q.lte("created_at", `${toDate}T23:59:59`);
@@ -111,7 +111,7 @@ function Page() {
         <CardContent className="p-0 overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
-              <tr><th className="px-3 py-2">Data</th><th className="px-3 py-2">Org</th><th className="px-3 py-2">Tipo</th><th className="px-3 py-2">Formato</th><th className="px-3 py-2">Tabelle</th><th className="px-3 py-2">Righe</th><th className="px-3 py-2">Dim.</th><th className="px-3 py-2">Stato</th></tr>
+              <tr><th className="px-3 py-2">Data</th><th className="px-3 py-2">Org</th><th className="px-3 py-2">Tipo</th><th className="px-3 py-2">Formato</th><th className="px-3 py-2">Tabelle</th><th className="px-3 py-2">Righe</th><th className="px-3 py-2">Dim.</th><th className="px-3 py-2">Durata</th><th className="px-3 py-2">Integrità</th><th className="px-3 py-2">Stato</th></tr>
             </thead>
             <tbody>
               {flat.backups.map((r: any) => (
@@ -123,10 +123,16 @@ function Page() {
                   <td className="px-3 py-2 text-xs">{r.tables_count ?? "—"}</td>
                   <td className="px-3 py-2 text-xs">{r.rows_count ?? "—"}</td>
                   <td className="px-3 py-2 text-xs">{r.size_bytes ? `${(r.size_bytes/1024).toFixed(1)} KB` : "—"}</td>
+                  <td className="px-3 py-2 text-xs">{r.duration_ms ? `${(r.duration_ms/1000).toFixed(1)}s` : "—"}</td>
+                  <td className="px-3 py-2 text-xs">
+                    <Badge variant={r.integrity_status === "verified" ? "outline" : r.integrity_status === "unverified" ? "secondary" : "destructive"}>
+                      {r.integrity_status ?? "—"}
+                    </Badge>
+                  </td>
                   <td className="px-3 py-2 text-xs">{r.status}</td>
                 </tr>
               ))}
-              {!flat.backups.length && <tr><td colSpan={8} className="px-3 py-6 text-center text-xs text-muted-foreground">Nessun backup nel periodo.</td></tr>}
+              {!flat.backups.length && <tr><td colSpan={10} className="px-3 py-6 text-center text-xs text-muted-foreground">Nessun backup nel periodo.</td></tr>}
             </tbody>
           </table>
         </CardContent>
@@ -137,7 +143,7 @@ function Page() {
         <CardContent className="p-0 overflow-x-auto">
           <table className="w-full text-sm">
             <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
-              <tr><th className="px-3 py-2">Data</th><th className="px-3 py-2">Org</th><th className="px-3 py-2">Modo</th><th className="px-3 py-2">PIT target / risolto</th><th className="px-3 py-2">File</th><th className="px-3 py-2">Righe</th><th className="px-3 py-2">Errori</th><th className="px-3 py-2">Stato</th></tr>
+              <tr><th className="px-3 py-2">Data</th><th className="px-3 py-2">Org</th><th className="px-3 py-2">Modo</th><th className="px-3 py-2">PIT target / risolto</th><th className="px-3 py-2">File</th><th className="px-3 py-2">Avanzamento</th><th className="px-3 py-2">Righe</th><th className="px-3 py-2">Errori</th><th className="px-3 py-2">Stato</th></tr>
             </thead>
             <tbody>
               {flat.restores.map((r: any) => (
@@ -147,12 +153,13 @@ function Page() {
                   <td className="px-3 py-2"><Badge variant="outline">{r.mode}</Badge></td>
                   <td className="px-3 py-2 text-xs">{r.pit_target ? `${new Date(r.pit_target).toLocaleString("it-IT")} → ${r.pit_resolved_to ? new Date(r.pit_resolved_to).toLocaleString("it-IT") : "—"}` : "—"}</td>
                   <td className="px-3 py-2 text-xs max-w-[260px] truncate" title={r.source_filename}>{r.source_filename ?? "—"}</td>
+                  <td className="px-3 py-2 text-xs">{r.steps_total ? `${r.steps_done ?? 0}/${r.steps_total} · ${r.current_step ?? ""}` : "—"}</td>
                   <td className="px-3 py-2 text-xs">{r.rows_inserted}</td>
                   <td className="px-3 py-2 text-xs">{r.errors_count}</td>
                   <td className="px-3 py-2 text-xs">{r.status}</td>
                 </tr>
               ))}
-              {!flat.restores.length && <tr><td colSpan={8} className="px-3 py-6 text-center text-xs text-muted-foreground">Nessun restore nel periodo.</td></tr>}
+              {!flat.restores.length && <tr><td colSpan={9} className="px-3 py-6 text-center text-xs text-muted-foreground">Nessun restore nel periodo.</td></tr>}
             </tbody>
           </table>
         </CardContent>

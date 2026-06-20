@@ -6,11 +6,15 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { Download, Upload, Database, FileJson, FileSpreadsheet, FileArchive, AlertTriangle, CloudUpload, History, Clock, Trash2 } from "lucide-react";
+import { ShieldCheck, ShieldAlert, ShieldQuestion, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import {
   exportOrgSnapshot, snapshotToJSONBlob, snapshotToZipCSV, snapshotToXLSX,
   restoreOrgSnapshot, downloadBlob, type Snapshot,
   uploadSnapshotAndRecord, downloadSnapshotFromStorage, signedBackupUrl,
   findNearestBackup, recordRestore, deleteBackup,
+  verifyBackupIntegrity, startRestoreRun, finishRestoreRun, updateRestoreProgress,
 } from "@/lib/backup";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -18,6 +22,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 export function BackupPanel({ orgId, orgName }: { orgId: string; orgName: string }) {
   const [busy, setBusy] = useState<string | null>(null);
   const [progress, setProgress] = useState<string>("");
+  const [pitSteps, setPitSteps] = useState<{ done: number; total: number; step: string } | null>(null);
   const [restoreMode, setRestoreMode] = useState<"merge" | "replace" | "point_in_time">("merge");
   const [pitTarget, setPitTarget] = useState<string>("");
   const [confirmName, setConfirmName] = useState("");
@@ -28,7 +33,7 @@ export function BackupPanel({ orgId, orgName }: { orgId: string; orgName: string
     queryKey: ["backup_runs", orgId],
     queryFn: async () => {
       const { data, error } = await (supabase as any).from("backup_runs")
-        .select("id, kind, format, storage_path, size_bytes, tables_count, rows_count, snapshot_taken_at, status, actor_id")
+        .select("id, kind, format, storage_path, size_bytes, tables_count, rows_count, snapshot_taken_at, status, actor_id, integrity_status, integrity_hash, verified_at, duration_ms")
         .eq("org_id", orgId).order("snapshot_taken_at", { ascending: false }).limit(50);
       if (error) throw error;
       return data as any[];
@@ -81,24 +86,36 @@ export function BackupPanel({ orgId, orgName }: { orgId: string; orgName: string
     if (!pitTarget) { toast.error("Seleziona data e ora"); return; }
     if (confirmName !== orgName) { toast.error("Digita il nome dell'organizzazione per confermare"); return; }
     setBusy("pit"); setProgress("Ricerca snapshot più vicino…");
+    const STEPS = ["Ricerca snapshot","Download snapshot","Backup pre-restore","Restore replace","Finalizzazione"];
+    setPitSteps({ done: 0, total: STEPS.length, step: STEPS[0] });
+    const runId = await startRestoreRun(orgId, { mode: "point_in_time", pitTarget: new Date(pitTarget).toISOString(), stepsTotal: STEPS.length });
+    const tick = async (i: number) => { setPitSteps({ done: i, total: STEPS.length, step: STEPS[i] ?? "Completato" }); if (runId) await updateRestoreProgress(runId, { steps_total: STEPS.length, steps_done: i, current_step: STEPS[i] ?? "Completato" }); };
     try {
+      await tick(0);
       const near = await findNearestBackup(orgId, new Date(pitTarget));
-      if (!near) { toast.error("Nessun backup precedente alla data scelta"); return; }
+      if (!near) {
+        await finishRestoreRun(runId, orgId, { status: "failed", error_message: "Nessun backup precedente alla data scelta" });
+        toast.error("Nessun backup precedente alla data scelta"); return;
+      }
+      await tick(1);
       setProgress(`Download snapshot del ${new Date(near.snapshot_taken_at).toLocaleString("it-IT")}`);
       const snap = await downloadSnapshotFromStorage(near.storage_path);
+      await tick(2);
       setProgress("Backup pre-restore di sicurezza…");
       try { const pre = await exportOrgSnapshot(orgId); await uploadSnapshotAndRecord(orgId, pre, "pre_restore"); } catch {}
+      await tick(3);
       setProgress("Restore replace in corso…");
       const res = await restoreOrgSnapshot(orgId, snap, "replace", (t, i, n) => setProgress(`${i}/${n} · ${t}`));
       const ok = Object.values(res.inserted).reduce((a, b) => a + b, 0);
       const err = Object.keys(res.errors).length;
-      await recordRestore({ orgId, sourceBackupId: near.id, sourceFilename: near.storage_path, mode: "point_in_time", pitTarget: new Date(pitTarget).toISOString(), pitResolved: near.snapshot_taken_at, rowsInserted: ok, errorsCount: err, details: { inserted: res.inserted, errors: res.errors } });
+      await tick(4);
+      await finishRestoreRun(runId, orgId, { status: err ? "partial" : "success", rows_inserted: ok, errors_count: err, details: { inserted: res.inserted, errors: res.errors }, pit_resolved_to: near.snapshot_taken_at });
       toast.success(`Point-in-time ripristinato (${ok} righe, ${err} errori)`);
       qc.invalidateQueries({ queryKey: ["backup_runs", orgId] });
     } catch (e: any) {
       toast.error(`Errore PIT: ${e?.message ?? e}`);
-      await recordRestore({ orgId, mode: "point_in_time", pitTarget: new Date(pitTarget).toISOString(), rowsInserted: 0, errorsCount: 1, status: "failed", errorMessage: e?.message ?? String(e) });
-    } finally { setBusy(null); setProgress(""); }
+      await finishRestoreRun(runId, orgId, { status: "failed", error_message: e?.message ?? String(e) });
+    } finally { setBusy(null); setProgress(""); setPitSteps(null); }
   }
 
   async function doRestore() {
@@ -136,6 +153,25 @@ export function BackupPanel({ orgId, orgName }: { orgId: string; orgName: string
     if (!confirm("Eliminare definitivamente questo backup?")) return;
     try { await deleteBackup(id, path); qc.invalidateQueries({ queryKey: ["backup_runs", orgId] }); toast.success("Backup eliminato"); }
     catch (e: any) { toast.error(e?.message ?? String(e)); }
+  }
+  async function verifyOne(id: string) {
+    setBusy("verify");
+    try {
+      const r = await verifyBackupIntegrity(id);
+      if (r.status === "verified") toast.success("Integrità verificata");
+      else if (r.status === "mismatch") toast.error("Hash non corrisponde: backup potenzialmente corrotto");
+      else if (r.status === "missing") toast.error("File backup mancante sullo storage");
+      else toast.error("Errore in verifica");
+      qc.invalidateQueries({ queryKey: ["backup_runs", orgId] });
+    } finally { setBusy(null); }
+  }
+
+  function IntegrityBadge({ status }: { status?: string }) {
+    if (status === "verified") return <Badge variant="outline" className="gap-1 text-emerald-600"><ShieldCheck className="h-3 w-3" /> integro</Badge>;
+    if (status === "mismatch") return <Badge variant="destructive" className="gap-1"><ShieldAlert className="h-3 w-3" /> non ripristinabile</Badge>;
+    if (status === "missing") return <Badge variant="destructive" className="gap-1"><ShieldAlert className="h-3 w-3" /> file mancante</Badge>;
+    if (status === "error") return <Badge variant="destructive" className="gap-1"><ShieldAlert className="h-3 w-3" /> errore</Badge>;
+    return <Badge variant="outline" className="gap-1 text-muted-foreground"><ShieldQuestion className="h-3 w-3" /> da verificare</Badge>;
   }
 
   return (
@@ -187,7 +223,16 @@ export function BackupPanel({ orgId, orgName }: { orgId: string; orgName: string
             <Button disabled={!restoreFile || !!busy} onClick={doRestore}><Download className="mr-2 h-4 w-4" /> Esegui restore</Button>
           )}
           {busy === "restore" && <p className="text-xs text-muted-foreground">{progress}</p>}
-          {busy === "pit" && <p className="text-xs text-muted-foreground">{progress}</p>}
+          {busy === "pit" && (
+            <div className="space-y-2 rounded border border-border p-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="flex items-center gap-2"><Loader2 className="h-3 w-3 animate-spin" /> {pitSteps?.step ?? "Avvio…"}</span>
+                <span className="text-muted-foreground">{pitSteps ? `${pitSteps.done}/${pitSteps.total}` : ""}</span>
+              </div>
+              <Progress value={pitSteps ? (pitSteps.done / pitSteps.total) * 100 : 0} />
+              <p className="text-[11px] text-muted-foreground">{progress}</p>
+            </div>
+          )}
           {busy === "restoreCloud" && <p className="text-xs text-muted-foreground">{progress}</p>}
         </CardContent>
       </Card>
@@ -196,7 +241,7 @@ export function BackupPanel({ orgId, orgName }: { orgId: string; orgName: string
         <CardContent className="p-0">
           <table className="w-full text-sm">
             <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
-              <tr><th className="px-3 py-2">Data snapshot</th><th className="px-3 py-2">Tipo</th><th className="px-3 py-2">Tabelle</th><th className="px-3 py-2">Righe</th><th className="px-3 py-2">Dim.</th><th className="px-3 py-2">Azioni</th></tr>
+              <tr><th className="px-3 py-2">Data snapshot</th><th className="px-3 py-2">Tipo</th><th className="px-3 py-2">Tabelle</th><th className="px-3 py-2">Righe</th><th className="px-3 py-2">Dim.</th><th className="px-3 py-2">Durata</th><th className="px-3 py-2">Integrità</th><th className="px-3 py-2">Azioni</th></tr>
             </thead>
             <tbody>
               {(history ?? []).map((r) => (
@@ -206,14 +251,17 @@ export function BackupPanel({ orgId, orgName }: { orgId: string; orgName: string
                   <td className="px-3 py-2 text-xs">{r.tables_count ?? "—"}</td>
                   <td className="px-3 py-2 text-xs">{r.rows_count ?? "—"}</td>
                   <td className="px-3 py-2 text-xs">{r.size_bytes ? `${(r.size_bytes/1024).toFixed(1)} KB` : "—"}</td>
+                  <td className="px-3 py-2 text-xs">{r.duration_ms ? `${(r.duration_ms/1000).toFixed(1)}s` : "—"}</td>
+                  <td className="px-3 py-2 text-xs"><IntegrityBadge status={r.integrity_status} /></td>
                   <td className="px-3 py-2 flex gap-2">
+                    {r.storage_path && <Button size="sm" variant="outline" title="Verifica integrità" onClick={() => verifyOne(r.id)}><ShieldCheck className="h-3 w-3" /></Button>}
                     {r.storage_path && <Button size="sm" variant="outline" onClick={() => dlBackup(r.storage_path)}><Download className="h-3 w-3" /></Button>}
-                    {r.storage_path && <Button size="sm" variant="outline" onClick={() => restoreFromCloud(r.id, r.storage_path)}><Upload className="h-3 w-3" /></Button>}
+                    {r.storage_path && r.integrity_status !== "mismatch" && r.integrity_status !== "missing" && <Button size="sm" variant="outline" onClick={() => restoreFromCloud(r.id, r.storage_path)}><Upload className="h-3 w-3" /></Button>}
                     <Button size="sm" variant="outline" onClick={() => delBackup(r.id, r.storage_path)}><Trash2 className="h-3 w-3" /></Button>
                   </td>
                 </tr>
               ))}
-              {!history?.length && <tr><td colSpan={6} className="px-3 py-6 text-center text-xs text-muted-foreground">Nessun backup nel cloud.</td></tr>}
+              {!history?.length && <tr><td colSpan={8} className="px-3 py-6 text-center text-xs text-muted-foreground">Nessun backup nel cloud.</td></tr>}
             </tbody>
           </table>
         </CardContent>

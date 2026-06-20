@@ -543,9 +543,12 @@ export type Database = {
           actor_id: string | null
           created_at: string
           details: Json | null
+          duration_ms: number | null
           error_message: string | null
           format: string
           id: string
+          integrity_hash: string | null
+          integrity_status: string
           kind: string
           org_id: string
           rows_count: number | null
@@ -556,14 +559,18 @@ export type Database = {
           storage_bucket: string | null
           storage_path: string | null
           tables_count: number | null
+          verified_at: string | null
         }
         Insert: {
           actor_id?: string | null
           created_at?: string
           details?: Json | null
+          duration_ms?: number | null
           error_message?: string | null
           format?: string
           id?: string
+          integrity_hash?: string | null
+          integrity_status?: string
           kind?: string
           org_id: string
           rows_count?: number | null
@@ -574,14 +581,18 @@ export type Database = {
           storage_bucket?: string | null
           storage_path?: string | null
           tables_count?: number | null
+          verified_at?: string | null
         }
         Update: {
           actor_id?: string | null
           created_at?: string
           details?: Json | null
+          duration_ms?: number | null
           error_message?: string | null
           format?: string
           id?: string
+          integrity_hash?: string | null
+          integrity_status?: string
           kind?: string
           org_id?: string
           rows_count?: number | null
@@ -592,6 +603,7 @@ export type Database = {
           storage_bucket?: string | null
           storage_path?: string | null
           tables_count?: number | null
+          verified_at?: string | null
         }
         Relationships: [
           {
@@ -3091,6 +3103,7 @@ export type Database = {
         Row: {
           actor_id: string | null
           created_at: string
+          current_step: string | null
           details: Json | null
           error_message: string | null
           errors_count: number | null
@@ -3099,14 +3112,18 @@ export type Database = {
           org_id: string
           pit_resolved_to: string | null
           pit_target: string | null
+          progress: Json
           rows_inserted: number | null
           source_backup_id: string | null
           source_filename: string | null
           status: string
+          steps_done: number | null
+          steps_total: number | null
         }
         Insert: {
           actor_id?: string | null
           created_at?: string
+          current_step?: string | null
           details?: Json | null
           error_message?: string | null
           errors_count?: number | null
@@ -3115,14 +3132,18 @@ export type Database = {
           org_id: string
           pit_resolved_to?: string | null
           pit_target?: string | null
+          progress?: Json
           rows_inserted?: number | null
           source_backup_id?: string | null
           source_filename?: string | null
           status?: string
+          steps_done?: number | null
+          steps_total?: number | null
         }
         Update: {
           actor_id?: string | null
           created_at?: string
+          current_step?: string | null
           details?: Json | null
           error_message?: string | null
           errors_count?: number | null
@@ -3131,10 +3152,13 @@ export type Database = {
           org_id?: string
           pit_resolved_to?: string | null
           pit_target?: string | null
+          progress?: Json
           rows_inserted?: number | null
           source_backup_id?: string | null
           source_filename?: string | null
           status?: string
+          steps_done?: number | null
+          steps_total?: number | null
         }
         Relationships: [
           {
@@ -5098,9 +5122,12 @@ export type Database = {
           actor_id: string | null
           created_at: string
           details: Json | null
+          duration_ms: number | null
           error_message: string | null
           format: string
           id: string
+          integrity_hash: string | null
+          integrity_status: string
           kind: string
           org_id: string
           rows_count: number | null
@@ -5111,6 +5138,7 @@ export type Database = {
           storage_bucket: string | null
           storage_path: string | null
           tables_count: number | null
+          verified_at: string | null
         }
         SetofOptions: {
           from: "*"
@@ -5135,9 +5163,12 @@ export type Database = {
           actor_id: string | null
           created_at: string
           details: Json | null
+          duration_ms: number | null
           error_message: string | null
           format: string
           id: string
+          integrity_hash: string | null
+          integrity_status: string
           kind: string
           org_id: string
           rows_count: number | null
@@ -5148,6 +5179,7 @@ export type Database = {
           storage_bucket: string | null
           storage_path: string | null
           tables_count: number | null
+          verified_at: string | null
         }
         SetofOptions: {
           from: "*"
@@ -5291,6 +5323,10 @@ export type Database = {
       is_org_member: { Args: { _org: string; _user: string }; Returns: boolean }
       is_org_owner: { Args: { _org: string; _user: string }; Returns: boolean }
       missing_module_deps: { Args: { _modules: string[] }; Returns: string[] }
+      notify_org_admins: {
+        Args: { _kind: string; _org: string; _payload?: Json; _reason: string }
+        Returns: number
+      }
       org_can_write: { Args: { _org: string }; Returns: boolean }
       org_effective_status: {
         Args: { _org: string }
@@ -5336,6 +5372,7 @@ export type Database = {
         Returns: {
           actor_id: string | null
           created_at: string
+          current_step: string | null
           details: Json | null
           error_message: string | null
           errors_count: number | null
@@ -5344,10 +5381,13 @@ export type Database = {
           org_id: string
           pit_resolved_to: string | null
           pit_target: string | null
+          progress: Json
           rows_inserted: number | null
           source_backup_id: string | null
           source_filename: string | null
           status: string
+          steps_done: number | null
+          steps_total: number | null
         }
         SetofOptions: {
           from: "*"
