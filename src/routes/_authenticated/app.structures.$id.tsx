@@ -86,7 +86,7 @@ function Anagrafica({ s }: { s: Structure }) {
         province: f.province, country: f.country, rooms_count: f.rooms_count, timezone: f.timezone,
         vat_number: f.vat_number, fiscal_code: f.fiscal_code, regime_fiscale: f.regime_fiscale,
         notes: f.notes,
-      }).eq("id", s.id);
+      } as any).eq("id", s.id);
       if (error) throw error;
     },
     onSuccess: () => {
