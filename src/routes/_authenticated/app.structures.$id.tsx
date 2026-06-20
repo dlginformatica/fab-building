@@ -255,8 +255,10 @@ function RoomsTab({ structureId }: { structureId: string }) {
     onError: (e: Error) => toast.error(e.message),
   });
   const seedPreset = useMutation({
-    mutationFn: async (preset: string) => {
-      const { error } = await (supabase as any).rpc("seed_structure_preset", { _structure: structureId, _preset: preset });
+    mutationFn: async (cfg: { preset: string; floors: number; perFloor: number }) => {
+      const { error } = await (supabase as any).rpc("seed_structure_preset", {
+        _structure: structureId, _preset: cfg.preset, _floors_count: cfg.floors, _rooms_per_floor: cfg.perFloor,
+      });
       if (error) throw error;
     },
     onSuccess: () => { toast.success("Preset applicato"); qc.invalidateQueries({ queryKey: ["floors", structureId] }); qc.invalidateQueries({ queryKey: ["rooms", structureId] }); },
@@ -287,9 +289,9 @@ function RoomsTab({ structureId }: { structureId: string }) {
           <div className="border-t pt-3 space-y-2">
             <div className="text-xs text-muted-foreground">Crea rapidamente con preset:</div>
             <div className="flex gap-2 flex-wrap">
-              <Button size="sm" variant="outline" onClick={() => seedPreset.mutate("small")}>Piccolo</Button>
-              <Button size="sm" variant="outline" onClick={() => seedPreset.mutate("medium")}>Medio</Button>
-              <Button size="sm" variant="outline" onClick={() => seedPreset.mutate("large")}>Grande</Button>
+              <Button size="sm" variant="outline" onClick={() => seedPreset.mutate({ preset: "small", floors: 2, perFloor: 5 })}>Piccolo (2×5)</Button>
+              <Button size="sm" variant="outline" onClick={() => seedPreset.mutate({ preset: "medium", floors: 3, perFloor: 10 })}>Medio (3×10)</Button>
+              <Button size="sm" variant="outline" onClick={() => seedPreset.mutate({ preset: "large", floors: 5, perFloor: 15 })}>Grande (5×15)</Button>
             </div>
           </div>
         </CardContent>
