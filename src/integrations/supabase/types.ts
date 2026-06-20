@@ -4985,6 +4985,45 @@ export type Database = {
           violation_id: string
         }[]
       }
+      subscriptions_sync_expired: {
+        Args: never
+        Returns: {
+          new_status: Database["public"]["Enums"]["subscription_status"]
+          old_status: Database["public"]["Enums"]["subscription_status"]
+          updated_org_id: string
+        }[]
+      }
+      super_admin_force_subscription: {
+        Args: {
+          _extend_days?: number
+          _note?: string
+          _org: string
+          _status?: Database["public"]["Enums"]["subscription_status"]
+          _tier?: Database["public"]["Enums"]["subscription_tier"]
+        }
+        Returns: {
+          activated_at: string | null
+          activated_by: string | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          manual_payment_notes: string | null
+          manual_payment_ref: string | null
+          org_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          trial_ends_at: string
+          trial_started_at: string
+          updated_at: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "org_subscriptions"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       transfer_org_ownership: {
         Args: { _new_owner: string; _org: string }
         Returns: undefined

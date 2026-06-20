@@ -222,22 +222,38 @@ function OrgSubscriptionsAdmin() {
       return data ?? [];
     },
   });
-  const update = useMutation({
-    mutationFn: async (payload: { id: string; tier?: Tier; status?: string; current_period_end?: string | null; manual_payment_ref?: string }) => {
-      const { id, ...rest } = payload;
-      const patch: any = { ...rest };
-      if (rest.status === "active" && !rest.current_period_end) patch.current_period_end = new Date(Date.now() + 30 * 86400000).toISOString();
-      if (rest.status === "active") { patch.activated_at = new Date().toISOString(); }
-      const { error } = await (supabase as any).from("org_subscriptions").update(patch).eq("id", id);
+  const force = useMutation({
+    mutationFn: async (payload: { org_id: string; tier?: Tier; status?: string; extend_days?: number; note?: string }) => {
+      const { error } = await (supabase as any).rpc("super_admin_force_subscription", {
+        _org: payload.org_id,
+        _tier: payload.tier ?? null,
+        _status: payload.status ?? null,
+        _extend_days: payload.extend_days ?? null,
+        _note: payload.note ?? null,
+      });
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Aggiornato"); qc.invalidateQueries({ queryKey: ["all-org-subs"] }); },
+    onSuccess: () => { toast.success("Abbonamento aggiornato"); qc.invalidateQueries({ queryKey: ["all-org-subs"] }); qc.invalidateQueries({ queryKey: ["my-subscription"] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const syncNow = useMutation({
+    mutationFn: async () => {
+      const { error } = await (supabase as any).rpc("subscriptions_sync_expired");
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Sincronizzazione eseguita"); qc.invalidateQueries({ queryKey: ["all-org-subs"] }); qc.invalidateQueries({ queryKey: ["my-subscription"] }); },
     onError: (e: Error) => toast.error(e.message),
   });
 
   return (
     <Card>
-      <CardHeader><CardTitle className="font-display text-base">Abbonamenti organizzazioni ({subs?.length ?? 0})</CardTitle></CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between gap-2">
+        <div>
+          <CardTitle className="font-display text-base">Abbonamenti organizzazioni ({subs?.length ?? 0})</CardTitle>
+          <p className="text-xs text-muted-foreground mt-1">Un job orario marca automaticamente come <code>readonly</code> i trial scaduti e gli abbonamenti con periodo concluso. Il super admin può forzare tier, stato e proroghe in qualsiasi momento.</p>
+        </div>
+        <Button size="sm" variant="outline" onClick={() => syncNow.mutate()} disabled={syncNow.isPending}>Sincronizza ora</Button>
+      </CardHeader>
       <CardContent className="p-0">
         <table className="w-full text-sm">
           <thead className="border-b border-border text-left text-xs uppercase text-muted-foreground">
@@ -253,10 +269,11 @@ function OrgSubscriptionsAdmin() {
                 <td className="px-4 py-2 text-xs">{s.trial_ends_at ? new Date(s.trial_ends_at).toLocaleDateString("it-IT") : "—"}</td>
                 <td className="px-4 py-2 text-xs">{s.current_period_end ? new Date(s.current_period_end).toLocaleDateString("it-IT") : "—"}</td>
                 <td className="px-4 py-2 text-right space-x-1">
-                  <Button size="sm" variant="outline" onClick={() => update.mutate({ id: s.id, status: "active", tier: s.tier, current_period_end: new Date(Date.now() + 30 * 86400000).toISOString() })}>+30gg attivo</Button>
-                  <Button size="sm" variant="outline" onClick={() => update.mutate({ id: s.id, status: "active", tier: s.tier, current_period_end: new Date(Date.now() + 365 * 86400000).toISOString() })}>+1 anno</Button>
-                  <Button size="sm" variant="ghost" onClick={() => update.mutate({ id: s.id, status: "readonly" })}>Blocca</Button>
-                  <select className="ml-2 rounded border bg-background px-2 py-1 text-xs" value={s.tier} onChange={(e) => update.mutate({ id: s.id, tier: e.target.value as Tier })}>
+                  <Button size="sm" variant="outline" onClick={() => force.mutate({ org_id: s.org_id, status: "active", extend_days: 30, note: "Attivazione manuale +30gg" })}>+30gg attivo</Button>
+                  <Button size="sm" variant="outline" onClick={() => force.mutate({ org_id: s.org_id, status: "active", extend_days: 365, note: "Attivazione manuale +1 anno" })}>+1 anno</Button>
+                  <Button size="sm" variant="outline" onClick={() => force.mutate({ org_id: s.org_id, status: "trial", extend_days: 30, note: "Estensione trial +30gg" })}>+30gg trial</Button>
+                  <Button size="sm" variant="ghost" onClick={() => force.mutate({ org_id: s.org_id, status: "readonly", note: "Bloccato dal super admin" })}>Blocca</Button>
+                  <select className="ml-2 rounded border bg-background px-2 py-1 text-xs" value={s.tier} onChange={(e) => force.mutate({ org_id: s.org_id, tier: e.target.value as Tier, note: "Cambio tier" })}>
                     <option value="small">Small</option><option value="medium">Medium</option><option value="large">Large</option>
                   </select>
                 </td>
