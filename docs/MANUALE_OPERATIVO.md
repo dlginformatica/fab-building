@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### 2026-06-20 — Fase 12 · Trend, Preferenze SLA, Stato notifiche, Export schedulati
+- **Trend YoY** (`/app/trends`): selettore KPI (ticket, SLA, fatture, energia, acqua, gas, housekeeping, guest issues) con confronto anno corrente vs precedente, benchmark per camera/anno, export CSV.
+- **Preferenze SLA** (`/app/sla-settings`): per utente e struttura — soglia pre-allerta, intervallo reminder, canali (in-app/email/push), orario silenzioso. Anteprima impatto in tempo reale sui ticket aperti.
+- **Smart Inbox · stato notifiche SLA**: nuovo blocco con stato `nuovo / letto / risolto` e azioni rapide (Letto, Risolto). Refresh 30s.
+- **Export schedulati** (`/app/scheduled-exports`): pianificazioni periodiche per Fatture SDI (XML/PDF/CSV), Cashbook, Housekeeping KPI, SLA, ESG. Ogni pianificazione genera un link condivisibile (`/exports/{token}`).
+
 ### 2026-06-20 — Fase 11: Overview, Alert, Export & Audit estesi
 
 **Overview unificata (`/app/overview`)** — Dashboard "tutto in uno" con KPI di Housekeeping, Segnalazioni ospiti, SLA, Fatture e trend consumi elettrici, filtrabile per periodo (default ultimi 30 giorni). Include lista degli alert recenti e bottone *PDF* per esportare il riepilogo.
