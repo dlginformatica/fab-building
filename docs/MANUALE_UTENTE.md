@@ -4,6 +4,7 @@
 > Documento vivo: aggiornato ad ogni iterazione (regola permanente).
 
 ## Changelog
+- **2026-06-20** — Il pulsante "Scarica PDF" in /manual produce ora un **PDF reale** con copertina, indice cliccabile, immagini e numerazione pagine. Nome file: `hotelops_manuale_utente_v{versione}_{data}.pdf`.
 - **2026-06-20** — Prima edizione del Manuale Utente: 10 capitoli, FAQ, screenshot reali. Affiancato al Manuale Operativo (tecnico) già esistente.
 
 ---
