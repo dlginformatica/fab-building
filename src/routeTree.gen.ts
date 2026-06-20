@@ -49,6 +49,7 @@ import { Route as AuthenticatedAppOverviewRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppOrganizationRouteImport } from './routes/_authenticated/app.organization'
 import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authenticated/app.onboarding'
 import { Route as AuthenticatedAppNotificationsRouteImport } from './routes/_authenticated/app.notifications'
+import { Route as AuthenticatedAppNotificationPrefsRouteImport } from './routes/_authenticated/app.notification-prefs'
 import { Route as AuthenticatedAppModuleDependenciesRouteImport } from './routes/_authenticated/app.module-dependencies'
 import { Route as AuthenticatedAppMessagesRouteImport } from './routes/_authenticated/app.messages'
 import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authenticated/app.maintenance'
@@ -307,6 +308,12 @@ const AuthenticatedAppNotificationsRoute =
     path: '/app/notifications',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppNotificationPrefsRoute =
+  AuthenticatedAppNotificationPrefsRouteImport.update({
+    id: '/app/notification-prefs',
+    path: '/app/notification-prefs',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppModuleDependenciesRoute =
   AuthenticatedAppModuleDependenciesRouteImport.update({
     id: '/app/module-dependencies',
@@ -516,6 +523,7 @@ export interface FileRoutesByFullPath {
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/app/messages': typeof AuthenticatedAppMessagesRoute
   '/app/module-dependencies': typeof AuthenticatedAppModuleDependenciesRoute
+  '/app/notification-prefs': typeof AuthenticatedAppNotificationPrefsRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
   '/app/organization': typeof AuthenticatedAppOrganizationRoute
@@ -588,6 +596,7 @@ export interface FileRoutesByTo {
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/app/messages': typeof AuthenticatedAppMessagesRoute
   '/app/module-dependencies': typeof AuthenticatedAppModuleDependenciesRoute
+  '/app/notification-prefs': typeof AuthenticatedAppNotificationPrefsRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
   '/app/organization': typeof AuthenticatedAppOrganizationRoute
@@ -662,6 +671,7 @@ export interface FileRoutesById {
   '/_authenticated/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/_authenticated/app/messages': typeof AuthenticatedAppMessagesRoute
   '/_authenticated/app/module-dependencies': typeof AuthenticatedAppModuleDependenciesRoute
+  '/_authenticated/app/notification-prefs': typeof AuthenticatedAppNotificationPrefsRoute
   '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/_authenticated/app/onboarding': typeof AuthenticatedAppOnboardingRoute
   '/_authenticated/app/organization': typeof AuthenticatedAppOrganizationRoute
@@ -736,6 +746,7 @@ export interface FileRouteTypes {
     | '/app/maintenance'
     | '/app/messages'
     | '/app/module-dependencies'
+    | '/app/notification-prefs'
     | '/app/notifications'
     | '/app/onboarding'
     | '/app/organization'
@@ -808,6 +819,7 @@ export interface FileRouteTypes {
     | '/app/maintenance'
     | '/app/messages'
     | '/app/module-dependencies'
+    | '/app/notification-prefs'
     | '/app/notifications'
     | '/app/onboarding'
     | '/app/organization'
@@ -881,6 +893,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/maintenance'
     | '/_authenticated/app/messages'
     | '/_authenticated/app/module-dependencies'
+    | '/_authenticated/app/notification-prefs'
     | '/_authenticated/app/notifications'
     | '/_authenticated/app/onboarding'
     | '/_authenticated/app/organization'
@@ -1221,6 +1234,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppNotificationsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/notification-prefs': {
+      id: '/_authenticated/app/notification-prefs'
+      path: '/app/notification-prefs'
+      fullPath: '/app/notification-prefs'
+      preLoaderRoute: typeof AuthenticatedAppNotificationPrefsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/module-dependencies': {
       id: '/_authenticated/app/module-dependencies'
       path: '/app/module-dependencies'
@@ -1521,6 +1541,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppMaintenanceRoute: typeof AuthenticatedAppMaintenanceRoute
   AuthenticatedAppMessagesRoute: typeof AuthenticatedAppMessagesRoute
   AuthenticatedAppModuleDependenciesRoute: typeof AuthenticatedAppModuleDependenciesRoute
+  AuthenticatedAppNotificationPrefsRoute: typeof AuthenticatedAppNotificationPrefsRoute
   AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRoute
   AuthenticatedAppOnboardingRoute: typeof AuthenticatedAppOnboardingRoute
   AuthenticatedAppOrganizationRoute: typeof AuthenticatedAppOrganizationRoute
@@ -1584,6 +1605,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppMessagesRoute: AuthenticatedAppMessagesRoute,
   AuthenticatedAppModuleDependenciesRoute:
     AuthenticatedAppModuleDependenciesRoute,
+  AuthenticatedAppNotificationPrefsRoute:
+    AuthenticatedAppNotificationPrefsRoute,
   AuthenticatedAppNotificationsRoute: AuthenticatedAppNotificationsRoute,
   AuthenticatedAppOnboardingRoute: AuthenticatedAppOnboardingRoute,
   AuthenticatedAppOrganizationRoute: AuthenticatedAppOrganizationRoute,

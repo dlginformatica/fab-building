@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ShieldAlert, Check } from "lucide-react";
+import { ShieldAlert, Check, ExternalLink } from "lucide-react";
 import { fmtDateTime } from "@/lib/format";
+import { moduleHref } from "@/lib/module-paths";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/app/admin-alerts")({ component: Page });
@@ -55,9 +56,21 @@ function Page() {
                 <tr key={r.id} className={`border-b border-border/40 ${r.read_at ? "opacity-60" : ""}`}>
                   <td className="px-3 py-2">{fmtDateTime(r.created_at)}</td>
                   <td className="px-3 py-2">{emailOf(r.source_user_id)}</td>
-                  <td className="px-3 py-2 font-mono">{r.module}</td>
+                  <td className="px-3 py-2 font-mono">
+                    <Link to={moduleHref(r.module)} className="text-primary hover:underline inline-flex items-center gap-1">
+                      {r.module}<ExternalLink className="h-3 w-3" />
+                    </Link>
+                  </td>
                   <td className="px-3 py-2"><Badge variant="destructive">{r.reason}</Badge></td>
-                  <td className="px-3 py-2 font-mono text-amber-500">{(r.missing_deps ?? []).join(", ") || "—"}</td>
+                  <td className="px-3 py-2">
+                    {(r.missing_deps ?? []).length === 0 ? <span className="text-muted-foreground">—</span> : (
+                      <div className="flex flex-wrap gap-1">
+                        {(r.missing_deps as string[]).map((d) => (
+                          <Badge key={d} variant="outline" className="font-mono text-[10px] border-amber-500/40 text-amber-500">{d}</Badge>
+                        ))}
+                      </div>
+                    )}
+                  </td>
                   <td className="px-3 py-2">{r.read_at ? <Badge variant="secondary">letto</Badge> : <Badge>nuovo</Badge>}</td>
                   <td className="px-3 py-2 text-right">
                     <Link to="/app/delegations" className="text-xs text-primary hover:underline mr-2">Correggi delega →</Link>

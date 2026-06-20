@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-20 — Fase 18**: avvisi admin con link diretto al modulo coinvolto e riepilogo visivo delle dipendenze mancanti; nuova pagina **Preferenze notifiche organizzazione** (`/app/notification-prefs`) per impostare canali (in-app/email/push), frequenza (immediata/digest), categorie e fascia di silenzio; rollback delle dipendenze ora ha **selettore versione**, **diff** vs versione attiva, **anteprima impatto** sulle deleghe correnti e blocco di conferma se la versione bersaglio renderebbe non conformi deleghe attive.
 - **2026-06-20 — Fase 17**: rollback versionato delle regole di dipendenza (clona la versione target, la attiva e traccia l'evento in audit), nuovi avvisi automatici per gli admin di organizzazione quando un utente viene respinto per dipendenza mancante (con modulo, motivazione e link alla pagina deleghe).
 - **2026-06-20 — Fase 16**: editor versionato delle dipendenze tra moduli (validazione cicli/duplicati + anteprima impatto), pagina **Accessi negati** in Smart Inbox che mostra il motivo e le dipendenze mancanti, **Audit permessi & deleghe** con diff before/after, test di integrazione sull'espansione delle dipendenze nelle deleghe (`src/lib/module-deps.test.ts`).
 
