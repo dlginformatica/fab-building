@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,7 +13,15 @@ import { BackupPanel } from "@/components/backup/BackupPanel";
 import { ImportWizard } from "@/components/backup/ImportWizard";
 import { exportOrgSnapshot, downloadBlob } from "@/lib/backup";
 
-export const Route = createFileRoute("/_authenticated/app/super-admin/backup")({ component: Page });
+export const Route = createFileRoute("/_authenticated/app/super-admin/backup")({
+  beforeLoad: async () => {
+    const { data } = await supabase.auth.getUser();
+    if (!data.user) throw redirect({ to: "/auth" });
+    const { data: isSuper } = await (supabase as any).rpc("has_role", { _user_id: data.user.id, _role: "super_admin" });
+    if (!isSuper) throw redirect({ to: "/app" });
+  },
+  component: Page,
+});
 
 function Page() {
   const { data: isSuper, isLoading } = useIsSuperAdmin();
