@@ -15,6 +15,7 @@ import { Toaster } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SpeakerProvider } from "@/components/tts/SpeakerProvider";
 import { OfflineBadge } from "@/components/pwa/OfflineBadge";
+import { BuildBadge } from "@/components/layout/BuildBadge";
 import { registerPWA } from "@/lib/pwa/register";
 import { flushOutbox } from "@/lib/pwa/outbox";
 
@@ -150,6 +151,7 @@ function RootComponent() {
       <SpeakerProvider>
         <Outlet />
         <OfflineBadge />
+        <BuildBadge />
         <Toaster richColors position="top-right" />
       </SpeakerProvider>
     </QueryClientProvider>
