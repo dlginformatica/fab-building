@@ -14,7 +14,7 @@ export function printableHtmlAsPdf(title: string, columns: string[], rows: any[]
   const w = window.open("", "_blank", "width=1000,height=700");
   if (!w) return;
   const head = `<thead><tr>${columns.map((c) => `<th>${c}</th>`).join("")}</tr></thead>`;
-  const esc = (s: any) => (s ?? "").toString().replace(/[<>&]/g, (c) => ({ "<":"&lt;", ">":"&gt;", "&":"&amp;" } as any)[c]);
+  const esc = (s: any) => (s ?? "").toString().replace(/[<>&]/g, (c: string) => ({ "<":"&lt;", ">":"&gt;", "&":"&amp;" } as Record<string,string>)[c]);
   const body = `<tbody>${rows.map((r) => `<tr>${r.map((c: any) => `<td>${esc(c)}</td>`).join("")}</tr>`).join("")}</tbody>`;
   w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title>
     <style>body{font-family:system-ui,sans-serif;margin:24px;color:#0f172a}h1{font-size:18px;margin:0 0 8px}p{color:#475569;font-size:12px}
