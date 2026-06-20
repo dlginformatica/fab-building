@@ -61,13 +61,14 @@ export async function exportOrgSnapshot(orgId: string, onProgress?: (t: string, 
   for (const t of allTables) {
     i++; onProgress?.(t.table, i, allTables.length);
     try {
-      let q = supabase.from(t.table as any).select("*");
+      const sb: any = supabase;
+      let q: any = sb.from(t.table).select("*");
       if (t.kind === "structure") {
         if (structureIds.length === 0) { data[t.table] = []; continue; }
         q = q.in("structure_id", structureIds);
       } else if (t.kind === "direct") {
         q = q.eq((t as any).col, orgId);
-      } else { // self: organizations row
+      } else {
         q = q.eq("id", orgId);
       }
       const { data: rows, error } = await q;
