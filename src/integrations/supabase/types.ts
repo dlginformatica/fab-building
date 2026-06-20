@@ -1838,6 +1838,56 @@ export type Database = {
           },
         ]
       }
+      notification_templates: {
+        Row: {
+          active: boolean
+          body_md: string
+          channel_type: string
+          created_at: string
+          created_by: string | null
+          event: string
+          id: string
+          name: string
+          structure_id: string | null
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body_md: string
+          channel_type: string
+          created_at?: string
+          created_by?: string | null
+          event: string
+          id?: string
+          name: string
+          structure_id?: string | null
+          subject: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body_md?: string
+          channel_type?: string
+          created_at?: string
+          created_by?: string | null
+          event?: string
+          id?: string
+          name?: string
+          structure_id?: string | null
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_templates_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       penalty_rules: {
         Row: {
           active: boolean
@@ -2698,6 +2748,8 @@ export type Database = {
           channel: string
           created_at: string
           delay_minutes: number | null
+          dispatched_at: string | null
+          dispatched_count: number
           due_at: string | null
           id: string
           kind: string
@@ -2715,6 +2767,8 @@ export type Database = {
           channel?: string
           created_at?: string
           delay_minutes?: number | null
+          dispatched_at?: string | null
+          dispatched_count?: number
           due_at?: string | null
           id?: string
           kind: string
@@ -2732,6 +2786,8 @@ export type Database = {
           channel?: string
           created_at?: string
           delay_minutes?: number | null
+          dispatched_at?: string | null
+          dispatched_count?: number
           due_at?: string | null
           id?: string
           kind?: string
