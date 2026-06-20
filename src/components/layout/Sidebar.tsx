@@ -56,6 +56,7 @@ const groups: Array<{ label: string; items: Item[] }> = [
     { to: "/app/backup", label: "Backup, Restore & Import", icon: DatabaseBackup },
     { to: "/app/backup-schedules", label: "Pianificazione backup", icon: Timer },
     { to: "/app/backup-audit", label: "Audit backup & restore", icon: ScrollText },
+    { to: "/app/backup-notification-prefs", label: "Notifiche backup", icon: Bell },
     { to: "/app/super-admin/backup", label: "Backup globale (super admin)", icon: DatabaseBackup, superOnly: true },
     { to: "/app/super-admin/reset-org", label: "Reset organizzazione (super admin)", icon: Eraser, superOnly: true },
   ]},
