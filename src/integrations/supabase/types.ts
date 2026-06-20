@@ -538,6 +538,130 @@ export type Database = {
           },
         ]
       }
+      backup_runs: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          details: Json | null
+          error_message: string | null
+          format: string
+          id: string
+          kind: string
+          org_id: string
+          rows_count: number | null
+          schema_version: number
+          size_bytes: number | null
+          snapshot_taken_at: string
+          status: string
+          storage_bucket: string | null
+          storage_path: string | null
+          tables_count: number | null
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          error_message?: string | null
+          format?: string
+          id?: string
+          kind?: string
+          org_id: string
+          rows_count?: number | null
+          schema_version?: number
+          size_bytes?: number | null
+          snapshot_taken_at?: string
+          status?: string
+          storage_bucket?: string | null
+          storage_path?: string | null
+          tables_count?: number | null
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          error_message?: string | null
+          format?: string
+          id?: string
+          kind?: string
+          org_id?: string
+          rows_count?: number | null
+          schema_version?: number
+          size_bytes?: number | null
+          snapshot_taken_at?: string
+          status?: string
+          storage_bucket?: string | null
+          storage_path?: string | null
+          tables_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backup_runs_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backup_schedules: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          day_of_month: number | null
+          enabled: boolean
+          format: string
+          frequency: string
+          hour_utc: number
+          id: string
+          last_run_at: string | null
+          next_run_at: string | null
+          org_id: string
+          retention_count: number
+          updated_at: string
+          weekday: number | null
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          day_of_month?: number | null
+          enabled?: boolean
+          format?: string
+          frequency?: string
+          hour_utc?: number
+          id?: string
+          last_run_at?: string | null
+          next_run_at?: string | null
+          org_id: string
+          retention_count?: number
+          updated_at?: string
+          weekday?: number | null
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          day_of_month?: number | null
+          enabled?: boolean
+          format?: string
+          frequency?: string
+          hour_utc?: number
+          id?: string
+          last_run_at?: string | null
+          next_run_at?: string | null
+          org_id?: string
+          retention_count?: number
+          updated_at?: string
+          weekday?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backup_schedules_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       cash_movements: {
         Row: {
           amount: number
@@ -1232,6 +1356,59 @@ export type Database = {
             columns: ["structure_id"]
             isOneToOne: false
             referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_mappings: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          delimiter: string | null
+          fields_snapshot: Json | null
+          id: string
+          mapping: Json
+          name: string
+          notes: string | null
+          org_id: string | null
+          schema_version: number
+          target_table: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          delimiter?: string | null
+          fields_snapshot?: Json | null
+          id?: string
+          mapping: Json
+          name: string
+          notes?: string | null
+          org_id?: string | null
+          schema_version?: number
+          target_table: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          delimiter?: string | null
+          fields_snapshot?: Json | null
+          id?: string
+          mapping?: Json
+          name?: string
+          notes?: string | null
+          org_id?: string | null
+          schema_version?: number
+          target_table?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_mappings_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -2906,6 +3083,72 @@ export type Database = {
             columns: ["structure_id"]
             isOneToOne: false
             referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      restore_runs: {
+        Row: {
+          actor_id: string | null
+          created_at: string
+          details: Json | null
+          error_message: string | null
+          errors_count: number | null
+          id: string
+          mode: string
+          org_id: string
+          pit_resolved_to: string | null
+          pit_target: string | null
+          rows_inserted: number | null
+          source_backup_id: string | null
+          source_filename: string | null
+          status: string
+        }
+        Insert: {
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          error_message?: string | null
+          errors_count?: number | null
+          id?: string
+          mode: string
+          org_id: string
+          pit_resolved_to?: string | null
+          pit_target?: string | null
+          rows_inserted?: number | null
+          source_backup_id?: string | null
+          source_filename?: string | null
+          status?: string
+        }
+        Update: {
+          actor_id?: string | null
+          created_at?: string
+          details?: Json | null
+          error_message?: string | null
+          errors_count?: number | null
+          id?: string
+          mode?: string
+          org_id?: string
+          pit_resolved_to?: string | null
+          pit_target?: string | null
+          rows_inserted?: number | null
+          source_backup_id?: string | null
+          source_filename?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "restore_runs_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "restore_runs_source_backup_id_fkey"
+            columns: ["source_backup_id"]
+            isOneToOne: false
+            referencedRelation: "backup_runs"
             referencedColumns: ["id"]
           },
         ]
@@ -4849,6 +5092,70 @@ export type Database = {
           title: string
         }[]
       }
+      backup_nearest_to: {
+        Args: { _org: string; _target: string }
+        Returns: {
+          actor_id: string | null
+          created_at: string
+          details: Json | null
+          error_message: string | null
+          format: string
+          id: string
+          kind: string
+          org_id: string
+          rows_count: number | null
+          schema_version: number
+          size_bytes: number | null
+          snapshot_taken_at: string
+          status: string
+          storage_bucket: string | null
+          storage_path: string | null
+          tables_count: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "backup_runs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
+      backup_record: {
+        Args: {
+          _bucket: string
+          _details?: Json
+          _format: string
+          _kind: string
+          _org: string
+          _path: string
+          _rows: number
+          _size: number
+          _tables: number
+        }
+        Returns: {
+          actor_id: string | null
+          created_at: string
+          details: Json | null
+          error_message: string | null
+          format: string
+          id: string
+          kind: string
+          org_id: string
+          rows_count: number | null
+          schema_version: number
+          size_bytes: number | null
+          snapshot_taken_at: string
+          status: string
+          storage_bucket: string | null
+          storage_path: string | null
+          tables_count: number | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "backup_runs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       can_manage_template: {
         Args: { _template: string; _user: string }
         Returns: boolean
@@ -5012,6 +5319,43 @@ export type Database = {
           module: string
         }[]
       }
+      restore_record: {
+        Args: {
+          _details?: Json
+          _err?: string
+          _errors: number
+          _mode: string
+          _org: string
+          _pit: string
+          _pit_resolved: string
+          _rows: number
+          _source_id: string
+          _source_name: string
+          _status: string
+        }
+        Returns: {
+          actor_id: string | null
+          created_at: string
+          details: Json | null
+          error_message: string | null
+          errors_count: number | null
+          id: string
+          mode: string
+          org_id: string
+          pit_resolved_to: string | null
+          pit_target: string | null
+          rows_inserted: number | null
+          source_backup_id: string | null
+          source_filename: string | null
+          status: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "restore_runs"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       rollback_dependency_version: {
         Args: { _note?: string; _target: string }
         Returns: string
@@ -5146,6 +5490,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      super_admin_reset_org: {
+        Args: { _confirm: string; _note?: string; _org: string }
+        Returns: Json
       }
       super_admin_set_trial_days: {
         Args: { _days: number; _note?: string; _org: string }
