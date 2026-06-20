@@ -132,7 +132,7 @@ function Page() {
             <CardContent className="space-y-2">
               <Select value={t.status} onValueChange={(v) => updateStatus.mutate(v)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s.replace("_"," ")}</SelectItem>)}</SelectContent>
+                <SelectContent>{STATUSES.map((s: string) => <SelectItem key={s} value={s}>{s.replace("_"," ")}</SelectItem>)}</SelectContent>
               </Select>
             </CardContent>
           </Card>
