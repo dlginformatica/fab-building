@@ -75,6 +75,7 @@ function AuthPage() {
             </TabsContent>
             <TabsContent value="signup" className="space-y-3 pt-4">
               <div className="space-y-2"><Label>Nome completo</Label><Input value={fullName} onChange={(e) => setFullName(e.target.value)} /></div>
+              <div className="space-y-2"><Label>Nome organizzazione</Label><Input value={orgName} onChange={(e) => setOrgName(e.target.value)} placeholder="Es. Hotel Marina Group" /></div>
               <div className="space-y-2"><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
               <div className="space-y-2"><Label>Password</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
               <Button className="w-full" onClick={signUp} disabled={loading}>Crea account</Button>
