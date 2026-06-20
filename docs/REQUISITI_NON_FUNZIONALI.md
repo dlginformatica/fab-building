@@ -1,5 +1,10 @@
 # HotelOps — Requisiti Non Funzionali
 
+## 2026-06-20 — Fix routing & connettività
+- **RNF-RT-01** Le rotte file `*.tsx` non possono essere allo stesso tempo pagine finali e padri di rotte `$param`: usare la convenzione `*.index.tsx` per la pagina lista, mantenendo `*.tsx` solo se serve da layout con `<Outlet />`.
+- **RNF-NET-02** Il probe di connettività usa `/favicon.ico` come endpoint stabile: il file deve esistere in `public/` per evitare 404 ricorrenti nei log del browser.
+- **RNF-DB-03** Le query PostgREST verso `profiles` da tabelle senza relazione FK esplicita (`tickets.reported_by`, `tickets.assigned_to`, `ticket_comments.author_id`, `ticket_reports.author_id`, `asset_documents.uploaded_by`) devono evitare la sintassi `alias:colonna(...)`: usare colonne piatte e risolvere i nomi via query separata se necessario.
+
 ## 2026-06-20 — Fase 19 · Vetrina prodotto & brochure
 - **RNF-MK-01** Le pagine pubbliche (`/`, `/features`, `/features/:slug`, `/manual`, `/brochure`) sono server-side rendered con metadata SEO dedicate (title, description, og:title, og:description per pagina).
 - **RNF-MK-02** La brochure PDF è generata client-side tramite `window.print()` con CSS `@page A4` e `print:break-before-page`, senza invio dati a servizi terzi.

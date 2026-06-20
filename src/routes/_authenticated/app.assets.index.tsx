@@ -14,7 +14,7 @@ import { Plus, QrCode } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 
-export const Route = createFileRoute("/_authenticated/app/assets")({ component: Page });
+export const Route = createFileRoute("/_authenticated/app/assets/")({ component: Page });
 
 function Page() {
   const qc = useQueryClient();

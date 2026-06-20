@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { RefreshCw, RotateCw, AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 import { fmtDateTime } from "@/lib/format";
 
-export const Route = createFileRoute("/_authenticated/app/delivery-queue")({ component: Page });
+export const Route = createFileRoute("/_authenticated/app/delivery-queue/")({ component: Page });
 
 const STATUS = ["all", "pending", "sending", "sent", "error", "dlq"];
 
