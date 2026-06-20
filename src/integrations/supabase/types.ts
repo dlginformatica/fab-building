@@ -3242,6 +3242,44 @@ export type Database = {
           },
         ]
       }
+      room_types: {
+        Row: {
+          base_price: number | null
+          beds: number | null
+          capacity: number | null
+          created_at: string
+          id: string
+          name: string
+          structure_id: string
+        }
+        Insert: {
+          base_price?: number | null
+          beds?: number | null
+          capacity?: number | null
+          created_at?: string
+          id?: string
+          name: string
+          structure_id: string
+        }
+        Update: {
+          base_price?: number | null
+          beds?: number | null
+          capacity?: number | null
+          created_at?: string
+          id?: string
+          name?: string
+          structure_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_types_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rooms: {
         Row: {
           created_at: string
@@ -3252,6 +3290,7 @@ export type Database = {
           occupancy_status: string
           qr_token: string | null
           room_type: string | null
+          room_type_id: string | null
           structure_id: string
         }
         Insert: {
@@ -3263,6 +3302,7 @@ export type Database = {
           occupancy_status?: string
           qr_token?: string | null
           room_type?: string | null
+          room_type_id?: string | null
           structure_id: string
         }
         Update: {
@@ -3274,6 +3314,7 @@ export type Database = {
           occupancy_status?: string
           qr_token?: string | null
           room_type?: string | null
+          room_type_id?: string | null
           structure_id?: string
         }
         Relationships: [
@@ -3282,6 +3323,13 @@ export type Database = {
             columns: ["floor_id"]
             isOneToOne: false
             referencedRelation: "floors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rooms_room_type_id_fkey"
+            columns: ["room_type_id"]
+            isOneToOne: false
+            referencedRelation: "room_types"
             referencedColumns: ["id"]
           },
           {
@@ -3756,6 +3804,41 @@ export type Database = {
           },
         ]
       }
+      structure_photos: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          path: string
+          sort_order: number
+          structure_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          path: string
+          sort_order?: number
+          structure_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          path?: string
+          sort_order?: number
+          structure_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "structure_photos_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       structures: {
         Row: {
           address: string | null
@@ -3765,6 +3848,8 @@ export type Database = {
           created_at: string
           fiscal_code: string | null
           id: string
+          lat: number | null
+          lng: number | null
           name: string
           notes: string | null
           onboarded_at: string | null
@@ -3786,6 +3871,8 @@ export type Database = {
           created_at?: string
           fiscal_code?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           name: string
           notes?: string | null
           onboarded_at?: string | null
@@ -3807,6 +3894,8 @@ export type Database = {
           created_at?: string
           fiscal_code?: string | null
           id?: string
+          lat?: number | null
+          lng?: number | null
           name?: string
           notes?: string | null
           onboarded_at?: string | null
