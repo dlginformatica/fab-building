@@ -22,7 +22,7 @@ export function AssetDocuments({ assetId, structureId }: { assetId: string; stru
 
   const { data: docs = [] } = useQuery({
     queryKey: ["asset_documents", assetId],
-    queryFn: async () => (await (supabase as any).from("asset_documents").select("*, profiles:uploaded_by(full_name,email)").eq("asset_id", assetId).order("created_at",{ascending:false})).data ?? [],
+    queryFn: async () => (await (supabase as any).from("asset_documents").select("*").eq("asset_id", assetId).order("created_at",{ascending:false})).data ?? [],
   });
 
   const upload = useMutation({
