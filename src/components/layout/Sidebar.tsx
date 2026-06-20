@@ -61,6 +61,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app/notifications", label: "Notifiche Email & Teams", icon: Mail },
     { to: "/app/users", label: "Utenti & Ruoli", icon: Users },
     { to: "/app/permissions", label: "Permessi funzioni", icon: ShieldCheck },
+    { to: "/app/permissions-matrix", label: "Matrice permessi", icon: ShieldCheck },
     { to: "/app/delegations", label: "Deleghe", icon: UserCog },
     { to: "/app/delegations-history", label: "Storico deleghe", icon: ScrollText },
     { to: "/app/audit", label: "Audit log", icon: ScrollText },
