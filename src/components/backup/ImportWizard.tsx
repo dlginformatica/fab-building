@@ -10,7 +10,10 @@ import { Upload, FileText, ListChecks, Eye, CheckCircle2, AlertTriangle } from "
 import {
   IMPORT_TARGETS, parseCsvText, buildImportRows, commitImport,
   type ImportTarget, type ParsedCSV,
+  buildMappingFile, parseMappingFile,
 } from "@/lib/backup";
+import { downloadBlob } from "@/lib/backup";
+import { FileDown, FileUp } from "lucide-react";
 
 export function ImportWizard({ structures }: { structures: Array<{ id: string; name: string }> }) {
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
@@ -21,11 +24,34 @@ export function ImportWizard({ structures }: { structures: Array<{ id: string; n
   const [parsed, setParsed] = useState<ParsedCSV | null>(null);
   const [mapping, setMapping] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
+  const [mappingName, setMappingName] = useState("");
 
   const target: ImportTarget = useMemo(
     () => IMPORT_TARGETS.find((t) => t.table === targetKey) ?? IMPORT_TARGETS[0],
     [targetKey],
   );
+
+  function exportMapping() {
+    if (!Object.keys(mapping).length) { toast.error("Definisci prima la mappatura"); return; }
+    const file = buildMappingFile(target, mapping, mappingName || `mapping-${target.table}`, delimiter || undefined);
+    const blob = new Blob([JSON.stringify(file, null, 2)], { type: "application/json" });
+    downloadBlob(blob, `${file.name.replace(/\W+/g,"-")}.mapping.json`);
+    toast.success("Schema mapping esportato");
+  }
+
+  async function importMappingFile(f: File) {
+    try {
+      const txt = await f.text();
+      const m = parseMappingFile(txt);
+      if (m.target_table !== target.table) {
+        if (!confirm(`Il file riguarda "${m.target_table}", non "${target.table}". Caricarlo comunque?`)) return;
+      }
+      setMapping(m.mapping);
+      setMappingName(m.name);
+      if (m.delimiter) setDelimiter(m.delimiter);
+      toast.success(`Mapping "${m.name}" v${m.schema_version} caricato`);
+    } catch (e: any) { toast.error(e?.message ?? String(e)); }
+  }
 
   async function handleFile(f: File) {
     setFile(f);
@@ -123,6 +149,16 @@ export function ImportWizard({ structures }: { structures: Array<{ id: string; n
         {step === 3 && parsed && (
           <div className="space-y-3">
             <p className="text-sm text-muted-foreground flex items-center gap-2"><ListChecks className="h-4 w-4" /> File: <strong>{file?.name}</strong> · {parsed.rows.length} righe · delimitatore "{parsed.delimiter}"</p>
+            <div className="flex flex-wrap items-end gap-3 rounded border border-border p-3">
+              <div className="space-y-1"><Label>Nome schema mapping</Label>
+                <Input value={mappingName} onChange={(e) => setMappingName(e.target.value)} placeholder={`mapping-${target.table}`} className="w-64" />
+              </div>
+              <Button type="button" variant="outline" onClick={exportMapping}><FileDown className="mr-2 h-4 w-4" /> Esporta mapping</Button>
+              <div>
+                <Label className="text-xs">Carica mapping (.json)</Label>
+                <Input type="file" accept=".json,application/json" onChange={(e) => { const f = e.target.files?.[0]; if (f) importMappingFile(f); }} className="w-64" />
+              </div>
+            </div>
             <div className="overflow-x-auto rounded border border-border">
               <table className="w-full text-sm">
                 <thead className="bg-muted/40 text-xs uppercase"><tr><th className="px-3 py-2 text-left">Campo destinazione</th><th className="px-3 py-2 text-left">Colonna CSV</th><th className="px-3 py-2 text-left">Tipo</th></tr></thead>
