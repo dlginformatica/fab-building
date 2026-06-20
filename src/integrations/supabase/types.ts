@@ -50,6 +50,59 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_alerts: {
+        Row: {
+          admin_user_id: string | null
+          created_at: string
+          id: string
+          kind: string
+          missing_deps: string[] | null
+          module: string | null
+          org_id: string | null
+          payload: Json | null
+          read_at: string | null
+          reason: string | null
+          source_user_id: string | null
+          structure_id: string | null
+        }
+        Insert: {
+          admin_user_id?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          missing_deps?: string[] | null
+          module?: string | null
+          org_id?: string | null
+          payload?: Json | null
+          read_at?: string | null
+          reason?: string | null
+          source_user_id?: string | null
+          structure_id?: string | null
+        }
+        Update: {
+          admin_user_id?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          missing_deps?: string[] | null
+          module?: string | null
+          org_id?: string | null
+          payload?: Json | null
+          read_at?: string | null
+          reason?: string | null
+          source_user_id?: string | null
+          structure_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_alerts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       asset_categories: {
         Row: {
           color: string | null
@@ -4683,6 +4736,10 @@ export type Database = {
           source: string
           user_id: string
         }[]
+      }
+      rollback_dependency_version: {
+        Args: { _note?: string; _target: string }
+        Returns: string
       }
       room_by_qr: {
         Args: { _token: string }
