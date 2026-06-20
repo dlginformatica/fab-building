@@ -449,6 +449,86 @@ export type Database = {
           },
         ]
       }
+      cash_movements: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          created_by: string | null
+          description: string
+          id: string
+          invoice_id: string | null
+          kind: string
+          movement_date: string
+          notes: string | null
+          payment_method: string
+          structure_id: string
+          supplier_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description: string
+          id?: string
+          invoice_id?: string | null
+          kind: string
+          movement_date?: string
+          notes?: string | null
+          payment_method?: string
+          structure_id: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          id?: string
+          invoice_id?: string | null
+          kind?: string
+          movement_date?: string
+          notes?: string | null
+          payment_method?: string
+          structure_id?: string
+          supplier_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_movements_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_movements_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_movements_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_compliance"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cash_movements_supplier_id_fkey"
+            columns: ["supplier_id"]
+            isOneToOne: false
+            referencedRelation: "suppliers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contract_attachments: {
         Row: {
           category: string | null
@@ -924,6 +1004,192 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "floors_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guest_issues: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          guest_contact: string | null
+          guest_name: string | null
+          id: string
+          language: string | null
+          room_id: string | null
+          source: string
+          status: string
+          structure_id: string
+          ticket_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description: string
+          guest_contact?: string | null
+          guest_name?: string | null
+          id?: string
+          language?: string | null
+          room_id?: string | null
+          source?: string
+          status?: string
+          structure_id: string
+          ticket_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          guest_contact?: string | null
+          guest_name?: string | null
+          id?: string
+          language?: string | null
+          room_id?: string | null
+          source?: string
+          status?: string
+          structure_id?: string
+          ticket_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_issues_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_issues_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_issues_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      housekeeping_tasks: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          notes: string | null
+          priority: string
+          room_id: string
+          started_at: string | null
+          status: string
+          structure_id: string
+          task_date: string
+          task_type: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          priority?: string
+          room_id: string
+          started_at?: string | null
+          status?: string
+          structure_id: string
+          task_date?: string
+          task_type?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          notes?: string | null
+          priority?: string
+          room_id?: string
+          started_at?: string | null
+          status?: string
+          structure_id?: string
+          task_date?: string
+          task_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "housekeeping_tasks_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "housekeeping_tasks_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integrations: {
+        Row: {
+          config: Json
+          created_at: string
+          enabled: boolean
+          id: string
+          kind: string
+          last_sync_at: string | null
+          last_sync_error: string | null
+          last_sync_status: string | null
+          provider: string
+          structure_id: string
+          updated_at: string
+        }
+        Insert: {
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind: string
+          last_sync_at?: string | null
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          provider: string
+          structure_id: string
+          updated_at?: string
+        }
+        Update: {
+          config?: Json
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          kind?: string
+          last_sync_at?: string | null
+          last_sync_error?: string | null
+          last_sync_status?: string | null
+          provider?: string
+          structure_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integrations_structure_id_fkey"
             columns: ["structure_id"]
             isOneToOne: false
             referencedRelation: "structures"
@@ -2184,24 +2450,33 @@ export type Database = {
         Row: {
           created_at: string
           floor_id: string | null
+          housekeeping_status: string
           id: string
           name: string
+          occupancy_status: string
+          qr_token: string | null
           room_type: string | null
           structure_id: string
         }
         Insert: {
           created_at?: string
           floor_id?: string | null
+          housekeeping_status?: string
           id?: string
           name: string
+          occupancy_status?: string
+          qr_token?: string | null
           room_type?: string | null
           structure_id: string
         }
         Update: {
           created_at?: string
           floor_id?: string | null
+          housekeeping_status?: string
           id?: string
           name?: string
+          occupancy_status?: string
+          qr_token?: string | null
           room_type?: string | null
           structure_id?: string
         }
@@ -2556,14 +2831,19 @@ export type Database = {
           code: string | null
           country: string | null
           created_at: string
+          fiscal_code: string | null
           id: string
           name: string
           notes: string | null
           onboarded_at: string | null
           onboarding_preset: string | null
+          postal_code: string | null
+          province: string | null
+          regime_fiscale: string | null
           rooms_count: number | null
           timezone: string
           updated_at: string
+          vat_number: string | null
         }
         Insert: {
           address?: string | null
@@ -2571,14 +2851,19 @@ export type Database = {
           code?: string | null
           country?: string | null
           created_at?: string
+          fiscal_code?: string | null
           id?: string
           name: string
           notes?: string | null
           onboarded_at?: string | null
           onboarding_preset?: string | null
+          postal_code?: string | null
+          province?: string | null
+          regime_fiscale?: string | null
           rooms_count?: number | null
           timezone?: string
           updated_at?: string
+          vat_number?: string | null
         }
         Update: {
           address?: string | null
@@ -2586,14 +2871,19 @@ export type Database = {
           code?: string | null
           country?: string | null
           created_at?: string
+          fiscal_code?: string | null
           id?: string
           name?: string
           notes?: string | null
           onboarded_at?: string | null
           onboarding_preset?: string | null
+          postal_code?: string | null
+          province?: string | null
+          regime_fiscale?: string | null
           rooms_count?: number | null
           timezone?: string
           updated_at?: string
+          vat_number?: string | null
         }
         Relationships: []
       }
@@ -3881,10 +4171,31 @@ export type Database = {
         Args: { _structure_id: string; _user_id: string }
         Returns: boolean
       }
+      housekeeping_kpi: {
+        Args: { _date?: string; _structure: string }
+        Returns: {
+          clean: number
+          dirty: number
+          in_progress: number
+          ooo: number
+          tasks_done: number
+          tasks_today: number
+          total_rooms: number
+        }[]
+      }
       is_admin: { Args: { _user_id: string }; Returns: boolean }
       is_conversation_member: {
         Args: { _conv: string; _user: string }
         Returns: boolean
+      }
+      room_by_qr: {
+        Args: { _token: string }
+        Returns: {
+          room_id: string
+          room_name: string
+          structure_id: string
+          structure_name: string
+        }[]
       }
       seed_structure_preset: {
         Args: {
