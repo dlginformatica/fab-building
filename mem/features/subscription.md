@@ -3,6 +3,13 @@ name: Subscription tiers & trial
 description: Piani Small/Medium/Large configurabili dal super admin con trial 30gg Large, gate moduli per tier e read-only post-scadenza
 type: feature
 ---
+
+## Backup, Restore & Import (Fase 21)
+- `/app/backup` (admin org) e `/app/super-admin/backup` (super_admin) usano `src/lib/backup.ts` + `BackupPanel` + `ImportWizard`.
+- Export: JSON re-importabile, ZIP-di-CSV (JSZip), Excel multi-foglio (SheetJS). Tutto client-side via RLS della sessione.
+- Restore: merge (upsert per id) o replace (cancella prima le righe collegate alle strutture dell'org). Snapshot vincolato a `meta.org_id`.
+- Import wizard CSV/TXT (papaparse) con 5 step, auto-detect delimitatore, mappatura auto, validazione tipi/required, preview prime 10 righe. Target: assets, suppliers, contracts, inventory_items, meter_readings, tickets.
+- Super_admin: bottone "Backup globale (JSON)" che concatena snapshot di tutte le org.
 - 3 piani in `subscription_plans` (tier enum small/medium/large): prezzo, max_users, max_structures, trial_days, modules[].
 - Ogni nuova organizzazione → `org_subscriptions` con `status='trial'`, `tier='small'`, `trial_ends_at=now()+trial_days` ma `org_effective_tier` ritorna 'large' durante il trial.
 - `has_module_access` filtra per moduli inclusi nel tier effettivo (super_admin sempre passa).
