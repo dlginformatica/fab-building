@@ -1,3 +1,13 @@
+## Aggiornamento 2026-06-20 — Backup cloud, point-in-time, audit e reset
+
+- **Backup nel cloud**: nella pagina **Backup, Restore & Import** trovi un nuovo bottone "Backup nel cloud" che salva uno snapshot completo della tua organizzazione su archivio sicuro, tracciato nel registro.
+- **Pianificazione automatica** (`/app/backup-schedules`): scegli frequenza giornaliera/settimanale/mensile, ora UTC e quanti backup conservare. Puoi anche eseguire un backup pianificato on-demand.
+- **Restore point-in-time**: nel restore scegli "Point-in-time (cloud, data/ora)" e indica la data esatta a cui tornare: il sistema usa lo snapshot pianificato più vicino e antecedente alla data scelta, dopo aver salvato un backup di sicurezza.
+- **Audit Backup & Restore** (`/app/backup-audit`): consulta chi/quando/cosa per ogni backup e restore, filtra per data e organizzazione, esporta in **CSV** o **PDF**.
+- **Audit abbonamenti**: la pagina super admin ora supporta filtri data + organizzazione ed export CSV/PDF.
+- **Schemi di mapping per l'import**: nel wizard puoi esportare il mapping corrente come file `.mapping.json` e ricaricarlo agli import successivi (versionato `schema_version`).
+- **Reset organizzazione (super admin)** (`/app/super-admin/reset-org`): cancella tutti i dati operativi di un'organizzazione (strutture, asset, ticket, contratti, ruoli, audit, backup). Restano l'organizzazione, l'owner e l'abbonamento. Operazione irreversibile, richiede digitazione del nome esatto e si consiglia il backup di sicurezza.
+
 ## Aggiornamento 2026-06-20 — Sincronizzazione robusta, notifiche e trial personalizzato
 
 - **Sincronizzazione abbonamenti più sicura**: il super admin può usare "Sincronizza ora" senza rischio di esecuzioni doppie — un lock cooperativo impedisce sovrapposizioni; ogni esecuzione (manuale, cron, retry) viene registrata con stato, durata e numero di organizzazioni aggiornate.
