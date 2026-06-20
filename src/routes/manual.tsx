@@ -6,6 +6,8 @@ import { useMemo, useState } from "react";
 import utenteMd from "@/../docs/MANUALE_UTENTE.md?raw";
 import manualeMd from "@/../docs/MANUALE_OPERATIVO.md?raw";
 import { Download, BookOpen, List, Printer, FileDown } from "lucide-react";
+import { downloadManualPdf } from "@/lib/manual-pdf";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/manual")({
   head: () => ({
@@ -49,10 +51,27 @@ function ManualPage() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
-  function downloadPdf() {
-    // Sfrutta la stampa del browser: in tutti i browser moderni include
-    // "Salva come PDF" come destinazione. Il CSS @media print sotto
-    // nasconde chrome/sidebar e stampa solo l'articolo corrente.
+  const [pdfBusy, setPdfBusy] = useState(false);
+  async function downloadPdf() {
+    try {
+      setPdfBusy(true);
+      const isUtente = tab === "utente";
+      await downloadManualPdf({
+        title: isUtente ? "Manuale Utente" : "Manuale Operativo",
+        subtitle: isUtente
+          ? "Guida completa all'uso della piattaforma HotelOps"
+          : "Documento tecnico e changelog operativo",
+        filenameBase: isUtente ? "hotelops_manuale_utente" : "hotelops_manuale_operativo",
+        markdown: currentMd,
+      });
+    } catch (e) {
+      console.error(e);
+      toast.error("Generazione PDF fallita");
+    } finally {
+      setPdfBusy(false);
+    }
+  }
+  function printNow() {
     window.print();
   }
 
@@ -78,8 +97,15 @@ function ManualPage() {
             </p>
           </div>
           <div className="flex gap-2">
-            <button onClick={downloadPdf} className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
-              <FileDown className="h-4 w-4" /> Scarica PDF
+            <button
+              onClick={downloadPdf}
+              disabled={pdfBusy}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-60"
+            >
+              <FileDown className="h-4 w-4" /> {pdfBusy ? "Genero PDF…" : "Scarica PDF"}
+            </button>
+            <button onClick={printNow} className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm hover:bg-accent">
+              <Printer className="h-4 w-4" /> Stampa
             </button>
             <button onClick={download} className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm hover:bg-accent">
               <Download className="h-4 w-4" /> Scarica .md
