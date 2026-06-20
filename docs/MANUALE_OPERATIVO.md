@@ -3,6 +3,14 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-20 — Fase 21 · Backup, Restore & Import wizard**
+  - Nuovo modulo `src/lib/backup.ts`: lista tabelle org-scoped, `exportOrgSnapshot(orgId)` produce uno snapshot tipato `{ meta, data }` interrogando tutte le tabelle filtrate per `structure_id` (via lookup `structures.organization_id`) o per `org_id`/`organization_id` diretto. Conversione a JSON, ZIP-di-CSV (JSZip + `XLSX.sheet_to_csv`) e Excel multi-foglio (`XLSX.book_append_sheet`).
+  - `restoreOrgSnapshot(orgId, snapshot, mode)`: in modalità **replace** elimina prima le righe collegate alle strutture dell'org; in entrambi i modi esegue `upsert` per `id`. Verifica che lo snapshot appartenga all'org corrente.
+  - Wizard import `src/components/backup/ImportWizard.tsx` con 5 step e mappatura automatica (normalizzazione su lettere/cifre del nome colonna/label). Parser CSV via `papaparse` con auto-detect delimitatore. Coercizione tipi (`number`, `boolean`, `date` dd/mm/yyyy o ISO, `uuid`). Target predefiniti in `IMPORT_TARGETS` (asset, suppliers, contracts, inventory_items, meter_readings, tickets).
+  - Pannello `src/components/backup/BackupPanel.tsx` riutilizzabile (export 3 formati, restore merge/replace con conferma testuale).
+  - Nuove route: `/app/backup` (admin org) e `/app/super-admin/backup` (snapshot per qualunque org + backup globale che concatena tutte le org in un unico JSON). Voci di sidebar nel gruppo "Abbonamento".
+  - Dipendenze installate: `jszip@3.10.1`, `xlsx@0.18.5`, `papaparse@5.5.4`, `@types/papaparse@5.5.2`.
+  - Sicurezza: tutte le query passano dal client autenticato → RLS è autoritativa; super_admin con bypass RLS può operare su qualsiasi org. Nessun bucket dedicato in questa fase: i backup vengono scaricati direttamente dal browser dell'utente (no persistenza server).
 - **2026-06-20 — Fase 20.1 · Job sincronizzazione abbonamenti**
   - Funzione `public.subscriptions_sync_expired()` (SECURITY DEFINER) marca come `readonly` le righe `org_subscriptions` con `status='trial' AND trial_ends_at<=now()` o `status='active' AND current_period_end<=now()`. Restituisce gli `org_id` aggiornati.
   - Schedulazione `pg_cron`: job `subscriptions-sync-expired-hourly` ogni ora al minuto 5 (`5 * * * *`). Eseguita anche subito una sincronizzazione iniziale.

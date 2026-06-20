@@ -3,6 +3,26 @@
 > Guida completa all'uso della piattaforma HotelOps per direttori, facility manager, manutentori, fornitori e personale di struttura.
 > Documento vivo: aggiornato ad ogni iterazione (regola permanente).
 
+## Aggiornamento 2026-06-20 — Backup, Restore & Import
+
+Dalla voce di menu **Abbonamento → Backup, Restore & Import** (`/app/backup`) puoi:
+
+1. **Scaricare un backup completo** della tua organizzazione in tre formati:
+   - **JSON** — il formato re-importabile (consigliato per il restore).
+   - **ZIP di CSV** — un file CSV per ogni gestione (utile per analisi esterna).
+   - **Excel** — un foglio per gestione (leggibile da non tecnici).
+2. **Ripristinare un backup** caricando un file JSON:
+   - **Merge** (consigliato): aggiorna i record esistenti per ID, non cancella nulla.
+   - **Replace**: cancella i dati attuali dell'organizzazione e ricarica quelli del backup. Per sicurezza devi digitare il nome esatto dell'organizzazione.
+3. **Importare dati massivi da CSV / TXT** con il wizard guidato in 5 passi:
+   1. Scegli la gestione (Asset, Fornitori, Contratti, Magazzino, Letture contatori, Ticket) e la struttura di destinazione.
+   2. Carica il file: il delimitatore viene rilevato automaticamente (puoi forzarlo).
+   3. Mappa le colonne del file ai campi del sistema (la mappatura iniziale è automatica per nome).
+   4. Vedi l'anteprima delle prime righe, eventuali errori di validazione e il numero di righe da importare.
+   5. Conferma e ricevi il riepilogo dell'esito.
+
+Il **super_admin** dispone in più della pagina `/app/super-admin/backup` per operare su qualsiasi organizzazione e per scaricare un **backup globale** che contiene lo snapshot di tutte le organizzazioni.
+
 **Aggiornamento 2026-06-20 — Abbonamenti**: la scadenza del trial 30 giorni e degli abbonamenti attivi viene rilevata automaticamente da un job che gira ogni ora; alla scadenza l'app passa in **sola lettura** senza intervento manuale. Il super admin può sempre forzare attivazione, blocco o estensione dalla pagina "Configurazione piani".
 
 ## Changelog

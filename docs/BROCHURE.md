@@ -3,6 +3,12 @@
 > Documento sorgente per la brochure. La versione HTML stampabile e PDF è disponibile su `/brochure`.
 > Aggiornato ad ogni iterazione (regola permanente).
 
+### Backup, Restore & Import guidato (2026-06-20)
+- Backup completo dell'organizzazione in **JSON / ZIP-di-CSV / Excel** scaricabile direttamente dal browser.
+- Restore da JSON in modalità **Merge** o **Replace** (con conferma testuale per evitare cancellazioni accidentali).
+- **Wizard di import CSV/TXT** in 5 step (gestione → file → mappatura → preview/validazione → fine) con auto-detect del delimitatore, mapping automatico per nome e validazione dei tipi.
+- Super_admin: backup globale di tutte le organizzazioni in un singolo file JSON.
+
 **Novità 2026-06-20**: scadenze trial e abbonamenti gestite automaticamente da job orario (passaggio a sola lettura senza intervento). Il super admin può forzare attivazione/blocco/proroghe in qualsiasi momento.
 
 ## Changelog
