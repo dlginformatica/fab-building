@@ -78,6 +78,7 @@ import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAppAdminAlertsRouteImport } from './routes/_authenticated/app.admin-alerts'
 import { Route as AuthenticatedAppAccessDeniedRouteImport } from './routes/_authenticated/app.access-denied'
 import { Route as AuthenticatedAppTicketsIndexRouteImport } from './routes/_authenticated/app.tickets.index'
+import { Route as AuthenticatedAppStructuresIndexRouteImport } from './routes/_authenticated/app.structures.index'
 import { Route as AuthenticatedAppReordersIndexRouteImport } from './routes/_authenticated/app.reorders.index'
 import { Route as AuthenticatedAppDeliveryQueueIndexRouteImport } from './routes/_authenticated/app.delivery-queue.index'
 import { Route as AuthenticatedAppAssetsIndexRouteImport } from './routes/_authenticated/app.assets.index'
@@ -488,6 +489,12 @@ const AuthenticatedAppTicketsIndexRoute =
     path: '/app/tickets/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppStructuresIndexRoute =
+  AuthenticatedAppStructuresIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAppStructuresRoute,
+  } as any)
 const AuthenticatedAppReordersIndexRoute =
   AuthenticatedAppReordersIndexRouteImport.update({
     id: '/app/reorders/',
@@ -674,6 +681,7 @@ export interface FileRoutesByFullPath {
   '/app/assets/': typeof AuthenticatedAppAssetsIndexRoute
   '/app/delivery-queue/': typeof AuthenticatedAppDeliveryQueueIndexRoute
   '/app/reorders/': typeof AuthenticatedAppReordersIndexRoute
+  '/app/structures/': typeof AuthenticatedAppStructuresIndexRoute
   '/app/tickets/': typeof AuthenticatedAppTicketsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -733,7 +741,6 @@ export interface FileRoutesByTo {
   '/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
-  '/app/structures': typeof AuthenticatedAppStructuresRouteWithChildren
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
@@ -761,6 +768,7 @@ export interface FileRoutesByTo {
   '/app/assets': typeof AuthenticatedAppAssetsIndexRoute
   '/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueIndexRoute
   '/app/reorders': typeof AuthenticatedAppReordersIndexRoute
+  '/app/structures': typeof AuthenticatedAppStructuresIndexRoute
   '/app/tickets': typeof AuthenticatedAppTicketsIndexRoute
 }
 export interface FileRoutesById {
@@ -850,6 +858,7 @@ export interface FileRoutesById {
   '/_authenticated/app/assets/': typeof AuthenticatedAppAssetsIndexRoute
   '/_authenticated/app/delivery-queue/': typeof AuthenticatedAppDeliveryQueueIndexRoute
   '/_authenticated/app/reorders/': typeof AuthenticatedAppReordersIndexRoute
+  '/_authenticated/app/structures/': typeof AuthenticatedAppStructuresIndexRoute
   '/_authenticated/app/tickets/': typeof AuthenticatedAppTicketsIndexRoute
 }
 export interface FileRouteTypes {
@@ -939,6 +948,7 @@ export interface FileRouteTypes {
     | '/app/assets/'
     | '/app/delivery-queue/'
     | '/app/reorders/'
+    | '/app/structures/'
     | '/app/tickets/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -998,7 +1008,6 @@ export interface FileRouteTypes {
     | '/app/smart-inbox'
     | '/app/statistics'
     | '/app/structure-kpi'
-    | '/app/structures'
     | '/app/suppliers'
     | '/app/suppliers-compliance'
     | '/app/sustainability'
@@ -1026,6 +1035,7 @@ export interface FileRouteTypes {
     | '/app/assets'
     | '/app/delivery-queue'
     | '/app/reorders'
+    | '/app/structures'
     | '/app/tickets'
   id:
     | '__root__'
@@ -1114,6 +1124,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/assets/'
     | '/_authenticated/app/delivery-queue/'
     | '/_authenticated/app/reorders/'
+    | '/_authenticated/app/structures/'
     | '/_authenticated/app/tickets/'
   fileRoutesById: FileRoutesById
 }
@@ -1619,6 +1630,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTicketsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/structures/': {
+      id: '/_authenticated/app/structures/'
+      path: '/'
+      fullPath: '/app/structures/'
+      preLoaderRoute: typeof AuthenticatedAppStructuresIndexRouteImport
+      parentRoute: typeof AuthenticatedAppStructuresRoute
+    }
     '/_authenticated/app/reorders/': {
       id: '/_authenticated/app/reorders/'
       path: '/app/reorders'
@@ -1743,11 +1761,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedAppStructuresRouteChildren {
   AuthenticatedAppStructuresIdRoute: typeof AuthenticatedAppStructuresIdRoute
+  AuthenticatedAppStructuresIndexRoute: typeof AuthenticatedAppStructuresIndexRoute
 }
 
 const AuthenticatedAppStructuresRouteChildren: AuthenticatedAppStructuresRouteChildren =
   {
     AuthenticatedAppStructuresIdRoute: AuthenticatedAppStructuresIdRoute,
+    AuthenticatedAppStructuresIndexRoute: AuthenticatedAppStructuresIndexRoute,
   }
 
 const AuthenticatedAppStructuresRouteWithChildren =
