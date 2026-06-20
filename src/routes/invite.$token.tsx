@@ -27,12 +27,10 @@ function Page() {
     (async () => {
       const { data: u } = await supabase.auth.getUser();
       if (u.user) setUser({ id: u.user.id, email: u.user.email! });
-      const { data: inv } = await (supabase as any).from("org_invitations").select("*").eq("token", token).maybeSingle();
-      setInvite(inv);
-      if (inv?.org_id) {
-        const { data: o } = await (supabase as any).from("organizations").select("name").eq("id", inv.org_id).maybeSingle();
-        setOrgName(o?.name ?? "");
-      }
+      const { data: invRows } = await (supabase as any).rpc("get_invitation_by_token", { _token: token });
+      const inv = Array.isArray(invRows) ? invRows[0] : invRows;
+      setInvite(inv ?? null);
+      if (inv?.org_name) setOrgName(inv.org_name);
       setLoading(false);
     })();
   }, [token]);
