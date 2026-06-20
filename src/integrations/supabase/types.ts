@@ -2211,6 +2211,71 @@ export type Database = {
           },
         ]
       }
+      org_backup_notify_prefs: {
+        Row: {
+          created_at: string
+          email_enabled: boolean
+          frequency: string
+          id: string
+          in_app_enabled: boolean
+          notes: string | null
+          notify_on_failure: boolean
+          notify_on_integrity_issue: boolean
+          notify_on_start: boolean
+          notify_on_success: boolean
+          organization_id: string
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          recipients: string[]
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          email_enabled?: boolean
+          frequency?: string
+          id?: string
+          in_app_enabled?: boolean
+          notes?: string | null
+          notify_on_failure?: boolean
+          notify_on_integrity_issue?: boolean
+          notify_on_start?: boolean
+          notify_on_success?: boolean
+          organization_id: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          recipients?: string[]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          email_enabled?: boolean
+          frequency?: string
+          id?: string
+          in_app_enabled?: boolean
+          notes?: string | null
+          notify_on_failure?: boolean
+          notify_on_integrity_issue?: boolean
+          notify_on_start?: boolean
+          notify_on_success?: boolean
+          organization_id?: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          recipients?: string[]
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_backup_notify_prefs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       org_invitations: {
         Row: {
           accepted_at: string | null
