@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as GQrRouteImport } from './routes/g.$qr'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
@@ -43,6 +44,7 @@ import { Route as AuthenticatedAppPurchaseOrdersRouteImport } from './routes/_au
 import { Route as AuthenticatedAppPermissionsRouteImport } from './routes/_authenticated/app.permissions'
 import { Route as AuthenticatedAppPenaltiesRouteImport } from './routes/_authenticated/app.penalties'
 import { Route as AuthenticatedAppOverviewRouteImport } from './routes/_authenticated/app.overview'
+import { Route as AuthenticatedAppOrganizationRouteImport } from './routes/_authenticated/app.organization'
 import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authenticated/app.onboarding'
 import { Route as AuthenticatedAppNotificationsRouteImport } from './routes/_authenticated/app.notifications'
 import { Route as AuthenticatedAppMessagesRouteImport } from './routes/_authenticated/app.messages'
@@ -86,6 +88,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GQrRoute = GQrRouteImport.update({
@@ -263,6 +270,12 @@ const AuthenticatedAppOverviewRoute =
   AuthenticatedAppOverviewRouteImport.update({
     id: '/app/overview',
     path: '/app/overview',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppOrganizationRoute =
+  AuthenticatedAppOrganizationRouteImport.update({
+    id: '/app/organization',
+    path: '/app/organization',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppOnboardingRoute =
@@ -445,6 +458,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -466,6 +480,7 @@ export interface FileRoutesByFullPath {
   '/app/messages': typeof AuthenticatedAppMessagesRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/app/organization': typeof AuthenticatedAppOrganizationRoute
   '/app/overview': typeof AuthenticatedAppOverviewRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
@@ -510,6 +525,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -531,6 +547,7 @@ export interface FileRoutesByTo {
   '/app/messages': typeof AuthenticatedAppMessagesRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/app/organization': typeof AuthenticatedAppOrganizationRoute
   '/app/overview': typeof AuthenticatedAppOverviewRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
@@ -577,6 +594,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/_authenticated/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -598,6 +616,7 @@ export interface FileRoutesById {
   '/_authenticated/app/messages': typeof AuthenticatedAppMessagesRoute
   '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/_authenticated/app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/_authenticated/app/organization': typeof AuthenticatedAppOrganizationRoute
   '/_authenticated/app/overview': typeof AuthenticatedAppOverviewRoute
   '/_authenticated/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/_authenticated/app/permissions': typeof AuthenticatedAppPermissionsRoute
@@ -644,6 +663,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/portal'
     | '/g/$qr'
+    | '/invite/$token'
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
@@ -665,6 +685,7 @@ export interface FileRouteTypes {
     | '/app/messages'
     | '/app/notifications'
     | '/app/onboarding'
+    | '/app/organization'
     | '/app/overview'
     | '/app/penalties'
     | '/app/permissions'
@@ -709,6 +730,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/portal'
     | '/g/$qr'
+    | '/invite/$token'
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
@@ -730,6 +752,7 @@ export interface FileRouteTypes {
     | '/app/messages'
     | '/app/notifications'
     | '/app/onboarding'
+    | '/app/organization'
     | '/app/overview'
     | '/app/penalties'
     | '/app/permissions'
@@ -775,6 +798,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/portal'
     | '/g/$qr'
+    | '/invite/$token'
     | '/_authenticated/app/alerts'
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/assets'
@@ -796,6 +820,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/messages'
     | '/_authenticated/app/notifications'
     | '/_authenticated/app/onboarding'
+    | '/_authenticated/app/organization'
     | '/_authenticated/app/overview'
     | '/_authenticated/app/penalties'
     | '/_authenticated/app/permissions'
@@ -841,6 +866,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   GQrRoute: typeof GQrRoute
+  InviteTokenRoute: typeof InviteTokenRoute
   ApiTtsSpeakRoute: typeof ApiTtsSpeakRoute
   ApiPublicHooksContractsNotifyRoute: typeof ApiPublicHooksContractsNotifyRoute
   ApiPublicHooksReportSchedulerRoute: typeof ApiPublicHooksReportSchedulerRoute
@@ -869,6 +895,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/g/$qr': {
@@ -1086,6 +1119,13 @@ declare module '@tanstack/react-router' {
       path: '/app/overview'
       fullPath: '/app/overview'
       preLoaderRoute: typeof AuthenticatedAppOverviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/organization': {
+      id: '/_authenticated/app/organization'
+      path: '/app/organization'
+      fullPath: '/app/organization'
+      preLoaderRoute: typeof AuthenticatedAppOrganizationRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/onboarding': {
@@ -1380,6 +1420,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppMessagesRoute: typeof AuthenticatedAppMessagesRoute
   AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRoute
   AuthenticatedAppOnboardingRoute: typeof AuthenticatedAppOnboardingRoute
+  AuthenticatedAppOrganizationRoute: typeof AuthenticatedAppOrganizationRoute
   AuthenticatedAppOverviewRoute: typeof AuthenticatedAppOverviewRoute
   AuthenticatedAppPenaltiesRoute: typeof AuthenticatedAppPenaltiesRoute
   AuthenticatedAppPermissionsRoute: typeof AuthenticatedAppPermissionsRoute
@@ -1436,6 +1477,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppMessagesRoute: AuthenticatedAppMessagesRoute,
   AuthenticatedAppNotificationsRoute: AuthenticatedAppNotificationsRoute,
   AuthenticatedAppOnboardingRoute: AuthenticatedAppOnboardingRoute,
+  AuthenticatedAppOrganizationRoute: AuthenticatedAppOrganizationRoute,
   AuthenticatedAppOverviewRoute: AuthenticatedAppOverviewRoute,
   AuthenticatedAppPenaltiesRoute: AuthenticatedAppPenaltiesRoute,
   AuthenticatedAppPermissionsRoute: AuthenticatedAppPermissionsRoute,
@@ -1476,6 +1518,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   GQrRoute: GQrRoute,
+  InviteTokenRoute: InviteTokenRoute,
   ApiTtsSpeakRoute: ApiTtsSpeakRoute,
   ApiPublicHooksContractsNotifyRoute: ApiPublicHooksContractsNotifyRoute,
   ApiPublicHooksReportSchedulerRoute: ApiPublicHooksReportSchedulerRoute,

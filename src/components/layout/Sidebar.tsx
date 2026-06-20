@@ -48,6 +48,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app/cost-analytics", label: "Costi per area (5★)", icon: TrendingUp },
   ]},
   { label: "Amministrazione", items: [
+    { to: "/app/organization", label: "Organizzazione (multi-tenant)", icon: Building2 },
     { to: "/app/integrations", label: "Integrazioni (PMS, WA, SDI)", icon: Plug },
     { to: "/app/sla", label: "Regole SLA", icon: Bell },
     { to: "/app/sla-escalations", label: "Escalation SLA", icon: AlertTriangle },

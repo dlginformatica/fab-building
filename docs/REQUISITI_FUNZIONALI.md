@@ -1,5 +1,15 @@
 # HotelOps — Requisiti Funzionali
 
+## 2026-06-20 — RF Multi-tenant
+- RF-MT-01: Ogni utente registrato crea automaticamente la propria organizzazione e ne è proprietario (owner).
+- RF-MT-02: L'organizzazione ha un limite massimo di 6 utenti (1 owner + max 5 invitati). Il limite è bloccato a livello DB.
+- RF-MT-03: L'owner può invitare utenti via email con ruolo organizzazione (admin/member) e ruolo applicativo (direttore/facility_manager/manutentore/fornitore/economato/viewer).
+- RF-MT-04: La delega di moduli all'invitato include automaticamente le dipendenze obbligatorie (es. tickets richiede assets; work_orders richiede tickets+suppliers).
+- RF-MT-05: L'owner può limitare la delega a specifiche strutture dell'organizzazione o a tutte.
+- RF-MT-06: Gli inviti hanno token unico, link condivisibile `/invite/{token}`, scadenza 14 giorni, sono revocabili e tracciati.
+- RF-MT-07: L'owner può trasferire la proprietà a un altro membro esistente; diventa admin dell'org.
+- RF-MT-08: Tutti i dati (strutture, ticket, fatture, ecc.) sono isolati per organizzazione. Il super_admin globale può vedere tutto.
+
 ## 2026-06-20 — Fase 12
 - **RF-TR-01** Trend avanzati YoY con confronto anno-corrente vs anno-precedente, benchmark per camera/anno (energia 3200 kWh, acqua 130 mc, gas 380 Smc, SLA target 90%).
 - **RF-SLP-01** Preferenze SLA per utente e struttura: soglia pre-allerta, reminder periodico, canali (in-app/email/push), orario silenzioso. Anteprima impatto su ticket aperti.

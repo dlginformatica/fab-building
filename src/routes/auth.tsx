@@ -19,6 +19,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [orgName, setOrgName] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ function AuthPage() {
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email, password,
-      options: { data: { full_name: fullName }, emailRedirectTo: window.location.origin + "/app" },
+      options: { data: { full_name: fullName, org_name: orgName }, emailRedirectTo: window.location.origin + "/app" },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
@@ -74,6 +75,7 @@ function AuthPage() {
             </TabsContent>
             <TabsContent value="signup" className="space-y-3 pt-4">
               <div className="space-y-2"><Label>Nome completo</Label><Input value={fullName} onChange={(e) => setFullName(e.target.value)} /></div>
+              <div className="space-y-2"><Label>Nome organizzazione</Label><Input value={orgName} onChange={(e) => setOrgName(e.target.value)} placeholder="Es. Hotel Marina Group" /></div>
               <div className="space-y-2"><Label>Email</Label><Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} /></div>
               <div className="space-y-2"><Label>Password</Label><Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} /></div>
               <Button className="w-full" onClick={signUp} disabled={loading}>Crea account</Button>

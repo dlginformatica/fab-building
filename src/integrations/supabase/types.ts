@@ -1693,6 +1693,21 @@ export type Database = {
           },
         ]
       }
+      module_dependencies: {
+        Row: {
+          depends_on: string
+          module: string
+        }
+        Insert: {
+          depends_on: string
+          module: string
+        }
+        Update: {
+          depends_on?: string
+          module?: string
+        }
+        Relationships: []
+      }
       module_permissions: {
         Row: {
           action: string
@@ -1888,6 +1903,127 @@ export type Database = {
           },
         ]
       }
+      org_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          app_role: Database["public"]["Enums"]["app_role"]
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          modules: string[]
+          org_id: string
+          org_role: Database["public"]["Enums"]["org_member_role"]
+          revoked_at: string | null
+          structure_ids: string[]
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          app_role?: Database["public"]["Enums"]["app_role"]
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          modules?: string[]
+          org_id: string
+          org_role?: Database["public"]["Enums"]["org_member_role"]
+          revoked_at?: string | null
+          structure_ids?: string[]
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          app_role?: Database["public"]["Enums"]["app_role"]
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          modules?: string[]
+          org_id?: string
+          org_role?: Database["public"]["Enums"]["org_member_role"]
+          revoked_at?: string | null
+          structure_ids?: string[]
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_invitations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      org_memberships: {
+        Row: {
+          created_at: string
+          id: string
+          org_id: string
+          role: Database["public"]["Enums"]["org_member_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          org_id: string
+          role?: Database["public"]["Enums"]["org_member_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          org_id?: string
+          role?: Database["public"]["Enums"]["org_member_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_memberships_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          id: string
+          max_users: number
+          name: string
+          owner_id: string
+          slug: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          max_users?: number
+          name: string
+          owner_id: string
+          slug?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          max_users?: number
+          name?: string
+          owner_id?: string
+          slug?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       penalty_rules: {
         Row: {
           active: boolean
@@ -1969,6 +2105,7 @@ export type Database = {
           email: string
           full_name: string | null
           id: string
+          organization_id: string | null
           phone: string | null
           updated_at: string
         }
@@ -1978,6 +2115,7 @@ export type Database = {
           email: string
           full_name?: string | null
           id: string
+          organization_id?: string | null
           phone?: string | null
           updated_at?: string
         }
@@ -1987,10 +2125,19 @@ export type Database = {
           email?: string
           full_name?: string | null
           id?: string
+          organization_id?: string | null
           phone?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       purchase_orders: {
         Row: {
@@ -3023,6 +3170,7 @@ export type Database = {
           notes: string | null
           onboarded_at: string | null
           onboarding_preset: string | null
+          organization_id: string | null
           postal_code: string | null
           province: string | null
           regime_fiscale: string | null
@@ -3043,6 +3191,7 @@ export type Database = {
           notes?: string | null
           onboarded_at?: string | null
           onboarding_preset?: string | null
+          organization_id?: string | null
           postal_code?: string | null
           province?: string | null
           regime_fiscale?: string | null
@@ -3063,6 +3212,7 @@ export type Database = {
           notes?: string | null
           onboarded_at?: string | null
           onboarding_preset?: string | null
+          organization_id?: string | null
           postal_code?: string | null
           province?: string | null
           regime_fiscale?: string | null
@@ -3071,7 +3221,15 @@ export type Database = {
           updated_at?: string
           vat_number?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "structures_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       supplier_documents: {
         Row: {
@@ -4251,6 +4409,7 @@ export type Database = {
       }
     }
     Functions: {
+      accept_org_invitation: { Args: { _token: string }; Returns: string }
       alerts_for_structure: {
         Args: { _structure: string }
         Returns: {
@@ -4303,6 +4462,7 @@ export type Database = {
           title: string
         }[]
       }
+      current_org_id: { Args: never; Returns: string }
       dashboard_structure_kpi: {
         Args: { _structure: string }
         Returns: {
@@ -4342,6 +4502,10 @@ export type Database = {
       enqueue_sla_warnings: {
         Args: { p_threshold_minutes?: number }
         Returns: number
+      }
+      expand_modules_with_deps: {
+        Args: { _modules: string[] }
+        Returns: string[]
       }
       generate_maintenance_tasks: {
         Args: { _from: string; _to: string }
@@ -4385,6 +4549,9 @@ export type Database = {
         Args: { _conv: string; _user: string }
         Returns: boolean
       }
+      is_org_member: { Args: { _org: string; _user: string }; Returns: boolean }
+      is_org_owner: { Args: { _org: string; _user: string }; Returns: boolean }
+      org_user_count: { Args: { _org: string }; Returns: number }
       room_by_qr: {
         Args: { _token: string }
         Returns: {
@@ -4432,6 +4599,10 @@ export type Database = {
           ticket_id: string
           violation_id: string
         }[]
+      }
+      transfer_org_ownership: {
+        Args: { _new_owner: string; _org: string }
+        Returns: undefined
       }
       trends_monthly: {
         Args: { _from: string; _structure: string; _to: string }
@@ -4502,6 +4673,7 @@ export type Database = {
         | "sla_escalation_l2"
         | "sla_escalation_l3"
         | "compliance_report_ready"
+      org_member_role: "owner" | "admin" | "member"
       reorder_status:
         | "da_approvare"
         | "approvato"
@@ -4756,6 +4928,7 @@ export const Constants = {
         "sla_escalation_l3",
         "compliance_report_ready",
       ],
+      org_member_role: ["owner", "admin", "member"],
       reorder_status: [
         "da_approvare",
         "approvato",
