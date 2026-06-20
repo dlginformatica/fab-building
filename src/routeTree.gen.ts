@@ -64,6 +64,7 @@ import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
 import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/app.alerts'
+import { Route as ApiPublicHooksSlaNotifyRouteImport } from './routes/api/public/hooks/sla-notify'
 import { Route as ApiPublicHooksSlaEscalationsRouteImport } from './routes/api/public/hooks/sla-escalations'
 import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
 import { Route as ApiPublicHooksContractsNotifyRouteImport } from './routes/api/public/hooks/contracts-notify'
@@ -386,6 +387,11 @@ const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
   path: '/app/alerts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const ApiPublicHooksSlaNotifyRoute = ApiPublicHooksSlaNotifyRouteImport.update({
+  id: '/api/public/hooks/sla-notify',
+  path: '/api/public/hooks/sla-notify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicHooksSlaEscalationsRoute =
   ApiPublicHooksSlaEscalationsRouteImport.update({
     id: '/api/public/hooks/sla-escalations',
@@ -497,6 +503,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
   '/api/public/hooks/sla-escalations': typeof ApiPublicHooksSlaEscalationsRoute
+  '/api/public/hooks/sla-notify': typeof ApiPublicHooksSlaNotifyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -561,6 +568,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
   '/api/public/hooks/sla-escalations': typeof ApiPublicHooksSlaEscalationsRoute
+  '/api/public/hooks/sla-notify': typeof ApiPublicHooksSlaNotifyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -627,6 +635,7 @@ export interface FileRoutesById {
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
   '/api/public/hooks/sla-escalations': typeof ApiPublicHooksSlaEscalationsRoute
+  '/api/public/hooks/sla-notify': typeof ApiPublicHooksSlaNotifyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -693,6 +702,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
     | '/api/public/hooks/sla-escalations'
+    | '/api/public/hooks/sla-notify'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -757,6 +767,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
     | '/api/public/hooks/sla-escalations'
+    | '/api/public/hooks/sla-notify'
   id:
     | '__root__'
     | '/'
@@ -822,6 +833,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
     | '/api/public/hooks/sla-escalations'
+    | '/api/public/hooks/sla-notify'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -833,6 +845,7 @@ export interface RootRouteChildren {
   ApiPublicHooksContractsNotifyRoute: typeof ApiPublicHooksContractsNotifyRoute
   ApiPublicHooksReportSchedulerRoute: typeof ApiPublicHooksReportSchedulerRoute
   ApiPublicHooksSlaEscalationsRoute: typeof ApiPublicHooksSlaEscalationsRoute
+  ApiPublicHooksSlaNotifyRoute: typeof ApiPublicHooksSlaNotifyRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1222,6 +1235,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/api/public/hooks/sla-notify': {
+      id: '/api/public/hooks/sla-notify'
+      path: '/api/public/hooks/sla-notify'
+      fullPath: '/api/public/hooks/sla-notify'
+      preLoaderRoute: typeof ApiPublicHooksSlaNotifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/hooks/sla-escalations': {
       id: '/api/public/hooks/sla-escalations'
       path: '/api/public/hooks/sla-escalations'
@@ -1460,6 +1480,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicHooksContractsNotifyRoute: ApiPublicHooksContractsNotifyRoute,
   ApiPublicHooksReportSchedulerRoute: ApiPublicHooksReportSchedulerRoute,
   ApiPublicHooksSlaEscalationsRoute: ApiPublicHooksSlaEscalationsRoute,
+  ApiPublicHooksSlaNotifyRoute: ApiPublicHooksSlaNotifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

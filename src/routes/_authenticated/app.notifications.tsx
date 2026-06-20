@@ -12,7 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
-import { Mail, MessageSquare, Plus, Send, Trash2 } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Mail, MessageSquare, Plus, Send, Trash2, FileText, Save } from "lucide-react";
 import { fmtDateTime } from "@/lib/format";
 import { toast } from "sonner";
 import { sendTestNotification } from "@/lib/notifications.functions";
@@ -44,6 +45,39 @@ function Page() {
   const { data: logs = [] } = useQuery({
     queryKey: ["notif_log"],
     queryFn: async () => (await (supabase as any).from("notification_log").select("*").order("created_at", { ascending: false }).limit(100)).data ?? [],
+  });
+  const { data: templates = [] } = useQuery({
+    queryKey: ["notif_templates"],
+    queryFn: async () => (await (supabase as any).from("notification_templates").select("*").order("event").order("channel_type")).data ?? [],
+  });
+
+  const saveTpl = useMutation({
+    mutationFn: async (t: any) => {
+      const { id, ...patch } = t;
+      const { error } = await (supabase as any).from("notification_templates").update(patch).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Template salvato"); qc.invalidateQueries({ queryKey: ["notif_templates"] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const newTpl = useMutation({
+    mutationFn: async () => {
+      const user = (await supabase.auth.getUser()).data.user;
+      const { error } = await (supabase as any).from("notification_templates").insert({
+        event: "sla_violated", channel_type: "email", name: "Nuovo template",
+        subject: "[HotelOps] {{ticket_number}}", body_md: "Ticket {{ticket_number}} — {{title}}",
+        created_by: user?.id,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["notif_templates"] }),
+  });
+  const delTpl = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await (supabase as any).from("notification_templates").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Template eliminato"); qc.invalidateQueries({ queryKey: ["notif_templates"] }); },
   });
 
   const [open, setOpen] = useState(false);
@@ -153,6 +187,7 @@ function Page() {
       <Tabs defaultValue="channels">
         <TabsList>
           <TabsTrigger value="channels">Canali</TabsTrigger>
+          <TabsTrigger value="templates">Template</TabsTrigger>
           <TabsTrigger value="log">Log invii</TabsTrigger>
         </TabsList>
         <TabsContent value="channels" className="mt-4">
@@ -186,6 +221,16 @@ function Page() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+        <TabsContent value="templates" className="mt-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">Template editabili per evento e canale. Placeholder disponibili: <code>{"{{ticket_number}}"}</code>, <code>{"{{title}}"}</code>, <code>{"{{priority}}"}</code>, <code>{"{{due_at}}"}</code>, <code>{"{{delay_minutes}}"}</code>.</p>
+            <Button size="sm" onClick={() => newTpl.mutate()}><Plus className="h-4 w-4 mr-1"/>Nuovo</Button>
+          </div>
+          <div className="space-y-3">
+            {templates.map((t: any) => <TemplateEditor key={t.id} tpl={t} onSave={(v) => saveTpl.mutate(v)} onDelete={() => { if (confirm("Eliminare?")) delTpl.mutate(t.id); }}/>)}
+            {templates.length === 0 && <p className="text-sm text-muted-foreground">Nessun template.</p>}
+          </div>
         </TabsContent>
         <TabsContent value="log" className="mt-4">
           <Card>
