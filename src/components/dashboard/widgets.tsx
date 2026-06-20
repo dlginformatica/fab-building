@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AlertTriangle, CheckCircle2, Ticket as TicketIcon, Wrench, Receipt, Package, Truck, Clock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { fmtDateTime, timeUntil } from "@/lib/format";
+import { fmtDateTime, fmtEUR, timeUntil } from "@/lib/format";
 
 export type WidgetKey =
   | "kpi_open_tickets" | "kpi_critical_tickets" | "kpi_sla_pct" | "kpi_assets"
@@ -14,7 +14,7 @@ export type WidgetKey =
 
 export const WIDGET_CATALOG: Array<{ key: WidgetKey; label: string; defaultSize: "sm"|"md"|"lg"|"xl"; group: string }> = [
   { key: "kpi_open_tickets", label: "KPI: Ticket aperti", defaultSize: "sm", group: "KPI" },
-  { key: "kpi_critical_tickets", label: "KPI: Ticket critici", defaultSize: "sm", group: "KPI" },
+  { key: "kpi_critical_tickets", label: "KPI: Ticket critici aperti", defaultSize: "sm", group: "KPI" },
   { key: "kpi_sla_pct", label: "KPI: Rispetto SLA", defaultSize: "sm", group: "KPI" },
   { key: "kpi_assets", label: "KPI: Asset censiti", defaultSize: "sm", group: "KPI" },
   { key: "kpi_open_invoices", label: "KPI: Fatture da pagare", defaultSize: "sm", group: "Economato" },
@@ -40,7 +40,7 @@ export function sizeClass(size: string) {
 export function WidgetRenderer({ wkey, structureId, title }: { wkey: WidgetKey; structureId: string | null; title?: string }) {
   switch (wkey) {
     case "kpi_open_tickets": return <KPI title={title ?? "Ticket aperti"} icon={<TicketIcon className="h-4 w-4"/>} q={async()=>(await supabase.from("tickets").select("id",{count:"exact",head:true}).eq("structure_id",structureId!).in("status",["aperto","assegnato","in_corso"])).count ?? 0} dep={["k-open",structureId]} enabled={!!structureId}/>;
-    case "kpi_critical_tickets": return <KPI title={title ?? "Ticket critici"} accent icon={<AlertTriangle className="h-4 w-4 text-destructive"/>} q={async()=>(await supabase.from("tickets").select("id",{count:"exact",head:true}).eq("structure_id",structureId!).eq("priority","critica").in("status",["aperto","assegnato","in_corso"])).count ?? 0} dep={["k-crit",structureId]} enabled={!!structureId}/>;
+    case "kpi_critical_tickets": return <KPI title={title ?? "Ticket critici aperti"} accent icon={<AlertTriangle className="h-4 w-4 text-destructive"/>} q={async()=>(await supabase.from("tickets").select("id",{count:"exact",head:true}).eq("structure_id",structureId!).eq("priority","critica").in("status",["aperto","assegnato","in_corso"])).count ?? 0} dep={["k-crit",structureId]} enabled={!!structureId}/>;
     case "kpi_sla_pct": return <KpiSLA structureId={structureId} title={title ?? "Rispetto SLA"}/>;
     case "kpi_assets": return <KPI title={title ?? "Asset"} icon={<Wrench className="h-4 w-4"/>} q={async()=>(await supabase.from("assets").select("id",{count:"exact",head:true}).eq("structure_id",structureId!)).count ?? 0} dep={["k-ast",structureId]} enabled={!!structureId}/>;
     case "kpi_open_invoices": return <KPI title={title ?? "Fatture da pagare"} icon={<Receipt className="h-4 w-4"/>} q={async()=>(await supabase.from("invoices").select("id",{count:"exact",head:true}).eq("status","da_pagare")).count ?? 0} dep={["k-inv"]}/>;
@@ -71,10 +71,22 @@ function KpiSLA({ structureId, title }: any) {
   const { data } = useQuery({
     queryKey:["kpi-sla",structureId], enabled: !!structureId,
     queryFn: async()=>{
-      const { data } = await supabase.from("tickets").select("resolve_due_at,resolved_at").eq("structure_id",structureId!).not("resolved_at","is",null);
-      const closed = data ?? []; if (!closed.length) return null;
-      const ok = closed.filter(t=>t.resolve_due_at && new Date(t.resolved_at!)<=new Date(t.resolve_due_at!)).length;
-      return Math.round(ok/closed.length*100);
+      // Considera tutti i ticket con SLA definita: violazione se chiuso oltre la scadenza
+      // oppure ancora aperto e già scaduto. Così le violazioni in corso pesano sul KPI.
+      const { data } = await supabase
+        .from("tickets")
+        .select("resolve_due_at,resolved_at")
+        .eq("structure_id", structureId!)
+        .not("resolve_due_at", "is", null);
+      const rows = data ?? [];
+      if (!rows.length) return null;
+      const now = Date.now();
+      const violated = rows.filter((t) => {
+        const due = new Date(t.resolve_due_at!).getTime();
+        if (t.resolved_at) return new Date(t.resolved_at).getTime() > due;
+        return now > due;
+      }).length;
+      return Math.round(((rows.length - violated) / rows.length) * 100);
     }
   });
   return (
@@ -93,21 +105,21 @@ function KpiStockValue({ title }: any) {
   return (
     <Card className="h-full"><CardContent className="pt-6">
       <div className="flex items-center gap-2 text-xs uppercase text-muted-foreground"><Package className="h-4 w-4"/>{title}</div>
-      <div className="mt-2 font-display text-3xl font-bold">{data==null?"—":new Intl.NumberFormat("it-IT",{style:"currency",currency:"EUR"}).format(data)}</div>
+      <div className="mt-2 font-display text-3xl font-bold">{fmtEUR(data)}</div>
     </CardContent></Card>
   );
 }
 
 function ListRecentTickets({ structureId, title }: any) {
   const { data = [] } = useQuery({ queryKey:["w-recent",structureId], enabled:!!structureId,
-    queryFn: async()=> (await supabase.from("tickets").select("id,ticket_number,title,priority,status,resolve_due_at,created_at").eq("structure_id",structureId!).order("created_at",{ascending:false}).limit(8)).data ?? [] });
+    queryFn: async()=> (await supabase.from("tickets").select("id,ticket_number,title,priority,status,resolve_due_at,resolved_at,closed_at,created_at").eq("structure_id",structureId!).order("created_at",{ascending:false}).limit(8)).data ?? [] });
   return (
     <Card className="h-full">
       <CardHeader><CardTitle className="font-display text-base">{title}</CardTitle></CardHeader>
       <CardContent className="p-0">
         <div className="divide-y">
           {data.length===0 && <div className="p-4 text-xs text-center text-muted-foreground">Nessun ticket.</div>}
-          {data.map((t:any)=>{ const sla = timeUntil(t.resolve_due_at); return (
+          {data.map((t:any)=>{ const sla = timeUntil(t.resolve_due_at, t.resolved_at ?? t.closed_at ?? null); return (
             <Link key={t.id} to="/app/tickets/$id" params={{id:t.id}} className="flex items-center gap-3 px-4 py-2 hover:bg-accent/40 text-sm">
               <span className="font-mono text-xs text-muted-foreground">#{t.ticket_number}</span>
               <span className="flex-1 truncate">{t.title}</span>
