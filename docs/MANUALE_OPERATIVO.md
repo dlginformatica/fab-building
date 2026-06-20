@@ -4,6 +4,26 @@
 
 ## Changelog
 
+### 2026-06-20 — Fasi 2-10: rilancio per piccole/medie strutture
+
+**Housekeeping (`/app/housekeeping`)** — Stato di ogni camera (Pulita/Sporca/In pulizia/Ispezionata/Fuori uso) + occupazione (Libera/Occupata/Arrivo/Partenza/Permanenza). KPI giornaliero a colpo d'occhio. "Genera turni" crea automaticamente i task del giorno per tutte le camere sporche; il cameriere clicca *Inizia* → *Fatto* dal telefono. I task sono per data, tipo (pulizia, cambio completo, rifacimento, ispezione, blocco) e priorità.
+
+**Segnalazioni ospiti via QR (`/g/<token>` pubblica, `/app/guest-issues` staff)** — Generi i QR di tutte le camere con un click ("Genera QR mancanti"), li stampi dal pannello (anteprima + bottone Stampa) e li attacchi in stanza. L'ospite inquadra → form mobile (categoria, descrizione, nome/telefono opzionali). Lo staff vede la segnalazione in "Segnalazioni ospiti" e con *Crea ticket* la trasforma in un ticket regolare. Funziona senza login per l'ospite (RLS INSERT anon controllato).
+
+**Integrazioni (`/app/integrations`)** — Collega Fatture in Cloud (export SDI), Octorate (channel manager), un PMS generico (Beddy o custom), WhatsApp Business, provider energia. Per ogni provider salvi credenziali (token cifrato lato DB) e attivi/disattivi con uno switch. Solo super_admin/direttore/facility_manager.
+
+**Export FatturaPA SDI** — Su ogni fattura ora compare *Export SDI XML*: genera un file XML schema FPR12 conforme. Prerequisito: in Impostazioni struttura inserire P.IVA, indirizzo, CAP, regime fiscale (default RF01). Il `CodiceDestinatario` viene preso dal Codice SDI del fornitore (o `0000000` se non presente, e si aggiunge `PECDestinatario` se il fornitore ha PEC).
+
+**Prima Nota / Cassa (`/app/cashbook`)** — Entrate e uscite quotidiane. Filtra per periodo, vedi saldo e totali in tempo reale, esporta in CSV per il commercialista. Categorie: soggiorno, extra (bar/ristorante), utenze, fornitori, manutenzione, stipendi, tasse, altro. Metodo: contanti, POS, bonifico, assegno.
+
+**Smart Inbox (`/app/smart-inbox`)** — Una sola pagina con tutto ciò che richiede la tua attenzione: nuove segnalazioni ospiti + ticket critici/alti aperti + ultime conversazioni. Tre colonne, link diretti alle pagine di dettaglio. Pensata come prima pagina della giornata.
+
+**Consumi & Sostenibilità (`/app/sustainability`)** — Letture contatori ultimi 12 mesi → consumi per camera/anno → confronto con benchmark di settore (3200 kWh elettrica, 380 Smc gas, 130 mc acqua per camera/anno). Badge ✓ sotto media / ≈ in media / ⚠ sopra media + percentuale. In fondo, 4 suggerimenti ESG operativi (caldaia condensazione, LED+sensori, soffioni a basso flusso, riuso asciugamani).
+
+**WhatsApp Business** — Provider preconfigurato nelle Integrazioni (phone_number_id + access_token); base per notifiche outbound a ospiti/tecnici nei prossimi rilasci.
+
+**Mobile-first** — Tutte le nuove pagine sono progettate per uso da telefono (housekeeping a bordo letto, ospite QR sul comodino, cassa al banco). La PWA installabile e l'offline outbox della Fase 8.4 restano attivi.
+
 ### 2026-06-19 — Setup guidato in 5 minuti
 Nuova pagina **Setup guidato** (`/app/onboarding`, in sidebar sotto Operativo) che porta un albergatore dal primo accesso a una struttura pronta all'uso in pochi minuti:
 1. **Struttura**: nome + città (crea o aggiorna la struttura attiva).

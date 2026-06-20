@@ -16,6 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { SimpleList, ListCard } from "@/components/SimpleList";
 import { Plus, Sparkles, Loader2, AlertTriangle, CalendarClock } from "lucide-react";
 import { toast } from "sonner";
+import { downloadFatturaPaXml } from "@/lib/sdi/fatturapa";
 
 export const Route = createFileRoute("/_authenticated/app/invoices")({ component: Page });
 
@@ -32,6 +33,12 @@ function Page() {
   const { data: items = [] } = useQuery({
     queryKey: ["invoices", activeStructureId], enabled: !!activeStructureId,
     queryFn: async () => (await supabase.from("invoices").select("*, suppliers(name)").eq("structure_id", activeStructureId!).order("due_date",{ascending:true,nullsFirst:false})).data ?? [],
+  });
+
+  const { data: structure } = useQuery({
+    queryKey:["inv_struct", activeStructureId],
+    enabled: !!activeStructureId,
+    queryFn: async () => (await (supabase as any).from("structures").select("*").eq("id", activeStructureId!).maybeSingle()).data,
   });
 
   async function handleOcr() {
@@ -173,7 +180,13 @@ function Page() {
               const overdue = i.due_date && i.status!=="pagata" && new Date(i.due_date) < new Date();
               return <ListCard title={`Fatt. ${i.number}`} meta={<>{i.suppliers?.name ?? "—"} · {i.issue_date}</>}
                 badges={<><Badge variant={overdue?"destructive":"default"}>{overdue?"scaduta":i.status}</Badge>{i.utility_type && <Badge variant="outline">{i.utility_type}</Badge>}{i.ocr_data && <Badge variant="secondary">OCR</Badge>}</>}
-                footer={<div>Totale: <b>€{i.amount_total}</b>{i.due_date && <div>Scade: {i.due_date}</div>}{i.pdf_url && <a href={i.pdf_url} target="_blank" className="text-primary underline">PDF</a>}</div>}/>;
+                footer={<div className="space-y-1"><div>Totale: <b>€{i.amount_total}</b>{i.due_date && <span> · Scade: {i.due_date}</span>}{i.pdf_url && <> · <a href={i.pdf_url} target="_blank" className="text-primary underline">PDF</a></>}</div>
+                  <Button size="sm" variant="outline" onClick={() => {
+                    if (!structure?.vat_number) { toast.error("Inserisci prima la P.IVA della struttura in Impostazioni"); return; }
+                    downloadFatturaPaXml({ structure, supplier: i.suppliers ? { name: i.suppliers.name } : null, invoice: { number: i.number, issue_date: i.issue_date, amount_net: i.amount_net, vat: i.vat, amount_total: i.amount_total, description: i.utility_type || "Servizi" } });
+                    toast.success("XML SDI scaricato");
+                  }}>Export SDI XML</Button>
+                </div>}/>;
             }}
           />
         </TabsContent>

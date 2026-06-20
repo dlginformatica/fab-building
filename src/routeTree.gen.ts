@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GQrRouteImport } from './routes/g.$qr'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as ApiTtsSpeakRouteImport } from './routes/api/tts/speak'
@@ -20,11 +21,13 @@ import { Route as AuthenticatedAppWorkOrdersRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppUtilitiesRouteImport } from './routes/_authenticated/app.utilities'
 import { Route as AuthenticatedAppUsersRouteImport } from './routes/_authenticated/app.users'
 import { Route as AuthenticatedAppTicketsRouteImport } from './routes/_authenticated/app.tickets'
+import { Route as AuthenticatedAppSustainabilityRouteImport } from './routes/_authenticated/app.sustainability'
 import { Route as AuthenticatedAppSuppliersComplianceRouteImport } from './routes/_authenticated/app.suppliers-compliance'
 import { Route as AuthenticatedAppSuppliersRouteImport } from './routes/_authenticated/app.suppliers'
 import { Route as AuthenticatedAppStructuresRouteImport } from './routes/_authenticated/app.structures'
 import { Route as AuthenticatedAppStructureKpiRouteImport } from './routes/_authenticated/app.structure-kpi'
 import { Route as AuthenticatedAppStatisticsRouteImport } from './routes/_authenticated/app.statistics'
+import { Route as AuthenticatedAppSmartInboxRouteImport } from './routes/_authenticated/app.smart-inbox'
 import { Route as AuthenticatedAppSlaNotificationsRouteImport } from './routes/_authenticated/app.sla-notifications'
 import { Route as AuthenticatedAppSlaEscalationsRouteImport } from './routes/_authenticated/app.sla-escalations'
 import { Route as AuthenticatedAppSlaComplianceRouteImport } from './routes/_authenticated/app.sla-compliance'
@@ -42,6 +45,9 @@ import { Route as AuthenticatedAppMessagesRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authenticated/app.maintenance'
 import { Route as AuthenticatedAppInvoicesRouteImport } from './routes/_authenticated/app.invoices'
 import { Route as AuthenticatedAppInventoryRouteImport } from './routes/_authenticated/app.inventory'
+import { Route as AuthenticatedAppIntegrationsRouteImport } from './routes/_authenticated/app.integrations'
+import { Route as AuthenticatedAppHousekeepingRouteImport } from './routes/_authenticated/app.housekeeping'
+import { Route as AuthenticatedAppGuestIssuesRouteImport } from './routes/_authenticated/app.guest-issues'
 import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticated/app.docs'
 import { Route as AuthenticatedAppDeliveryQueueRouteImport } from './routes/_authenticated/app.delivery-queue'
 import { Route as AuthenticatedAppDelegationsHistoryRouteImport } from './routes/_authenticated/app.delegations-history'
@@ -49,6 +55,7 @@ import { Route as AuthenticatedAppDelegationsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppDelegationAuditRouteImport } from './routes/_authenticated/app.delegation-audit'
 import { Route as AuthenticatedAppCostAnalyticsRouteImport } from './routes/_authenticated/app.cost-analytics'
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
+import { Route as AuthenticatedAppCashbookRouteImport } from './routes/_authenticated/app.cashbook'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
@@ -73,6 +80,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GQrRoute = GQrRouteImport.update({
+  id: '/g/$qr',
+  path: '/g/$qr',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
@@ -118,6 +130,12 @@ const AuthenticatedAppTicketsRoute = AuthenticatedAppTicketsRouteImport.update({
   path: '/app/tickets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppSustainabilityRoute =
+  AuthenticatedAppSustainabilityRouteImport.update({
+    id: '/app/sustainability',
+    path: '/app/sustainability',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppSuppliersComplianceRoute =
   AuthenticatedAppSuppliersComplianceRouteImport.update({
     id: '/app/suppliers-compliance',
@@ -146,6 +164,12 @@ const AuthenticatedAppStatisticsRoute =
   AuthenticatedAppStatisticsRouteImport.update({
     id: '/app/statistics',
     path: '/app/statistics',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppSmartInboxRoute =
+  AuthenticatedAppSmartInboxRouteImport.update({
+    id: '/app/smart-inbox',
+    path: '/app/smart-inbox',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppSlaNotificationsRoute =
@@ -248,6 +272,24 @@ const AuthenticatedAppInventoryRoute =
     path: '/app/inventory',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppIntegrationsRoute =
+  AuthenticatedAppIntegrationsRouteImport.update({
+    id: '/app/integrations',
+    path: '/app/integrations',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppHousekeepingRoute =
+  AuthenticatedAppHousekeepingRouteImport.update({
+    id: '/app/housekeeping',
+    path: '/app/housekeeping',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppGuestIssuesRoute =
+  AuthenticatedAppGuestIssuesRouteImport.update({
+    id: '/app/guest-issues',
+    path: '/app/guest-issues',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppDocsRoute = AuthenticatedAppDocsRouteImport.update({
   id: '/app/docs',
   path: '/app/docs',
@@ -287,6 +329,12 @@ const AuthenticatedAppContractsRoute =
   AuthenticatedAppContractsRouteImport.update({
     id: '/app/contracts',
     path: '/app/contracts',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppCashbookRoute =
+  AuthenticatedAppCashbookRouteImport.update({
+    id: '/app/cashbook',
+    path: '/app/cashbook',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppAuditRoute = AuthenticatedAppAuditRouteImport.update({
@@ -357,9 +405,11 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/portal': typeof AuthenticatedPortalRoute
+  '/g/$qr': typeof GQrRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
+  '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
@@ -367,6 +417,9 @@ export interface FileRoutesByFullPath {
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/guest-issues': typeof AuthenticatedAppGuestIssuesRoute
+  '/app/housekeeping': typeof AuthenticatedAppHousekeepingRoute
+  '/app/integrations': typeof AuthenticatedAppIntegrationsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
@@ -384,11 +437,13 @@ export interface FileRoutesByFullPath {
   '/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
   '/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
+  '/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
+  '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
@@ -409,9 +464,11 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/portal': typeof AuthenticatedPortalRoute
+  '/g/$qr': typeof GQrRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
+  '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
@@ -419,6 +476,9 @@ export interface FileRoutesByTo {
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   '/app/docs': typeof AuthenticatedAppDocsRoute
+  '/app/guest-issues': typeof AuthenticatedAppGuestIssuesRoute
+  '/app/housekeeping': typeof AuthenticatedAppHousekeepingRoute
+  '/app/integrations': typeof AuthenticatedAppIntegrationsRoute
   '/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
@@ -436,11 +496,13 @@ export interface FileRoutesByTo {
   '/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
   '/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
+  '/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
+  '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
@@ -463,9 +525,11 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
+  '/g/$qr': typeof GQrRoute
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
+  '/_authenticated/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
   '/_authenticated/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
   '/_authenticated/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
@@ -473,6 +537,9 @@ export interface FileRoutesById {
   '/_authenticated/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
   '/_authenticated/app/delivery-queue': typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   '/_authenticated/app/docs': typeof AuthenticatedAppDocsRoute
+  '/_authenticated/app/guest-issues': typeof AuthenticatedAppGuestIssuesRoute
+  '/_authenticated/app/housekeeping': typeof AuthenticatedAppHousekeepingRoute
+  '/_authenticated/app/integrations': typeof AuthenticatedAppIntegrationsRoute
   '/_authenticated/app/inventory': typeof AuthenticatedAppInventoryRoute
   '/_authenticated/app/invoices': typeof AuthenticatedAppInvoicesRoute
   '/_authenticated/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
@@ -490,11 +557,13 @@ export interface FileRoutesById {
   '/_authenticated/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
   '/_authenticated/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/_authenticated/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
+  '/_authenticated/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/_authenticated/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/_authenticated/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
   '/_authenticated/app/structures': typeof AuthenticatedAppStructuresRoute
   '/_authenticated/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/_authenticated/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
+  '/_authenticated/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/_authenticated/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/_authenticated/app/users': typeof AuthenticatedAppUsersRoute
   '/_authenticated/app/utilities': typeof AuthenticatedAppUtilitiesRoute
@@ -517,9 +586,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/portal'
+    | '/g/$qr'
     | '/app/area-mapping'
     | '/app/assets'
     | '/app/audit'
+    | '/app/cashbook'
     | '/app/contracts'
     | '/app/cost-analytics'
     | '/app/delegation-audit'
@@ -527,6 +598,9 @@ export interface FileRouteTypes {
     | '/app/delegations-history'
     | '/app/delivery-queue'
     | '/app/docs'
+    | '/app/guest-issues'
+    | '/app/housekeeping'
+    | '/app/integrations'
     | '/app/inventory'
     | '/app/invoices'
     | '/app/maintenance'
@@ -544,11 +618,13 @@ export interface FileRouteTypes {
     | '/app/sla-compliance'
     | '/app/sla-escalations'
     | '/app/sla-notifications'
+    | '/app/smart-inbox'
     | '/app/statistics'
     | '/app/structure-kpi'
     | '/app/structures'
     | '/app/suppliers'
     | '/app/suppliers-compliance'
+    | '/app/sustainability'
     | '/app/tickets'
     | '/app/users'
     | '/app/utilities'
@@ -569,9 +645,11 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/portal'
+    | '/g/$qr'
     | '/app/area-mapping'
     | '/app/assets'
     | '/app/audit'
+    | '/app/cashbook'
     | '/app/contracts'
     | '/app/cost-analytics'
     | '/app/delegation-audit'
@@ -579,6 +657,9 @@ export interface FileRouteTypes {
     | '/app/delegations-history'
     | '/app/delivery-queue'
     | '/app/docs'
+    | '/app/guest-issues'
+    | '/app/housekeeping'
+    | '/app/integrations'
     | '/app/inventory'
     | '/app/invoices'
     | '/app/maintenance'
@@ -596,11 +677,13 @@ export interface FileRouteTypes {
     | '/app/sla-compliance'
     | '/app/sla-escalations'
     | '/app/sla-notifications'
+    | '/app/smart-inbox'
     | '/app/statistics'
     | '/app/structure-kpi'
     | '/app/structures'
     | '/app/suppliers'
     | '/app/suppliers-compliance'
+    | '/app/sustainability'
     | '/app/tickets'
     | '/app/users'
     | '/app/utilities'
@@ -622,9 +705,11 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/portal'
+    | '/g/$qr'
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/assets'
     | '/_authenticated/app/audit'
+    | '/_authenticated/app/cashbook'
     | '/_authenticated/app/contracts'
     | '/_authenticated/app/cost-analytics'
     | '/_authenticated/app/delegation-audit'
@@ -632,6 +717,9 @@ export interface FileRouteTypes {
     | '/_authenticated/app/delegations-history'
     | '/_authenticated/app/delivery-queue'
     | '/_authenticated/app/docs'
+    | '/_authenticated/app/guest-issues'
+    | '/_authenticated/app/housekeeping'
+    | '/_authenticated/app/integrations'
     | '/_authenticated/app/inventory'
     | '/_authenticated/app/invoices'
     | '/_authenticated/app/maintenance'
@@ -649,11 +737,13 @@ export interface FileRouteTypes {
     | '/_authenticated/app/sla-compliance'
     | '/_authenticated/app/sla-escalations'
     | '/_authenticated/app/sla-notifications'
+    | '/_authenticated/app/smart-inbox'
     | '/_authenticated/app/statistics'
     | '/_authenticated/app/structure-kpi'
     | '/_authenticated/app/structures'
     | '/_authenticated/app/suppliers'
     | '/_authenticated/app/suppliers-compliance'
+    | '/_authenticated/app/sustainability'
     | '/_authenticated/app/tickets'
     | '/_authenticated/app/users'
     | '/_authenticated/app/utilities'
@@ -675,6 +765,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  GQrRoute: typeof GQrRoute
   ApiTtsSpeakRoute: typeof ApiTtsSpeakRoute
   ApiPublicHooksContractsNotifyRoute: typeof ApiPublicHooksContractsNotifyRoute
   ApiPublicHooksReportSchedulerRoute: typeof ApiPublicHooksReportSchedulerRoute
@@ -702,6 +793,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/g/$qr': {
+      id: '/g/$qr'
+      path: '/g/$qr'
+      fullPath: '/g/$qr'
+      preLoaderRoute: typeof GQrRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/portal': {
@@ -760,6 +858,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTicketsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/sustainability': {
+      id: '/_authenticated/app/sustainability'
+      path: '/app/sustainability'
+      fullPath: '/app/sustainability'
+      preLoaderRoute: typeof AuthenticatedAppSustainabilityRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/suppliers-compliance': {
       id: '/_authenticated/app/suppliers-compliance'
       path: '/app/suppliers-compliance'
@@ -793,6 +898,13 @@ declare module '@tanstack/react-router' {
       path: '/app/statistics'
       fullPath: '/app/statistics'
       preLoaderRoute: typeof AuthenticatedAppStatisticsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/smart-inbox': {
+      id: '/_authenticated/app/smart-inbox'
+      path: '/app/smart-inbox'
+      fullPath: '/app/smart-inbox'
+      preLoaderRoute: typeof AuthenticatedAppSmartInboxRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/sla-notifications': {
@@ -914,6 +1026,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppInventoryRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/integrations': {
+      id: '/_authenticated/app/integrations'
+      path: '/app/integrations'
+      fullPath: '/app/integrations'
+      preLoaderRoute: typeof AuthenticatedAppIntegrationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/housekeeping': {
+      id: '/_authenticated/app/housekeeping'
+      path: '/app/housekeeping'
+      fullPath: '/app/housekeeping'
+      preLoaderRoute: typeof AuthenticatedAppHousekeepingRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/guest-issues': {
+      id: '/_authenticated/app/guest-issues'
+      path: '/app/guest-issues'
+      fullPath: '/app/guest-issues'
+      preLoaderRoute: typeof AuthenticatedAppGuestIssuesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/docs': {
       id: '/_authenticated/app/docs'
       path: '/app/docs'
@@ -961,6 +1094,13 @@ declare module '@tanstack/react-router' {
       path: '/app/contracts'
       fullPath: '/app/contracts'
       preLoaderRoute: typeof AuthenticatedAppContractsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/cashbook': {
+      id: '/_authenticated/app/cashbook'
+      path: '/app/cashbook'
+      fullPath: '/app/cashbook'
+      preLoaderRoute: typeof AuthenticatedAppCashbookRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/audit': {
@@ -1104,6 +1244,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAreaMappingRoute: typeof AuthenticatedAppAreaMappingRoute
   AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
+  AuthenticatedAppCashbookRoute: typeof AuthenticatedAppCashbookRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
   AuthenticatedAppCostAnalyticsRoute: typeof AuthenticatedAppCostAnalyticsRoute
   AuthenticatedAppDelegationAuditRoute: typeof AuthenticatedAppDelegationAuditRoute
@@ -1111,6 +1252,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppDelegationsHistoryRoute: typeof AuthenticatedAppDelegationsHistoryRoute
   AuthenticatedAppDeliveryQueueRoute: typeof AuthenticatedAppDeliveryQueueRouteWithChildren
   AuthenticatedAppDocsRoute: typeof AuthenticatedAppDocsRoute
+  AuthenticatedAppGuestIssuesRoute: typeof AuthenticatedAppGuestIssuesRoute
+  AuthenticatedAppHousekeepingRoute: typeof AuthenticatedAppHousekeepingRoute
+  AuthenticatedAppIntegrationsRoute: typeof AuthenticatedAppIntegrationsRoute
   AuthenticatedAppInventoryRoute: typeof AuthenticatedAppInventoryRoute
   AuthenticatedAppInvoicesRoute: typeof AuthenticatedAppInvoicesRoute
   AuthenticatedAppMaintenanceRoute: typeof AuthenticatedAppMaintenanceRoute
@@ -1128,11 +1272,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppSlaComplianceRoute: typeof AuthenticatedAppSlaComplianceRoute
   AuthenticatedAppSlaEscalationsRoute: typeof AuthenticatedAppSlaEscalationsRoute
   AuthenticatedAppSlaNotificationsRoute: typeof AuthenticatedAppSlaNotificationsRoute
+  AuthenticatedAppSmartInboxRoute: typeof AuthenticatedAppSmartInboxRoute
   AuthenticatedAppStatisticsRoute: typeof AuthenticatedAppStatisticsRoute
   AuthenticatedAppStructureKpiRoute: typeof AuthenticatedAppStructureKpiRoute
   AuthenticatedAppStructuresRoute: typeof AuthenticatedAppStructuresRoute
   AuthenticatedAppSuppliersRoute: typeof AuthenticatedAppSuppliersRoute
   AuthenticatedAppSuppliersComplianceRoute: typeof AuthenticatedAppSuppliersComplianceRoute
+  AuthenticatedAppSustainabilityRoute: typeof AuthenticatedAppSustainabilityRoute
   AuthenticatedAppTicketsRoute: typeof AuthenticatedAppTicketsRouteWithChildren
   AuthenticatedAppUsersRoute: typeof AuthenticatedAppUsersRoute
   AuthenticatedAppUtilitiesRoute: typeof AuthenticatedAppUtilitiesRoute
@@ -1147,6 +1293,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAreaMappingRoute: AuthenticatedAppAreaMappingRoute,
   AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
+  AuthenticatedAppCashbookRoute: AuthenticatedAppCashbookRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
   AuthenticatedAppCostAnalyticsRoute: AuthenticatedAppCostAnalyticsRoute,
   AuthenticatedAppDelegationAuditRoute: AuthenticatedAppDelegationAuditRoute,
@@ -1156,6 +1303,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppDeliveryQueueRoute:
     AuthenticatedAppDeliveryQueueRouteWithChildren,
   AuthenticatedAppDocsRoute: AuthenticatedAppDocsRoute,
+  AuthenticatedAppGuestIssuesRoute: AuthenticatedAppGuestIssuesRoute,
+  AuthenticatedAppHousekeepingRoute: AuthenticatedAppHousekeepingRoute,
+  AuthenticatedAppIntegrationsRoute: AuthenticatedAppIntegrationsRoute,
   AuthenticatedAppInventoryRoute: AuthenticatedAppInventoryRoute,
   AuthenticatedAppInvoicesRoute: AuthenticatedAppInvoicesRoute,
   AuthenticatedAppMaintenanceRoute: AuthenticatedAppMaintenanceRoute,
@@ -1173,12 +1323,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppSlaComplianceRoute: AuthenticatedAppSlaComplianceRoute,
   AuthenticatedAppSlaEscalationsRoute: AuthenticatedAppSlaEscalationsRoute,
   AuthenticatedAppSlaNotificationsRoute: AuthenticatedAppSlaNotificationsRoute,
+  AuthenticatedAppSmartInboxRoute: AuthenticatedAppSmartInboxRoute,
   AuthenticatedAppStatisticsRoute: AuthenticatedAppStatisticsRoute,
   AuthenticatedAppStructureKpiRoute: AuthenticatedAppStructureKpiRoute,
   AuthenticatedAppStructuresRoute: AuthenticatedAppStructuresRoute,
   AuthenticatedAppSuppliersRoute: AuthenticatedAppSuppliersRoute,
   AuthenticatedAppSuppliersComplianceRoute:
     AuthenticatedAppSuppliersComplianceRoute,
+  AuthenticatedAppSustainabilityRoute: AuthenticatedAppSustainabilityRoute,
   AuthenticatedAppTicketsRoute: AuthenticatedAppTicketsRouteWithChildren,
   AuthenticatedAppUsersRoute: AuthenticatedAppUsersRoute,
   AuthenticatedAppUtilitiesRoute: AuthenticatedAppUtilitiesRoute,
@@ -1195,6 +1347,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  GQrRoute: GQrRoute,
   ApiTtsSpeakRoute: ApiTtsSpeakRoute,
   ApiPublicHooksContractsNotifyRoute: ApiPublicHooksContractsNotifyRoute,
   ApiPublicHooksReportSchedulerRoute: ApiPublicHooksReportSchedulerRoute,

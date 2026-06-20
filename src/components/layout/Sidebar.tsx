@@ -4,19 +4,23 @@ import {
   Truck, FileSignature, ClipboardList, CalendarClock, Package, ShoppingCart,
   Gauge, Receipt, MessageSquare, BarChart3, ScrollText, ExternalLink,
   ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity, TrendingUp, Workflow, Mail, Sparkles,
+  BedDouble, Inbox, Leaf, Wallet, Plug, QrCode,
 } from "lucide-react";
 
 const groups: Array<{ label: string; items: Array<{ to: string; label: string; icon: any; exact?: boolean }> }> = [
   { label: "Operativo", items: [
     { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/app/onboarding", label: "Setup guidato", icon: Sparkles },
+    { to: "/app/smart-inbox", label: "Smart Inbox", icon: Inbox },
     { to: "/app/structure-kpi", label: "KPI struttura", icon: BarChart3 },
     { to: "/app/tickets", label: "Ticket", icon: Ticket },
+    { to: "/app/guest-issues", label: "Segnalazioni ospiti (QR)", icon: QrCode },
     { to: "/app/messages", label: "Messaggi", icon: MessageSquare },
     { to: "/portal", label: "Portale Agenti", icon: ExternalLink },
   ]},
   { label: "Strutture & Asset", items: [
     { to: "/app/structures", label: "Strutture", icon: Building2 },
+    { to: "/app/housekeeping", label: "Housekeeping", icon: BedDouble },
     { to: "/app/assets", label: "Asset & Impianti", icon: Wrench },
     { to: "/app/area-mapping", label: "Aree & reparti", icon: Building2 },
     { to: "/app/maintenance", label: "Manutenzione", icon: CalendarClock },
@@ -33,12 +37,15 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
   { label: "Economato", items: [
     { to: "/app/utilities", label: "Utenze & Letture", icon: Gauge },
     { to: "/app/invoices", label: "Fatture & Bollette", icon: Receipt },
+    { to: "/app/cashbook", label: "Prima Nota / Cassa", icon: Wallet },
+    { to: "/app/sustainability", label: "Consumi & ESG", icon: Leaf },
     { to: "/app/reports", label: "Report", icon: BarChart3 },
     { to: "/app/report-builder", label: "Report Builder", icon: FileBarChart },
     { to: "/app/statistics", label: "Statistiche", icon: Activity },
     { to: "/app/cost-analytics", label: "Costi per area (5★)", icon: TrendingUp },
   ]},
   { label: "Amministrazione", items: [
+    { to: "/app/integrations", label: "Integrazioni (PMS, WA, SDI)", icon: Plug },
     { to: "/app/sla", label: "Regole SLA", icon: Bell },
     { to: "/app/sla-escalations", label: "Escalation SLA", icon: AlertTriangle },
     { to: "/app/sla-compliance", label: "Conformità SLA", icon: FileBarChart },
