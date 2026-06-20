@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as GQrRouteImport } from './routes/g.$qr'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
@@ -87,6 +88,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InviteTokenRoute = InviteTokenRouteImport.update({
+  id: '/invite/$token',
+  path: '/invite/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GQrRoute = GQrRouteImport.update({
@@ -452,6 +458,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -518,6 +525,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -586,6 +594,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
+  '/invite/$token': typeof InviteTokenRoute
   '/_authenticated/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -654,6 +663,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/portal'
     | '/g/$qr'
+    | '/invite/$token'
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
@@ -720,6 +730,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/portal'
     | '/g/$qr'
+    | '/invite/$token'
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
@@ -787,6 +798,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/portal'
     | '/g/$qr'
+    | '/invite/$token'
     | '/_authenticated/app/alerts'
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/assets'
@@ -854,6 +866,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   GQrRoute: typeof GQrRoute
+  InviteTokenRoute: typeof InviteTokenRoute
   ApiTtsSpeakRoute: typeof ApiTtsSpeakRoute
   ApiPublicHooksContractsNotifyRoute: typeof ApiPublicHooksContractsNotifyRoute
   ApiPublicHooksReportSchedulerRoute: typeof ApiPublicHooksReportSchedulerRoute
@@ -882,6 +895,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/invite/$token': {
+      id: '/invite/$token'
+      path: '/invite/$token'
+      fullPath: '/invite/$token'
+      preLoaderRoute: typeof InviteTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/g/$qr': {
@@ -1498,6 +1518,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   GQrRoute: GQrRoute,
+  InviteTokenRoute: InviteTokenRoute,
   ApiTtsSpeakRoute: ApiTtsSpeakRoute,
   ApiPublicHooksContractsNotifyRoute: ApiPublicHooksContractsNotifyRoute,
   ApiPublicHooksReportSchedulerRoute: ApiPublicHooksReportSchedulerRoute,

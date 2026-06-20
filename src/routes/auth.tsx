@@ -19,6 +19,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [orgName, setOrgName] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ function AuthPage() {
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email, password,
-      options: { data: { full_name: fullName }, emailRedirectTo: window.location.origin + "/app" },
+      options: { data: { full_name: fullName, org_name: orgName }, emailRedirectTo: window.location.origin + "/app" },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
