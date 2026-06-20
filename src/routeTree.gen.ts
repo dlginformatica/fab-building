@@ -90,6 +90,7 @@ import { Route as AuthenticatedAppSuperAdminSubscriptionAuditRouteImport } from 
 import { Route as AuthenticatedAppSuperAdminResetOrgRouteImport } from './routes/_authenticated/app.super-admin.reset-org'
 import { Route as AuthenticatedAppSuperAdminPlansRouteImport } from './routes/_authenticated/app.super-admin.plans'
 import { Route as AuthenticatedAppSuperAdminBackupRouteImport } from './routes/_authenticated/app.super-admin.backup'
+import { Route as AuthenticatedAppStructuresIdRouteImport } from './routes/_authenticated/app.structures.$id'
 import { Route as AuthenticatedAppReordersIdRouteImport } from './routes/_authenticated/app.reorders.$id'
 import { Route as AuthenticatedAppDeliveryQueueIdRouteImport } from './routes/_authenticated/app.delivery-queue.$id'
 import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
@@ -558,6 +559,12 @@ const AuthenticatedAppSuperAdminBackupRoute =
     path: '/app/super-admin/backup',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppStructuresIdRoute =
+  AuthenticatedAppStructuresIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAppStructuresRoute,
+  } as any)
 const AuthenticatedAppReordersIdRoute =
   AuthenticatedAppReordersIdRouteImport.update({
     id: '/app/reorders/$id',
@@ -639,7 +646,7 @@ export interface FileRoutesByFullPath {
   '/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
-  '/app/structures': typeof AuthenticatedAppStructuresRoute
+  '/app/structures': typeof AuthenticatedAppStructuresRouteWithChildren
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
@@ -654,6 +661,7 @@ export interface FileRoutesByFullPath {
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
+  '/app/structures/$id': typeof AuthenticatedAppStructuresIdRoute
   '/app/super-admin/backup': typeof AuthenticatedAppSuperAdminBackupRoute
   '/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
   '/app/super-admin/reset-org': typeof AuthenticatedAppSuperAdminResetOrgRoute
@@ -725,7 +733,7 @@ export interface FileRoutesByTo {
   '/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
-  '/app/structures': typeof AuthenticatedAppStructuresRoute
+  '/app/structures': typeof AuthenticatedAppStructuresRouteWithChildren
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
@@ -740,6 +748,7 @@ export interface FileRoutesByTo {
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
+  '/app/structures/$id': typeof AuthenticatedAppStructuresIdRoute
   '/app/super-admin/backup': typeof AuthenticatedAppSuperAdminBackupRoute
   '/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
   '/app/super-admin/reset-org': typeof AuthenticatedAppSuperAdminResetOrgRoute
@@ -813,7 +822,7 @@ export interface FileRoutesById {
   '/_authenticated/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/_authenticated/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/_authenticated/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
-  '/_authenticated/app/structures': typeof AuthenticatedAppStructuresRoute
+  '/_authenticated/app/structures': typeof AuthenticatedAppStructuresRouteWithChildren
   '/_authenticated/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/_authenticated/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/_authenticated/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
@@ -828,6 +837,7 @@ export interface FileRoutesById {
   '/_authenticated/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/_authenticated/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/_authenticated/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
+  '/_authenticated/app/structures/$id': typeof AuthenticatedAppStructuresIdRoute
   '/_authenticated/app/super-admin/backup': typeof AuthenticatedAppSuperAdminBackupRoute
   '/_authenticated/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
   '/_authenticated/app/super-admin/reset-org': typeof AuthenticatedAppSuperAdminResetOrgRoute
@@ -916,6 +926,7 @@ export interface FileRouteTypes {
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
     | '/app/reorders/$id'
+    | '/app/structures/$id'
     | '/app/super-admin/backup'
     | '/app/super-admin/plans'
     | '/app/super-admin/reset-org'
@@ -1002,6 +1013,7 @@ export interface FileRouteTypes {
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
     | '/app/reorders/$id'
+    | '/app/structures/$id'
     | '/app/super-admin/backup'
     | '/app/super-admin/plans'
     | '/app/super-admin/reset-org'
@@ -1089,6 +1101,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/assets/$id'
     | '/_authenticated/app/delivery-queue/$id'
     | '/_authenticated/app/reorders/$id'
+    | '/_authenticated/app/structures/$id'
     | '/_authenticated/app/super-admin/backup'
     | '/_authenticated/app/super-admin/plans'
     | '/_authenticated/app/super-admin/reset-org'
@@ -1690,6 +1703,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSuperAdminBackupRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/structures/$id': {
+      id: '/_authenticated/app/structures/$id'
+      path: '/$id'
+      fullPath: '/app/structures/$id'
+      preLoaderRoute: typeof AuthenticatedAppStructuresIdRouteImport
+      parentRoute: typeof AuthenticatedAppStructuresRoute
+    }
     '/_authenticated/app/reorders/$id': {
       id: '/_authenticated/app/reorders/$id'
       path: '/app/reorders/$id'
@@ -1720,6 +1740,20 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedAppStructuresRouteChildren {
+  AuthenticatedAppStructuresIdRoute: typeof AuthenticatedAppStructuresIdRoute
+}
+
+const AuthenticatedAppStructuresRouteChildren: AuthenticatedAppStructuresRouteChildren =
+  {
+    AuthenticatedAppStructuresIdRoute: AuthenticatedAppStructuresIdRoute,
+  }
+
+const AuthenticatedAppStructuresRouteWithChildren =
+  AuthenticatedAppStructuresRoute._addFileChildren(
+    AuthenticatedAppStructuresRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
@@ -1770,7 +1804,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppSmartInboxRoute: typeof AuthenticatedAppSmartInboxRoute
   AuthenticatedAppStatisticsRoute: typeof AuthenticatedAppStatisticsRoute
   AuthenticatedAppStructureKpiRoute: typeof AuthenticatedAppStructureKpiRoute
-  AuthenticatedAppStructuresRoute: typeof AuthenticatedAppStructuresRoute
+  AuthenticatedAppStructuresRoute: typeof AuthenticatedAppStructuresRouteWithChildren
   AuthenticatedAppSuppliersRoute: typeof AuthenticatedAppSuppliersRoute
   AuthenticatedAppSuppliersComplianceRoute: typeof AuthenticatedAppSuppliersComplianceRoute
   AuthenticatedAppSustainabilityRoute: typeof AuthenticatedAppSustainabilityRoute
@@ -1849,7 +1883,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppSmartInboxRoute: AuthenticatedAppSmartInboxRoute,
   AuthenticatedAppStatisticsRoute: AuthenticatedAppStatisticsRoute,
   AuthenticatedAppStructureKpiRoute: AuthenticatedAppStructureKpiRoute,
-  AuthenticatedAppStructuresRoute: AuthenticatedAppStructuresRoute,
+  AuthenticatedAppStructuresRoute: AuthenticatedAppStructuresRouteWithChildren,
   AuthenticatedAppSuppliersRoute: AuthenticatedAppSuppliersRoute,
   AuthenticatedAppSuppliersComplianceRoute:
     AuthenticatedAppSuppliersComplianceRoute,
