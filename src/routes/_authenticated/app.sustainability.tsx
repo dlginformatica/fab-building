@@ -32,7 +32,8 @@ function Page() {
         .select("reading_date,value,utility_meters(utility_type,unit)")
         .gte("reading_date", yearAgo.toISOString().slice(0, 10))
         .order("reading_date");
-      if (error) throw error; return data ?? [];
+      if (error) { console.warn("[sustainability] meter_readings:", error.message); return []; }
+      return data ?? [];
     },
   });
 

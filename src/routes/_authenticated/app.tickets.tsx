@@ -39,7 +39,7 @@ function Page() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("tickets")
-        .select("id,ticket_number,title,priority,status,resolve_due_at,ack_due_at,created_at,assigned_to,asset_id,profiles:assigned_to(full_name,email)")
+        .select("id,ticket_number,title,priority,status,resolve_due_at,ack_due_at,created_at,assigned_to,asset_id")
         .eq("structure_id", activeStructureId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
