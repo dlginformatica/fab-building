@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ManualRouteImport } from './routes/manual'
+import { Route as BrochureRouteImport } from './routes/brochure'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -88,6 +89,11 @@ import { Route as AuthenticatedAppAQrRouteImport } from './routes/_authenticated
 const ManualRoute = ManualRouteImport.update({
   id: '/manual',
   path: '/manual',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrochureRoute = BrochureRouteImport.update({
+  id: '/brochure',
+  path: '/brochure',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -516,6 +522,7 @@ const AuthenticatedAppAQrRoute = AuthenticatedAppAQrRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/brochure': typeof BrochureRoute
   '/manual': typeof ManualRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/features/$slug': typeof FeaturesSlugRoute
@@ -592,6 +599,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/brochure': typeof BrochureRoute
   '/manual': typeof ManualRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/features/$slug': typeof FeaturesSlugRoute
@@ -670,6 +678,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/brochure': typeof BrochureRoute
   '/manual': typeof ManualRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/features/$slug': typeof FeaturesSlugRoute
@@ -748,6 +757,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/brochure'
     | '/manual'
     | '/portal'
     | '/features/$slug'
@@ -824,6 +834,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/brochure'
     | '/manual'
     | '/portal'
     | '/features/$slug'
@@ -901,6 +912,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/brochure'
     | '/manual'
     | '/_authenticated/portal'
     | '/features/$slug'
@@ -979,6 +991,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  BrochureRoute: typeof BrochureRoute
   ManualRoute: typeof ManualRoute
   FeaturesSlugRoute: typeof FeaturesSlugRoute
   GQrRoute: typeof GQrRoute
@@ -998,6 +1011,13 @@ declare module '@tanstack/react-router' {
       path: '/manual'
       fullPath: '/manual'
       preLoaderRoute: typeof ManualRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brochure': {
+      id: '/brochure'
+      path: '/brochure'
+      fullPath: '/brochure'
+      preLoaderRoute: typeof BrochureRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -1712,6 +1732,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  BrochureRoute: BrochureRoute,
   ManualRoute: ManualRoute,
   FeaturesSlugRoute: FeaturesSlugRoute,
   GQrRoute: GQrRoute,
