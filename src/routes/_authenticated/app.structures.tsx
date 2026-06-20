@@ -10,12 +10,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { useActiveStructure } from "@/lib/structure-context";
+import { Link, useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_authenticated/app/structures")({ component: Page });
 
 function Page() {
   const qc = useQueryClient();
   const { setActiveStructureId } = useActiveStructure();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: "", code: "", address: "", city: "", rooms_count: "" });
 
@@ -75,7 +77,14 @@ function Page() {
       </div>
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
         {(data ?? []).map((s) => (
-          <Card key={s.id} className="cursor-pointer hover:border-primary/60" onClick={() => setActiveStructureId(s.id)}>
+          <Card
+            key={s.id}
+            className="cursor-pointer hover:border-primary/60"
+            onClick={() => {
+              setActiveStructureId(s.id);
+              navigate({ to: "/app/structures/$id", params: { id: s.id } });
+            }}
+          >
             <CardHeader>
               <CardTitle className="font-display">{s.name}</CardTitle>
               <div className="text-xs text-muted-foreground">{s.code} · {s.city ?? "—"}</div>
@@ -83,6 +92,16 @@ function Page() {
             <CardContent className="text-sm text-muted-foreground">
               {s.address ?? "—"}<br />
               {s.rooms_count ? `${s.rooms_count} camere` : ""}
+              <div className="mt-3">
+                <Link
+                  to="/app/structures/$id"
+                  params={{ id: s.id }}
+                  className="text-xs text-primary underline"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  Apri dettaglio →
+                </Link>
+              </div>
             </CardContent>
           </Card>
         ))}
