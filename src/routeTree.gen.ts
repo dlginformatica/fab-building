@@ -68,6 +68,8 @@ import { Route as AuthenticatedAppCostAnalyticsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
 import { Route as AuthenticatedAppCashbookRouteImport } from './routes/_authenticated/app.cashbook'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
+import { Route as AuthenticatedAppBackupSchedulesRouteImport } from './routes/_authenticated/app.backup-schedules'
+import { Route as AuthenticatedAppBackupAuditRouteImport } from './routes/_authenticated/app.backup-audit'
 import { Route as AuthenticatedAppBackupRouteImport } from './routes/_authenticated/app.backup'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
@@ -84,6 +86,7 @@ import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/
 import { Route as ApiPublicHooksContractsNotifyRouteImport } from './routes/api/public/hooks/contracts-notify'
 import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
 import { Route as AuthenticatedAppSuperAdminSubscriptionAuditRouteImport } from './routes/_authenticated/app.super-admin.subscription-audit'
+import { Route as AuthenticatedAppSuperAdminResetOrgRouteImport } from './routes/_authenticated/app.super-admin.reset-org'
 import { Route as AuthenticatedAppSuperAdminPlansRouteImport } from './routes/_authenticated/app.super-admin.plans'
 import { Route as AuthenticatedAppSuperAdminBackupRouteImport } from './routes/_authenticated/app.super-admin.backup'
 import { Route as AuthenticatedAppReordersIdRouteImport } from './routes/_authenticated/app.reorders.$id'
@@ -426,6 +429,18 @@ const AuthenticatedAppBillingRoute = AuthenticatedAppBillingRouteImport.update({
   path: '/app/billing',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppBackupSchedulesRoute =
+  AuthenticatedAppBackupSchedulesRouteImport.update({
+    id: '/app/backup-schedules',
+    path: '/app/backup-schedules',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppBackupAuditRoute =
+  AuthenticatedAppBackupAuditRouteImport.update({
+    id: '/app/backup-audit',
+    path: '/app/backup-audit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppBackupRoute = AuthenticatedAppBackupRouteImport.update({
   id: '/app/backup',
   path: '/app/backup',
@@ -518,6 +533,12 @@ const AuthenticatedAppSuperAdminSubscriptionAuditRoute =
     path: '/app/super-admin/subscription-audit',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppSuperAdminResetOrgRoute =
+  AuthenticatedAppSuperAdminResetOrgRouteImport.update({
+    id: '/app/super-admin/reset-org',
+    path: '/app/super-admin/reset-org',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppSuperAdminPlansRoute =
   AuthenticatedAppSuperAdminPlansRouteImport.update({
     id: '/app/super-admin/plans',
@@ -570,6 +591,8 @@ export interface FileRoutesByFullPath {
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/backup': typeof AuthenticatedAppBackupRoute
+  '/app/backup-audit': typeof AuthenticatedAppBackupAuditRoute
+  '/app/backup-schedules': typeof AuthenticatedAppBackupSchedulesRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
@@ -625,6 +648,7 @@ export interface FileRoutesByFullPath {
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
   '/app/super-admin/backup': typeof AuthenticatedAppSuperAdminBackupRoute
   '/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
+  '/app/super-admin/reset-org': typeof AuthenticatedAppSuperAdminResetOrgRoute
   '/app/super-admin/subscription-audit': typeof AuthenticatedAppSuperAdminSubscriptionAuditRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
@@ -652,6 +676,8 @@ export interface FileRoutesByTo {
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/backup': typeof AuthenticatedAppBackupRoute
+  '/app/backup-audit': typeof AuthenticatedAppBackupAuditRoute
+  '/app/backup-schedules': typeof AuthenticatedAppBackupSchedulesRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
@@ -707,6 +733,7 @@ export interface FileRoutesByTo {
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
   '/app/super-admin/backup': typeof AuthenticatedAppSuperAdminBackupRoute
   '/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
+  '/app/super-admin/reset-org': typeof AuthenticatedAppSuperAdminResetOrgRoute
   '/app/super-admin/subscription-audit': typeof AuthenticatedAppSuperAdminSubscriptionAuditRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
@@ -736,6 +763,8 @@ export interface FileRoutesById {
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
   '/_authenticated/app/backup': typeof AuthenticatedAppBackupRoute
+  '/_authenticated/app/backup-audit': typeof AuthenticatedAppBackupAuditRoute
+  '/_authenticated/app/backup-schedules': typeof AuthenticatedAppBackupSchedulesRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
@@ -791,6 +820,7 @@ export interface FileRoutesById {
   '/_authenticated/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
   '/_authenticated/app/super-admin/backup': typeof AuthenticatedAppSuperAdminBackupRoute
   '/_authenticated/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
+  '/_authenticated/app/super-admin/reset-org': typeof AuthenticatedAppSuperAdminResetOrgRoute
   '/_authenticated/app/super-admin/subscription-audit': typeof AuthenticatedAppSuperAdminSubscriptionAuditRoute
   '/_authenticated/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
@@ -820,6 +850,8 @@ export interface FileRouteTypes {
     | '/app/area-mapping'
     | '/app/audit'
     | '/app/backup'
+    | '/app/backup-audit'
+    | '/app/backup-schedules'
     | '/app/billing'
     | '/app/cashbook'
     | '/app/contracts'
@@ -875,6 +907,7 @@ export interface FileRouteTypes {
     | '/app/reorders/$id'
     | '/app/super-admin/backup'
     | '/app/super-admin/plans'
+    | '/app/super-admin/reset-org'
     | '/app/super-admin/subscription-audit'
     | '/app/tickets/$id'
     | '/api/public/hooks/contracts-notify'
@@ -902,6 +935,8 @@ export interface FileRouteTypes {
     | '/app/area-mapping'
     | '/app/audit'
     | '/app/backup'
+    | '/app/backup-audit'
+    | '/app/backup-schedules'
     | '/app/billing'
     | '/app/cashbook'
     | '/app/contracts'
@@ -957,6 +992,7 @@ export interface FileRouteTypes {
     | '/app/reorders/$id'
     | '/app/super-admin/backup'
     | '/app/super-admin/plans'
+    | '/app/super-admin/reset-org'
     | '/app/super-admin/subscription-audit'
     | '/app/tickets/$id'
     | '/api/public/hooks/contracts-notify'
@@ -985,6 +1021,8 @@ export interface FileRouteTypes {
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/audit'
     | '/_authenticated/app/backup'
+    | '/_authenticated/app/backup-audit'
+    | '/_authenticated/app/backup-schedules'
     | '/_authenticated/app/billing'
     | '/_authenticated/app/cashbook'
     | '/_authenticated/app/contracts'
@@ -1040,6 +1078,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/reorders/$id'
     | '/_authenticated/app/super-admin/backup'
     | '/_authenticated/app/super-admin/plans'
+    | '/_authenticated/app/super-admin/reset-org'
     | '/_authenticated/app/super-admin/subscription-audit'
     | '/_authenticated/app/tickets/$id'
     | '/api/public/hooks/contracts-notify'
@@ -1484,6 +1523,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppBillingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/backup-schedules': {
+      id: '/_authenticated/app/backup-schedules'
+      path: '/app/backup-schedules'
+      fullPath: '/app/backup-schedules'
+      preLoaderRoute: typeof AuthenticatedAppBackupSchedulesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/backup-audit': {
+      id: '/_authenticated/app/backup-audit'
+      path: '/app/backup-audit'
+      fullPath: '/app/backup-audit'
+      preLoaderRoute: typeof AuthenticatedAppBackupAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/backup': {
       id: '/_authenticated/app/backup'
       path: '/app/backup'
@@ -1596,6 +1649,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSuperAdminSubscriptionAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/super-admin/reset-org': {
+      id: '/_authenticated/app/super-admin/reset-org'
+      path: '/app/super-admin/reset-org'
+      fullPath: '/app/super-admin/reset-org'
+      preLoaderRoute: typeof AuthenticatedAppSuperAdminResetOrgRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/super-admin/plans': {
       id: '/_authenticated/app/super-admin/plans'
       path: '/app/super-admin/plans'
@@ -1649,6 +1709,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAreaMappingRoute: typeof AuthenticatedAppAreaMappingRoute
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
   AuthenticatedAppBackupRoute: typeof AuthenticatedAppBackupRoute
+  AuthenticatedAppBackupAuditRoute: typeof AuthenticatedAppBackupAuditRoute
+  AuthenticatedAppBackupSchedulesRoute: typeof AuthenticatedAppBackupSchedulesRoute
   AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
   AuthenticatedAppCashbookRoute: typeof AuthenticatedAppCashbookRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
@@ -1703,6 +1765,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppReordersIdRoute: typeof AuthenticatedAppReordersIdRoute
   AuthenticatedAppSuperAdminBackupRoute: typeof AuthenticatedAppSuperAdminBackupRoute
   AuthenticatedAppSuperAdminPlansRoute: typeof AuthenticatedAppSuperAdminPlansRoute
+  AuthenticatedAppSuperAdminResetOrgRoute: typeof AuthenticatedAppSuperAdminResetOrgRoute
   AuthenticatedAppSuperAdminSubscriptionAuditRoute: typeof AuthenticatedAppSuperAdminSubscriptionAuditRoute
   AuthenticatedAppTicketsIdRoute: typeof AuthenticatedAppTicketsIdRoute
   AuthenticatedAppAssetsIndexRoute: typeof AuthenticatedAppAssetsIndexRoute
@@ -1719,6 +1782,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAreaMappingRoute: AuthenticatedAppAreaMappingRoute,
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
   AuthenticatedAppBackupRoute: AuthenticatedAppBackupRoute,
+  AuthenticatedAppBackupAuditRoute: AuthenticatedAppBackupAuditRoute,
+  AuthenticatedAppBackupSchedulesRoute: AuthenticatedAppBackupSchedulesRoute,
   AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
   AuthenticatedAppCashbookRoute: AuthenticatedAppCashbookRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
@@ -1778,6 +1843,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppReordersIdRoute: AuthenticatedAppReordersIdRoute,
   AuthenticatedAppSuperAdminBackupRoute: AuthenticatedAppSuperAdminBackupRoute,
   AuthenticatedAppSuperAdminPlansRoute: AuthenticatedAppSuperAdminPlansRoute,
+  AuthenticatedAppSuperAdminResetOrgRoute:
+    AuthenticatedAppSuperAdminResetOrgRoute,
   AuthenticatedAppSuperAdminSubscriptionAuditRoute:
     AuthenticatedAppSuperAdminSubscriptionAuditRoute,
   AuthenticatedAppTicketsIdRoute: AuthenticatedAppTicketsIdRoute,

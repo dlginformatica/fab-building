@@ -5,7 +5,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Crown, ScrollText, Search, ArrowRight } from "lucide-react";
+import { Crown, ScrollText, Search, ArrowRight, FileSpreadsheet, Printer } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { exportRowsAsCsv, printableHtmlAsPdf } from "@/lib/csv-export";
 
 export const Route = createFileRoute("/_authenticated/app/super-admin/subscription-audit")({
   beforeLoad: async () => {
@@ -29,10 +33,21 @@ type Row = {
 
 function Page() {
   const [q, setQ] = useState("");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+  const [orgFilter, setOrgFilter] = useState("");
+  const { data: orgs } = useQuery({
+    queryKey: ["orgs-list-sa-audit"],
+    queryFn: async () => (await supabase.from("organizations").select("id,name").order("name")).data ?? [],
+  });
   const { data: rows } = useQuery<Row[]>({
-    queryKey: ["sub-audit"],
+    queryKey: ["sub-audit", fromDate, toDate, orgFilter],
     queryFn: async () => {
-      const { data, error } = await (supabase as any).from("v_subscription_audit").select("*").limit(500);
+      let qb: any = (supabase as any).from("v_subscription_audit").select("*").order("created_at", { ascending: false }).limit(2000);
+      if (fromDate) qb = qb.gte("created_at", fromDate);
+      if (toDate) qb = qb.lte("created_at", `${toDate}T23:59:59`);
+      if (orgFilter) qb = qb.eq("org_id", orgFilter);
+      const { data, error } = await qb;
       if (error) throw error;
       return (data ?? []) as Row[];
     },
@@ -49,6 +64,18 @@ function Page() {
     : a === "set_trial_days" ? "Trial custom"
     : a;
 
+  function exportCsv() {
+    exportRowsAsCsv(filtered.map((r) => ({
+      data: r.created_at, autore: r.actor_email, organizzazione: r.org_name, azione: r.action,
+      old_tier: r.old_tier, new_tier: r.new_tier, old_status: r.old_status, new_status: r.new_status, motivo: r.reason,
+    })), `audit_abbonamenti_${new Date().toISOString().slice(0,10)}.csv`);
+  }
+  function printPdf() {
+    printableHtmlAsPdf("Audit Abbonamenti",
+      ["Data","Autore","Organizzazione","Azione","Tier","Stato","Motivo"],
+      filtered.map((r) => [new Date(r.created_at).toLocaleString("it-IT"), r.actor_email ?? "—", r.org_name ?? "—", actionLabel(r.action), `${r.old_tier ?? "—"} → ${r.new_tier ?? "—"}`, `${r.old_status ?? "—"} → ${r.new_status ?? "—"}`, r.reason ?? ""]));
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -57,6 +84,22 @@ function Page() {
         </h1>
         <p className="text-sm text-muted-foreground">Cronologia di tutte le forzature e le proroghe abbonamento eseguite dal super admin (RPC <code>super_admin_force_subscription</code> e <code>super_admin_set_trial_days</code>).</p>
       </div>
+      <Card>
+        <CardContent className="p-4 grid gap-3 md:grid-cols-5 items-end">
+          <div className="space-y-1"><Label>Dal</Label><Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} /></div>
+          <div className="space-y-1"><Label>Al</Label><Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} /></div>
+          <div className="space-y-1 md:col-span-2"><Label>Organizzazione</Label>
+            <Select value={orgFilter || "all"} onValueChange={(v) => setOrgFilter(v === "all" ? "" : v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent><SelectItem value="all">Tutte</SelectItem>{(orgs ?? []).map((o: any) => <SelectItem key={o.id} value={o.id}>{o.name}</SelectItem>)}</SelectContent>
+            </Select>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={exportCsv}><FileSpreadsheet className="mr-2 h-4 w-4" /> CSV</Button>
+            <Button variant="outline" onClick={printPdf}><Printer className="mr-2 h-4 w-4" /> PDF</Button>
+          </div>
+        </CardContent>
+      </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-3">
           <CardTitle className="font-display text-base flex items-center gap-2"><ScrollText className="h-4 w-4" /> {filtered.length} eventi</CardTitle>

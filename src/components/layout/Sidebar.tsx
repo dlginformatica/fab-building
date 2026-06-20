@@ -4,7 +4,7 @@ import {
   Truck, FileSignature, ClipboardList, CalendarClock, Package, ShoppingCart,
   Gauge, Receipt, MessageSquare, BarChart3, ScrollText, ExternalLink,
   ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity, TrendingUp, Workflow, Mail, Sparkles,
-  BedDouble, Inbox, Leaf, Wallet, Plug, QrCode, CreditCard, Crown, DatabaseBackup,
+  BedDouble, Inbox, Leaf, Wallet, Plug, QrCode, CreditCard, Crown, DatabaseBackup, Eraser, Timer,
 } from "lucide-react";
 import { useMySubscription, useIsSuperAdmin } from "@/lib/use-subscription";
 
@@ -54,7 +54,10 @@ const groups: Array<{ label: string; items: Item[] }> = [
     { to: "/app/super-admin/plans", label: "Piani (super admin)", icon: Crown, superOnly: true },
     { to: "/app/super-admin/subscription-audit", label: "Audit abbonamenti (super admin)", icon: ScrollText, superOnly: true },
     { to: "/app/backup", label: "Backup, Restore & Import", icon: DatabaseBackup },
+    { to: "/app/backup-schedules", label: "Pianificazione backup", icon: Timer },
+    { to: "/app/backup-audit", label: "Audit backup & restore", icon: ScrollText },
     { to: "/app/super-admin/backup", label: "Backup globale (super admin)", icon: DatabaseBackup, superOnly: true },
+    { to: "/app/super-admin/reset-org", label: "Reset organizzazione (super admin)", icon: Eraser, superOnly: true },
   ]},
   { label: "Amministrazione", items: [
     { to: "/app/organization", label: "Organizzazione (multi-tenant)", icon: Building2, module: "organization" },

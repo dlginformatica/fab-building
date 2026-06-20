@@ -6,6 +6,14 @@ import { supabase } from "@/integrations/supabase/client";
 import JSZip from "jszip";
 import * as XLSX from "xlsx";
 
+/* ============================================================== */
+/* Costanti                                                        */
+/* ============================================================== */
+
+export const BACKUP_BUCKET = "org-backups";
+export const SNAPSHOT_SCHEMA_VERSION = 2;
+export const IMPORT_MAPPING_SCHEMA_VERSION = 1;
+
 /** Tabelle dump-abili dell'organizzazione, filtrate per structure_id. */
 export const ORG_STRUCTURE_TABLES = [
   "structures",
@@ -80,7 +88,7 @@ export async function exportOrgSnapshot(orgId: string, onProgress?: (t: string, 
     }
   }
   return {
-    meta: { org_id: orgId, created_at: new Date().toISOString(), app: "HotelOps", version: 1, tables: Object.keys(data) },
+    meta: { org_id: orgId, created_at: new Date().toISOString(), app: "HotelOps", version: SNAPSHOT_SCHEMA_VERSION, tables: Object.keys(data) },
     data,
   };
 }
@@ -351,4 +359,119 @@ export async function commitImport(target: ImportTarget, rows: any[]): Promise<{
   const { error, count } = await sb.from(target.table).insert(rows, { count: "exact" });
   if (error) return { inserted: 0, error: error.message };
   return { inserted: count ?? rows.length };
+}
+
+/* ============================================================== */
+/* Storage backup (cloud)                                          */
+/* ============================================================== */
+
+/** Conta righe totali in uno snapshot. */
+export function snapshotRowCount(s: Snapshot): number {
+  return Object.values(s.data).reduce((a, b) => a + (Array.isArray(b) ? b.length : 0), 0);
+}
+
+/** Carica uno snapshot JSON sul bucket privato `org-backups` e registra l'audit. */
+export async function uploadSnapshotAndRecord(orgId: string, snap: Snapshot, kind: "manual" | "scheduled" | "pre_restore" | "pre_reset" = "manual"): Promise<{ id: string; path: string; size: number }> {
+  const json = JSON.stringify(snap);
+  const blob = new Blob([json], { type: "application/json" });
+  const ts = new Date().toISOString().replace(/[:.]/g, "-");
+  const path = `${orgId}/${ts}__${kind}.json`;
+  const { error: upErr } = await supabase.storage.from(BACKUP_BUCKET).upload(path, blob, { upsert: false, contentType: "application/json" });
+  if (upErr) throw new Error(`Upload backup fallito: ${upErr.message}`);
+  const sb: any = supabase;
+  const { data, error } = await sb.rpc("backup_record", {
+    _org: orgId, _kind: kind, _format: "json",
+    _bucket: BACKUP_BUCKET, _path: path,
+    _size: blob.size, _tables: snap.meta.tables.length, _rows: snapshotRowCount(snap),
+    _details: { app: snap.meta.app, version: snap.meta.version },
+  });
+  if (error) throw error;
+  return { id: data?.id, path, size: blob.size };
+}
+
+/** Scarica uno snapshot dal bucket. */
+export async function downloadSnapshotFromStorage(path: string): Promise<Snapshot> {
+  const { data, error } = await supabase.storage.from(BACKUP_BUCKET).download(path);
+  if (error || !data) throw new Error(`Download fallito: ${error?.message ?? "no data"}`);
+  const txt = await data.text();
+  return JSON.parse(txt) as Snapshot;
+}
+
+/** URL firmato (10 min) per scaricare un file di backup. */
+export async function signedBackupUrl(path: string): Promise<string> {
+  const { data, error } = await supabase.storage.from(BACKUP_BUCKET).createSignedUrl(path, 600);
+  if (error || !data?.signedUrl) throw new Error(error?.message ?? "URL non disponibile");
+  return data.signedUrl;
+}
+
+/** Elimina un backup (storage + record). */
+export async function deleteBackup(runId: string, path: string | null): Promise<void> {
+  if (path) { await supabase.storage.from(BACKUP_BUCKET).remove([path]); }
+  await supabase.from("backup_runs").delete().eq("id", runId);
+}
+
+/* ============================================================== */
+/* Audit registro & restore                                        */
+/* ============================================================== */
+
+/** Registra un evento di restore. */
+export async function recordRestore(params: {
+  orgId: string; sourceBackupId?: string | null; sourceFilename?: string | null;
+  mode: "merge" | "replace" | "point_in_time";
+  pitTarget?: string | null; pitResolved?: string | null;
+  rowsInserted: number; errorsCount: number; details?: any; errorMessage?: string | null;
+  status?: "success" | "partial" | "failed";
+}) {
+  const sb: any = supabase;
+  const status = params.status ?? (params.errorsCount ? "partial" : "success");
+  const { data, error } = await sb.rpc("restore_record", {
+    _org: params.orgId, _source_id: params.sourceBackupId ?? null,
+    _source_name: params.sourceFilename ?? null, _mode: params.mode,
+    _pit: params.pitTarget ?? null, _pit_resolved: params.pitResolved ?? null,
+    _status: status, _rows: params.rowsInserted, _errors: params.errorsCount,
+    _details: params.details ?? {}, _err: params.errorMessage ?? null,
+  });
+  if (error) console.warn("recordRestore:", error.message);
+  return data;
+}
+
+/** Trova lo snapshot pianificato più vicino (≤ target). */
+export async function findNearestBackup(orgId: string, target: Date): Promise<{ id: string; storage_path: string; snapshot_taken_at: string } | null> {
+  const sb: any = supabase;
+  const { data, error } = await sb.rpc("backup_nearest_to", { _org: orgId, _target: target.toISOString() });
+  if (error) throw error;
+  return data ?? null;
+}
+
+/* ============================================================== */
+/* Mapping import versionato                                       */
+/* ============================================================== */
+
+export type ImportMappingFile = {
+  app: "HotelOps";
+  kind: "import-mapping";
+  schema_version: number;
+  target_table: string;
+  name: string;
+  delimiter?: string;
+  mapping: Record<string, string>;
+  fields_snapshot?: any;
+  exported_at: string;
+};
+
+export function buildMappingFile(target: ImportTarget, mapping: Record<string,string>, name: string, delimiter?: string): ImportMappingFile {
+  return {
+    app: "HotelOps", kind: "import-mapping",
+    schema_version: IMPORT_MAPPING_SCHEMA_VERSION,
+    target_table: target.table, name,
+    delimiter, mapping,
+    fields_snapshot: target.fields,
+    exported_at: new Date().toISOString(),
+  };
+}
+
+export function parseMappingFile(text: string): ImportMappingFile {
+  const j = JSON.parse(text);
+  if (j?.kind !== "import-mapping" || !j?.mapping || !j?.target_table) throw new Error("File mapping non valido");
+  return j as ImportMappingFile;
 }

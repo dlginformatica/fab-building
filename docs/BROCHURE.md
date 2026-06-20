@@ -1,3 +1,11 @@
+### Backup cloud, point-in-time & reset (2026-06-20)
+- **Backup cloud** dell'organizzazione con archivio privato, audit completo (chi/quando/righe/dimensione/versione schema) e storico consultabile.
+- **Pianificazione automatica** con frequenza configurabile (giornaliera/settimanale/mensile), ora e retention con auto-purge.
+- **Restore point-in-time**: ripristina lo stato a una data/ora specifica usando lo snapshot più vicino, con backup di sicurezza preventivo.
+- **Audit Backup & Restore** consultabile da admin e super admin con filtri data/organizzazione ed export **CSV/PDF**.
+- **Schemi di mapping import versionati** scaricabili e ricaricabili per gestire cambi di formato dei file CSV/TXT.
+- **Reset organizzazione** riservato al super admin: azzera tutti i dati di una qualunque organizzazione (compresa la propria) con doppia conferma.
+
 ### Sincronizzazione robusta + audit abbonamenti (2026-06-20)
 - Lock cooperativo sulla sincronizzazione automatica/manuale, coda visibile con stato e tasto Retry.
 - Notifiche in-app a fine trial / scadenza abbonamento con link diretto alla pagina di gestione piano.
