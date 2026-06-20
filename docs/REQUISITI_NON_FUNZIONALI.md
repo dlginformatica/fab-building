@@ -1,5 +1,9 @@
 # HotelOps — Requisiti Non Funzionali
 
+## 2026-06-20 — Manuale Utente
+- **RNF-DOC-04** Il Manuale Utente (`docs/MANUALE_UTENTE.md`) è renderizzato in `/manual` con `react-markdown` + `remark-gfm` e tipografia `@tailwindcss/typography`. Gli heading `##` generano automaticamente ancore (`scroll-mt-24`) collegate al TOC laterale. Le immagini referenziate vivono in `public/screens/<slug>/*.png` (stessa fonte di `/features/:slug`) per coerenza visiva tra marketing, manuale e brochure.
+- **RNF-DOC-05** Il manuale utente è la "guida al processo" (procedure, FAQ, glossario); il manuale operativo resta documento tecnico/changelog. Entrambi sono documenti vivi e vanno aggiornati nello stesso commit della modifica funzionale.
+
 ## 2026-06-20 — Fix routing & connettività
 - **RNF-RT-01** Le rotte file `*.tsx` non possono essere allo stesso tempo pagine finali e padri di rotte `$param`: usare la convenzione `*.index.tsx` per la pagina lista, mantenendo `*.tsx` solo se serve da layout con `<Outlet />`.
 - **RNF-NET-02** Il probe di connettività usa `/favicon.ico` come endpoint stabile: il file deve esistere in `public/` per evitare 404 ricorrenti nei log del browser.
