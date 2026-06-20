@@ -1,5 +1,10 @@
 # HotelOps — Requisiti Non Funzionali
 
+## 2026-06-20 — Fase 11
+- **RNF-AU-01** Ogni operazione di scrittura sulle entità critiche (fatture, cassa, integrazioni, documenti fornitori, fornitori) è tracciata in `audit_log` con utente, timestamp e diff JSON. Trigger `audit_trigger_fn` (`SECURITY DEFINER`, `search_path=public`).
+- **RNF-AL-01** Funzione `alerts_for_structure(uuid)` `STABLE SECURITY DEFINER`, accessibile solo a `authenticated`. Refresh client-side ogni 60s.
+- **RNF-EX-01** Export PDF generati lato client (jsPDF) senza inviare dati a terzi; CSV in UTF-8 con escaping standard.
+
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog

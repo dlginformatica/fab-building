@@ -39,6 +39,7 @@ import { Route as AuthenticatedAppReordersRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppPurchaseOrdersRouteImport } from './routes/_authenticated/app.purchase-orders'
 import { Route as AuthenticatedAppPermissionsRouteImport } from './routes/_authenticated/app.permissions'
 import { Route as AuthenticatedAppPenaltiesRouteImport } from './routes/_authenticated/app.penalties'
+import { Route as AuthenticatedAppOverviewRouteImport } from './routes/_authenticated/app.overview'
 import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authenticated/app.onboarding'
 import { Route as AuthenticatedAppNotificationsRouteImport } from './routes/_authenticated/app.notifications'
 import { Route as AuthenticatedAppMessagesRouteImport } from './routes/_authenticated/app.messages'
@@ -59,6 +60,7 @@ import { Route as AuthenticatedAppCashbookRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
+import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/app.alerts'
 import { Route as ApiPublicHooksSlaEscalationsRouteImport } from './routes/api/public/hooks/sla-escalations'
 import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
 import { Route as ApiPublicHooksContractsNotifyRouteImport } from './routes/api/public/hooks/contracts-notify'
@@ -236,6 +238,12 @@ const AuthenticatedAppPenaltiesRoute =
     path: '/app/penalties',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppOverviewRoute =
+  AuthenticatedAppOverviewRouteImport.update({
+    id: '/app/overview',
+    path: '/app/overview',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppOnboardingRoute =
   AuthenticatedAppOnboardingRouteImport.update({
     id: '/app/onboarding',
@@ -353,6 +361,11 @@ const AuthenticatedAppAreaMappingRoute =
     path: '/app/area-mapping',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
+  id: '/app/alerts',
+  path: '/app/alerts',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ApiPublicHooksSlaEscalationsRoute =
   ApiPublicHooksSlaEscalationsRouteImport.update({
     id: '/api/public/hooks/sla-escalations',
@@ -406,6 +419,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
+  '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
@@ -426,6 +440,7 @@ export interface FileRoutesByFullPath {
   '/app/messages': typeof AuthenticatedAppMessagesRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/app/overview': typeof AuthenticatedAppOverviewRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -465,6 +480,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
+  '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
@@ -485,6 +501,7 @@ export interface FileRoutesByTo {
   '/app/messages': typeof AuthenticatedAppMessagesRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/app/overview': typeof AuthenticatedAppOverviewRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -526,6 +543,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
+  '/_authenticated/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
@@ -546,6 +564,7 @@ export interface FileRoutesById {
   '/_authenticated/app/messages': typeof AuthenticatedAppMessagesRoute
   '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/_authenticated/app/onboarding': typeof AuthenticatedAppOnboardingRoute
+  '/_authenticated/app/overview': typeof AuthenticatedAppOverviewRoute
   '/_authenticated/app/penalties': typeof AuthenticatedAppPenaltiesRoute
   '/_authenticated/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/_authenticated/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -587,6 +606,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/portal'
     | '/g/$qr'
+    | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
     | '/app/audit'
@@ -607,6 +627,7 @@ export interface FileRouteTypes {
     | '/app/messages'
     | '/app/notifications'
     | '/app/onboarding'
+    | '/app/overview'
     | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
@@ -646,6 +667,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/portal'
     | '/g/$qr'
+    | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
     | '/app/audit'
@@ -666,6 +688,7 @@ export interface FileRouteTypes {
     | '/app/messages'
     | '/app/notifications'
     | '/app/onboarding'
+    | '/app/overview'
     | '/app/penalties'
     | '/app/permissions'
     | '/app/purchase-orders'
@@ -706,6 +729,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/portal'
     | '/g/$qr'
+    | '/_authenticated/app/alerts'
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/assets'
     | '/_authenticated/app/audit'
@@ -726,6 +750,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/messages'
     | '/_authenticated/app/notifications'
     | '/_authenticated/app/onboarding'
+    | '/_authenticated/app/overview'
     | '/_authenticated/app/penalties'
     | '/_authenticated/app/permissions'
     | '/_authenticated/app/purchase-orders'
@@ -984,6 +1009,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPenaltiesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/overview': {
+      id: '/_authenticated/app/overview'
+      path: '/app/overview'
+      fullPath: '/app/overview'
+      preLoaderRoute: typeof AuthenticatedAppOverviewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/onboarding': {
       id: '/_authenticated/app/onboarding'
       path: '/app/onboarding'
@@ -1124,6 +1156,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAreaMappingRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/alerts': {
+      id: '/_authenticated/app/alerts'
+      path: '/app/alerts'
+      fullPath: '/app/alerts'
+      preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/hooks/sla-escalations': {
       id: '/api/public/hooks/sla-escalations'
       path: '/api/public/hooks/sla-escalations'
@@ -1241,6 +1280,7 @@ const AuthenticatedAppTicketsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
+  AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
   AuthenticatedAppAreaMappingRoute: typeof AuthenticatedAppAreaMappingRoute
   AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
@@ -1261,6 +1301,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppMessagesRoute: typeof AuthenticatedAppMessagesRoute
   AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRoute
   AuthenticatedAppOnboardingRoute: typeof AuthenticatedAppOnboardingRoute
+  AuthenticatedAppOverviewRoute: typeof AuthenticatedAppOverviewRoute
   AuthenticatedAppPenaltiesRoute: typeof AuthenticatedAppPenaltiesRoute
   AuthenticatedAppPermissionsRoute: typeof AuthenticatedAppPermissionsRoute
   AuthenticatedAppPurchaseOrdersRoute: typeof AuthenticatedAppPurchaseOrdersRoute
@@ -1290,6 +1331,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
+  AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
   AuthenticatedAppAreaMappingRoute: AuthenticatedAppAreaMappingRoute,
   AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
@@ -1312,6 +1354,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppMessagesRoute: AuthenticatedAppMessagesRoute,
   AuthenticatedAppNotificationsRoute: AuthenticatedAppNotificationsRoute,
   AuthenticatedAppOnboardingRoute: AuthenticatedAppOnboardingRoute,
+  AuthenticatedAppOverviewRoute: AuthenticatedAppOverviewRoute,
   AuthenticatedAppPenaltiesRoute: AuthenticatedAppPenaltiesRoute,
   AuthenticatedAppPermissionsRoute: AuthenticatedAppPermissionsRoute,
   AuthenticatedAppPurchaseOrdersRoute: AuthenticatedAppPurchaseOrdersRoute,

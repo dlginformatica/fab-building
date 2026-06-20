@@ -4065,6 +4065,17 @@ export type Database = {
       }
     }
     Functions: {
+      alerts_for_structure: {
+        Args: { _structure: string }
+        Returns: {
+          detail: string
+          due_at: string
+          kind: string
+          ref_id: string
+          severity: string
+          title: string
+        }[]
+      }
       asset_maintenance_kpi: {
         Args: { _asset: string }
         Returns: {

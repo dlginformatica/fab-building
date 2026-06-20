@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useActiveStructure } from "@/lib/structure-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Inbox, MessageSquare, Ticket, AlertTriangle } from "lucide-react";
+import { Inbox, MessageSquare, Ticket, AlertTriangle, Bell } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/app/smart-inbox")({ component: Page });
 
@@ -26,8 +26,14 @@ function Page() {
     enabled: !!activeStructureId,
     queryFn: async () => (await (supabase as any).from("conversations").select("id,title,last_message_at").eq("structure_id", activeStructureId).order("last_message_at", { ascending: false, nullsFirst: false }).limit(10)).data ?? [],
   });
+  const { data: alerts = [] } = useQuery({
+    queryKey: ["si_alerts", activeStructureId],
+    enabled: !!activeStructureId,
+    queryFn: async () => (await (supabase as any).rpc("alerts_for_structure", { _structure: activeStructureId })).data ?? [],
+    refetchInterval: 60_000,
+  });
 
-  const total = guests.length + urgentTickets.length + convs.length;
+  const total = guests.length + urgentTickets.length + convs.length + alerts.length;
 
   return (
     <div className="space-y-6 p-6">
@@ -36,7 +42,21 @@ function Page() {
         <p className="text-sm text-muted-foreground">Tutto ciò che richiede la tua attenzione, in un solo posto. {total} elementi.</p>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Section icon={<Bell className="h-4 w-4"/>} title="Alert & Scadenze" tone="amber" count={alerts.length} href="/app/alerts">
+          {alerts.slice(0, 8).map((a: any, i: number) => (
+            <div key={`${a.ref_id}-${i}`} className="rounded-md border border-border/40 p-2 text-sm">
+              <div className="flex justify-between">
+                <Badge variant="outline" className={a.severity === "high" ? "bg-red-500/15 text-red-500" : "bg-amber-500/15 text-amber-500"}>{a.severity}</Badge>
+                <span className="text-xs text-muted-foreground">{a.due_at ? new Date(a.due_at).toLocaleDateString("it-IT") : "—"}</span>
+              </div>
+              <p className="mt-1 font-medium line-clamp-1">{a.title}</p>
+              <p className="text-xs text-muted-foreground line-clamp-1">{a.detail}</p>
+            </div>
+          ))}
+          {alerts.length === 0 && <p className="text-xs text-muted-foreground">Nessun alert attivo</p>}
+        </Section>
+
         <Section icon={<MessageSquare className="h-4 w-4"/>} title="Segnalazioni ospiti" tone="sky" count={guests.length} href="/app/guest-issues">
           {guests.map((g: any) => (
             <div key={g.id} className="rounded-md border border-border/40 p-2 text-sm">

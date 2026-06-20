@@ -1,5 +1,12 @@
 # HotelOps — Requisiti Funzionali
 
+## 2026-06-20 — Fase 11
+- **RF-OV-01** Overview unificata: KPI Housekeeping + Guest + SLA + Fatture + trend consumi, filtrabile per periodo, export PDF.
+- **RF-AL-01** Alert & Scadenze: aggregazione di SLA aperte, contratti 30g, fatture 7g, documenti fornitori 30g via `alerts_for_structure`.
+- **RF-AL-02** Reminder automatici: refresh ogni 60s in `/app/alerts`, integrati come sezione di Smart Inbox.
+- **RF-EX-01** Export CSV e PDF disponibili su Prima Nota, Audit, Alert, Overview tramite helper `src/lib/exports.ts`.
+- **RF-AU-02** Audit log esteso con trigger automatici su: fatture, movimenti di cassa, integrazioni, documenti fornitori, fornitori. Diff completo old/new in JSONB.
+
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog

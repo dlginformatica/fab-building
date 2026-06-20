@@ -4,6 +4,16 @@
 
 ## Changelog
 
+### 2026-06-20 — Fase 11: Overview, Alert, Export & Audit estesi
+
+**Overview unificata (`/app/overview`)** — Dashboard "tutto in uno" con KPI di Housekeeping, Segnalazioni ospiti, SLA, Fatture e trend consumi elettrici, filtrabile per periodo (default ultimi 30 giorni). Include lista degli alert recenti e bottone *PDF* per esportare il riepilogo.
+
+**Alert & Scadenze (`/app/alerts`)** — Pannello reminder automatici aggregati dalla funzione `alerts_for_structure`: violazioni SLA aperte, contratti in scadenza entro 30 giorni, fatture scadute o in scadenza entro 7 giorni, documenti fornitori in scadenza entro 30 giorni. Filtri per tipo, severità *high/medium*, refresh ogni 60 secondi. Export CSV/PDF inclusi. Gli alert appaiono anche come nuova colonna in Smart Inbox.
+
+**Export CSV/PDF unificati** — Nuovo helper `src/lib/exports.ts` con `exportCSV`, `exportPDF` (header standard HotelOps, brand color, formato landscape) e `shareLink`. Applicato a Prima Nota (ora ha sia CSV che PDF), Alert, Overview. Audit log già aveva entrambi; altri moduli possono riutilizzarlo in tre righe.
+
+**Audit log esteso** — Nuovo trigger generico `audit_trigger_fn` registra automaticamente ogni `INSERT/UPDATE/DELETE` su: `invoices`, `cash_movements`, `integrations`, `supplier_documents`, `suppliers`. Ogni voce salva utente (`auth.uid()`), entità, azione e diff JSON `{old,new}`. Visibile in `/app/audit` agli admin con filtri/export.
+
 ### 2026-06-20 — Fasi 2-10: rilancio per piccole/medie strutture
 
 **Housekeeping (`/app/housekeeping`)** — Stato di ogni camera (Pulita/Sporca/In pulizia/Ispezionata/Fuori uso) + occupazione (Libera/Occupata/Arrivo/Partenza/Permanenza). KPI giornaliero a colpo d'occhio. "Genera turni" crea automaticamente i task del giorno per tutte le camere sporche; il cameriere clicca *Inizia* → *Fatto* dal telefono. I task sono per data, tipo (pulizia, cambio completo, rifacimento, ispezione, blocco) e priorità.

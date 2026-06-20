@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Wallet, Plus, ArrowUpRight, ArrowDownRight, Download, Trash2 } from "lucide-react";
+import { Wallet, Plus, ArrowUpRight, ArrowDownRight, Download, Trash2, FileDown } from "lucide-react";
+import { exportPDF, type Column } from "@/lib/exports";
 
 export const Route = createFileRoute("/_authenticated/app/cashbook")({ component: Page });
 
@@ -69,6 +70,13 @@ function Page() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a"); a.href = url; a.download = `prima-nota_${from}_${to}.csv`; a.click(); URL.revokeObjectURL(url);
   };
+  const cols: Column<any>[] = [
+    { header: "Data", key: "movement_date" }, { header: "Tipo", key: "kind" },
+    { header: "Categoria", key: "category" }, { header: "Descrizione", key: "description" },
+    { header: "Importo €", key: "amount", format: (r) => Number(r.amount).toFixed(2) },
+    { header: "Metodo", key: "payment_method" },
+  ];
+  const exportPdf = () => exportPDF(`prima-nota_${from}_${to}`, "Prima Nota / Cassa", rows, cols, `Periodo ${from} → ${to} · Saldo € ${totals.saldo.toFixed(2)}`);
 
   return (
     <div className="space-y-6 p-6">
@@ -81,6 +89,7 @@ function Page() {
           <div><Label className="text-xs">Da</Label><Input type="date" value={from} onChange={e=>setFrom(e.target.value)} className="w-40"/></div>
           <div><Label className="text-xs">A</Label><Input type="date" value={to} onChange={e=>setTo(e.target.value)} className="w-40"/></div>
           <Button variant="outline" onClick={exportCsv}><Download className="h-4 w-4 mr-2"/>CSV</Button>
+          <Button variant="outline" onClick={exportPdf}><FileDown className="h-4 w-4 mr-2"/>PDF</Button>
           <Button onClick={() => setOpen(true)}><Plus className="h-4 w-4 mr-2"/>Nuovo</Button>
         </div>
       </header>

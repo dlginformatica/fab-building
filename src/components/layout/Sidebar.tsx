@@ -12,6 +12,8 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app", label: "Dashboard", icon: LayoutDashboard, exact: true },
     { to: "/app/onboarding", label: "Setup guidato", icon: Sparkles },
     { to: "/app/smart-inbox", label: "Smart Inbox", icon: Inbox },
+    { to: "/app/overview", label: "Overview unificata", icon: BarChart3 },
+    { to: "/app/alerts", label: "Alert & Scadenze", icon: Bell },
     { to: "/app/structure-kpi", label: "KPI struttura", icon: BarChart3 },
     { to: "/app/tickets", label: "Ticket", icon: Ticket },
     { to: "/app/guest-issues", label: "Segnalazioni ospiti (QR)", icon: QrCode },
