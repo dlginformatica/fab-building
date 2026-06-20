@@ -29,6 +29,28 @@ export async function sha256Hex(text: string): Promise<string> {
 export async function notifyOrgAdmins(orgId: string, kind: string, reason: string, payload: Record<string, unknown> = {}) {
   try {
     const sb: any = supabase;
+    // Rispetta le preferenze di notifica backup/restore dell'organizzazione
+    try {
+      const { data: prefs } = await sb
+        .from("org_backup_notify_prefs")
+        .select("in_app_enabled,notify_on_start,notify_on_success,notify_on_failure,notify_on_integrity_issue")
+        .eq("organization_id", orgId)
+        .maybeSingle();
+      if (prefs) {
+        if (prefs.in_app_enabled === false) return;
+        const map: Record<string, keyof typeof prefs> = {
+          backup_started: "notify_on_start",
+          restore_started: "notify_on_start",
+          backup_completed: "notify_on_success",
+          restore_completed: "notify_on_success",
+          backup_failed: "notify_on_failure",
+          restore_failed: "notify_on_failure",
+          backup_integrity_issue: "notify_on_integrity_issue",
+        };
+        const flag = map[kind];
+        if (flag && prefs[flag] === false) return;
+      }
+    } catch { /* preferenze opzionali */ }
     await sb.rpc("notify_org_admins", { _org: orgId, _kind: kind, _reason: reason, _payload: payload });
   } catch (e) {
     console.warn("notifyOrgAdmins:", e);
