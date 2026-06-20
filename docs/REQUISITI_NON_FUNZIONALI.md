@@ -1,3 +1,9 @@
+## Changelog 2026-06-20
+- Sicurezza multi-tenant: nuova funzione `is_org_admin` e isolamento per organizzazione su ticket, SLA, penali, audit, deleghe e permessi modulo.
+- `handle_new_user` non assegna più il ruolo globale "direttore" ai nuovi iscritti.
+- Strutture: rimosse policy legacy permissive; lettura/scrittura ora vincolate a appartenenza org / proprietà.
+- Segnalazioni ospiti via QR: gli utenti anonimi non possono più inserire record liberi; la submission passa dalla RPC `submit_guest_issue` che valida il token QR camera.
+
 # HotelOps — Requisiti Non Funzionali
 
 ## 2026-06-20 — Manuale Utente

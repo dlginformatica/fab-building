@@ -5401,6 +5401,7 @@ export type Database = {
         Args: { _conv: string; _user: string }
         Returns: boolean
       }
+      is_org_admin: { Args: { _org: string; _user: string }; Returns: boolean }
       is_org_member: { Args: { _org: string; _user: string }; Returns: boolean }
       is_org_owner: { Args: { _org: string; _user: string }; Returns: boolean }
       missing_module_deps: { Args: { _modules: string[] }; Returns: string[] }
@@ -5528,6 +5529,18 @@ export type Database = {
           ticket_id: string
           violation_id: string
         }[]
+      }
+      structure_org: { Args: { _structure: string }; Returns: string }
+      submit_guest_issue: {
+        Args: {
+          _category: string
+          _description: string
+          _guest_contact?: string
+          _guest_name?: string
+          _language?: string
+          _qr_token: string
+        }
+        Returns: string
       }
       subscriptions_sync_expired: {
         Args: never

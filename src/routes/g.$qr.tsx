@@ -38,13 +38,13 @@ function GuestPage() {
     mutationFn: async () => {
       if (!room?.structure_id) throw new Error("Camera non trovata");
       if (!description.trim()) throw new Error("Scrivi una breve descrizione");
-      const { error } = await (supabase as any).from("guest_issues").insert({
-        structure_id: room.structure_id,
-        room_id: room.room_id,
-        category, description: description.trim(),
-        guest_name: guestName.trim() || null,
-        guest_contact: contact.trim() || null,
-        source: "qr",
+      const { error } = await (supabase as any).rpc("submit_guest_issue", {
+        _qr_token: qr,
+        _category: category,
+        _description: description.trim(),
+        _guest_name: guestName.trim() || null,
+        _guest_contact: contact.trim() || null,
+        _language: null,
       });
       if (error) throw error;
     },
