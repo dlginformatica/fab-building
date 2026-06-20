@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveStructure } from "@/lib/structure-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { fmtEUR } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/reports")({ component: Page });
 
@@ -39,12 +40,12 @@ function Page() {
     { t: "Ticket totali", v: kpis?.ticketTotal ?? 0 },
     { t: "Ticket aperti", v: kpis?.ticketOpen ?? 0 },
     { t: "% SLA rispettati", v: kpis?.slaCompliance != null ? `${kpis.slaCompliance}%` : "—" },
-    { t: "€ Fatture da pagare", v: `€${(kpis?.invoiceTotalDue ?? 0).toFixed(2)}` },
-    { t: "€ Fatture pagate", v: `€${(kpis?.invoicePaid ?? 0).toFixed(2)}` },
+    { t: "€ Fatture da pagare", v: fmtEUR(kpis?.invoiceTotalDue ?? 0) },
+    { t: "€ Fatture pagate", v: fmtEUR(kpis?.invoicePaid ?? 0) },
     { t: "Ordini di lavoro", v: kpis?.woTotal ?? 0 },
-    { t: "€ Costo interventi", v: `€${(kpis?.woCost ?? 0).toFixed(2)}` },
+    { t: "€ Costo interventi", v: fmtEUR(kpis?.woCost ?? 0) },
     { t: "Articoli sotto-scorta", v: kpis?.invLowStock ?? 0 },
-    { t: "€ Valore magazzino", v: `€${(kpis?.invValue ?? 0).toFixed(2)}` },
+    { t: "€ Valore magazzino", v: fmtEUR(kpis?.invValue ?? 0) },
   ];
   return (
     <div className="space-y-6">
