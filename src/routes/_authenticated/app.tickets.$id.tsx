@@ -68,8 +68,9 @@ function Page() {
   });
 
   if (!t) return <div className="text-sm text-muted-foreground">Caricamento…</div>;
-  const ack = timeUntil(t.ack_due_at);
-  const res = timeUntil(t.resolve_due_at);
+  const stopAt = t.resolved_at ?? t.closed_at ?? null;
+  const ack = timeUntil(t.ack_due_at, t.ack_at ?? stopAt);
+  const res = timeUntil(t.resolve_due_at, stopAt);
 
   return (
     <div className="space-y-6">
