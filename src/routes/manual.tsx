@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm";
 import { useMemo, useState } from "react";
 import utenteMd from "@/../docs/MANUALE_UTENTE.md?raw";
 import manualeMd from "@/../docs/MANUALE_OPERATIVO.md?raw";
-import { Download, BookOpen, List } from "lucide-react";
+import { Download, BookOpen, List, Printer, FileDown } from "lucide-react";
 
 export const Route = createFileRoute("/manual")({
   head: () => ({
@@ -49,6 +49,13 @@ function ManualPage() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
+  function downloadPdf() {
+    // Sfrutta la stampa del browser: in tutti i browser moderni include
+    // "Salva come PDF" come destinazione. Il CSS @media print sotto
+    // nasconde chrome/sidebar e stampa solo l'articolo corrente.
+    window.print();
+  }
+
   function slugify(text: string) {
     return text
       .toLowerCase()
@@ -60,7 +67,7 @@ function ManualPage() {
     <div className="min-h-screen bg-background">
       <PublicHeader />
       <main className="container mx-auto px-6 py-10">
-        <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="no-print flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
               <BookOpen className="h-3 w-3" /> Documento vivo · aggiornato ad ogni iterazione
@@ -71,16 +78,19 @@ function ManualPage() {
             </p>
           </div>
           <div className="flex gap-2">
+            <button onClick={downloadPdf} className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+              <FileDown className="h-4 w-4" /> Scarica PDF
+            </button>
             <button onClick={download} className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm hover:bg-accent">
               <Download className="h-4 w-4" /> Scarica .md
             </button>
-            <Link to="/brochure" className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+            <Link to="/brochure" className="inline-flex items-center gap-2 rounded-md border border-border bg-card px-3 py-2 text-sm hover:bg-accent">
               Brochure PDF
             </Link>
           </div>
         </div>
 
-        <div className="mt-6 inline-flex rounded-lg border border-border bg-card p-1 text-sm">
+        <div className="no-print mt-6 inline-flex rounded-lg border border-border bg-card p-1 text-sm">
           <button
             onClick={() => setTab("utente")}
             className={`rounded-md px-3 py-1.5 ${tab === "utente" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
@@ -97,7 +107,7 @@ function ManualPage() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr]">
           {tab === "utente" ? (
-            <aside className="lg:sticky lg:top-6 lg:self-start rounded-xl border border-border bg-card p-4 text-sm">
+            <aside className="no-print lg:sticky lg:top-6 lg:self-start rounded-xl border border-border bg-card p-4 text-sm">
               <p className="mb-3 flex items-center gap-2 font-medium">
                 <List className="h-4 w-4" /> Capitoli
               </p>
@@ -112,14 +122,16 @@ function ManualPage() {
           ) : (
             <div />
           )}
-          <article className="rounded-xl border border-border bg-card p-6 md:p-8">
+          <article id="manual-article" className="rounded-xl border border-border bg-card p-6 md:p-8">
             {tab === "utente" ? (
-              <div className="prose prose-sm md:prose-base prose-invert max-w-none prose-headings:font-display prose-headings:scroll-mt-24 prose-img:rounded-lg prose-img:border prose-img:border-border prose-a:text-primary prose-table:text-sm">
+              <div className="prose prose-sm md:prose-base dark:prose-invert max-w-none prose-headings:font-display prose-headings:scroll-mt-24 prose-img:rounded-lg prose-img:border prose-img:border-border prose-a:text-primary prose-table:text-sm">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
                   components={{
                     h2: ({ children, ...props }) => {
-                      const text = String(children);
+                      const text = Array.isArray(children)
+                        ? children.map((c) => (typeof c === "string" ? c : "")).join("")
+                        : String(children ?? "");
                       return (
                         <h2 id={slugify(text)} {...props}>
                           {children}
@@ -138,6 +150,20 @@ function ManualPage() {
         </div>
       </main>
       <PublicFooter />
+      <style>{`
+        @media print {
+          @page { size: A4; margin: 14mm; }
+          html, body { background: white !important; }
+          header, footer, nav, aside, .print\\:hidden { display: none !important; }
+          main { padding: 0 !important; }
+          .no-print { display: none !important; }
+          #manual-article { border: 0 !important; padding: 0 !important; background: white !important; color: black !important; box-shadow: none !important; }
+          #manual-article * { color: black !important; background: transparent !important; }
+          #manual-article a { color: black !important; text-decoration: underline; }
+          #manual-article img { max-width: 100% !important; page-break-inside: avoid; }
+          #manual-article h1, #manual-article h2, #manual-article h3 { page-break-after: avoid; }
+        }
+      `}</style>
     </div>
   );
 }
