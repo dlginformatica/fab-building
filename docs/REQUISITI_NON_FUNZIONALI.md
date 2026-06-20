@@ -1,5 +1,10 @@
 # HotelOps — Requisiti Non Funzionali
 
+## 2026-06-20 — Matrice permessi
+- **RNF-PM-01** Tutti i check di accesso ai moduli sono in funzioni `STABLE SECURITY DEFINER` con `search_path=public`, eseguibili solo da `authenticated`.
+- **RNF-PM-02** UI e backend usano la stessa primitiva (`has_module_access`), evitando drift fra ciò che è visibile e ciò che è realmente autorizzato.
+- **RNF-PM-03** La coerenza delle dipendenze è enforced a livello DB tramite trigger `BEFORE INSERT OR UPDATE OF modules` su `user_delegations`.
+
 ## 2026-06-20 — Fase 11
 - **RNF-AU-01** Ogni operazione di scrittura sulle entità critiche (fatture, cassa, integrazioni, documenti fornitori, fornitori) è tracciata in `audit_log` con utente, timestamp e diff JSON. Trigger `audit_trigger_fn` (`SECURITY DEFINER`, `search_path=public`).
 - **RNF-AL-01** Funzione `alerts_for_structure(uuid)` `STABLE SECURITY DEFINER`, accessibile solo a `authenticated`. Refresh client-side ogni 60s.

@@ -4511,6 +4511,10 @@ export type Database = {
         Args: { _from: string; _to: string }
         Returns: number
       }
+      has_module_access: {
+        Args: { _module: string; _structure?: string; _user: string }
+        Returns: boolean
+      }
       has_permission: {
         Args: {
           _action?: string
@@ -4551,7 +4555,19 @@ export type Database = {
       }
       is_org_member: { Args: { _org: string; _user: string }; Returns: boolean }
       is_org_owner: { Args: { _org: string; _user: string }; Returns: boolean }
+      missing_module_deps: { Args: { _modules: string[] }; Returns: string[] }
       org_user_count: { Args: { _org: string }; Returns: number }
+      permission_matrix: {
+        Args: { _org?: string }
+        Returns: {
+          email: string
+          enabled: boolean
+          full_name: string
+          module: string
+          source: string
+          user_id: string
+        }[]
+      }
       room_by_qr: {
         Args: { _token: string }
         Returns: {

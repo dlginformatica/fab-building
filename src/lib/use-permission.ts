@@ -51,3 +51,37 @@ export function useDelegatedAccess(userId: string | null, module: string, struct
     return { enabled, delegations: list };
   }, [data, module, structureId]);
 }
+
+/**
+ * Server-authoritative module access check via has_module_access RPC.
+ * Use this to gate UI controls so visibility/abilitazione corrispondono
+ * esattamente a ciò che il server consentirà.
+ */
+export function useModuleAccess(userId: string | null, module: string, structureId: string | null = null) {
+  const { data, isLoading } = useQuery<boolean>({
+    queryKey: ["module-access", userId, module, structureId],
+    enabled: !!userId,
+    staleTime: 30_000,
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).rpc("has_module_access", {
+        _user: userId, _module: module, _structure: structureId,
+      });
+      if (error) throw error;
+      return !!data;
+    },
+  });
+  return { enabled: !!data, loading: isLoading };
+}
+
+/** Returns the list of mandatory dependencies missing from a desired modules[] set. */
+export function useMissingDeps(modules: string[]) {
+  return useQuery<string[]>({
+    queryKey: ["missing-deps", [...modules].sort().join(",")],
+    enabled: modules.length > 0,
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).rpc("missing_module_deps", { _modules: modules });
+      if (error) throw error;
+      return (data ?? []) as string[];
+    },
+  });
+}

@@ -1,5 +1,11 @@
 # HotelOps — Requisiti Funzionali
 
+## 2026-06-20 — RF Matrice permessi & dipendenze
+- RF-PM-01: ogni funzione/modulo è esposta in UI solo se `has_module_access(user, module, structure)` restituisce true; lo stesso check è eseguito anche lato server prima della scrittura.
+- RF-PM-02: la concessione di un modulo via delega comporta automaticamente la concessione delle sue dipendenze (trigger DB).
+- RF-PM-03: l'admin organizzazione vede una matrice utenti×moduli con stato effettivo e origine (ruolo / delega / permesso) e può simulare l'impatto di una selezione moduli sulle dipendenze.
+- RF-PM-04: la mappa delle dipendenze è persistente in `module_dependencies` ed estendibile via migration.
+
 ## 2026-06-20 — RF Multi-tenant
 - RF-MT-01: Ogni utente registrato crea automaticamente la propria organizzazione e ne è proprietario (owner).
 - RF-MT-02: L'organizzazione ha un limite massimo di 6 utenti (1 owner + max 5 invitati). Il limite è bloccato a livello DB.
