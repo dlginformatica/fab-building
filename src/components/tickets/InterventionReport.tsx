@@ -17,7 +17,7 @@ export function InterventionReport({ ticketId }: { ticketId: string }) {
 
   const { data: reports = [] } = useQuery({
     queryKey: ["ticket-reports", ticketId],
-    queryFn: async () => (await supabase.from("ticket_reports").select("*, profiles:author_id(full_name,email)").eq("ticket_id", ticketId).order("created_at", { ascending:false })).data ?? [],
+    queryFn: async () => (await supabase.from("ticket_reports").select("*").eq("ticket_id", ticketId).order("created_at", { ascending:false })).data ?? [],
   });
 
   const save = useMutation({
