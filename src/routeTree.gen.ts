@@ -20,6 +20,7 @@ import { Route as AuthenticatedAppWorkflowsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppWorkOrdersRouteImport } from './routes/_authenticated/app.work-orders'
 import { Route as AuthenticatedAppUtilitiesRouteImport } from './routes/_authenticated/app.utilities'
 import { Route as AuthenticatedAppUsersRouteImport } from './routes/_authenticated/app.users'
+import { Route as AuthenticatedAppTrendsRouteImport } from './routes/_authenticated/app.trends'
 import { Route as AuthenticatedAppTicketsRouteImport } from './routes/_authenticated/app.tickets'
 import { Route as AuthenticatedAppSustainabilityRouteImport } from './routes/_authenticated/app.sustainability'
 import { Route as AuthenticatedAppSuppliersComplianceRouteImport } from './routes/_authenticated/app.suppliers-compliance'
@@ -125,6 +126,11 @@ const AuthenticatedAppUtilitiesRoute =
 const AuthenticatedAppUsersRoute = AuthenticatedAppUsersRouteImport.update({
   id: '/app/users',
   path: '/app/users',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedAppTrendsRoute = AuthenticatedAppTrendsRouteImport.update({
+  id: '/app/trends',
+  path: '/app/trends',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAppTicketsRoute = AuthenticatedAppTicketsRouteImport.update({
@@ -460,6 +466,7 @@ export interface FileRoutesByFullPath {
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
+  '/app/trends': typeof AuthenticatedAppTrendsRoute
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
@@ -521,6 +528,7 @@ export interface FileRoutesByTo {
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
+  '/app/trends': typeof AuthenticatedAppTrendsRoute
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
@@ -584,6 +592,7 @@ export interface FileRoutesById {
   '/_authenticated/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/_authenticated/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/_authenticated/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
+  '/_authenticated/app/trends': typeof AuthenticatedAppTrendsRoute
   '/_authenticated/app/users': typeof AuthenticatedAppUsersRoute
   '/_authenticated/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/_authenticated/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
@@ -647,6 +656,7 @@ export interface FileRouteTypes {
     | '/app/suppliers-compliance'
     | '/app/sustainability'
     | '/app/tickets'
+    | '/app/trends'
     | '/app/users'
     | '/app/utilities'
     | '/app/work-orders'
@@ -708,6 +718,7 @@ export interface FileRouteTypes {
     | '/app/suppliers-compliance'
     | '/app/sustainability'
     | '/app/tickets'
+    | '/app/trends'
     | '/app/users'
     | '/app/utilities'
     | '/app/work-orders'
@@ -770,6 +781,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/suppliers-compliance'
     | '/_authenticated/app/sustainability'
     | '/_authenticated/app/tickets'
+    | '/_authenticated/app/trends'
     | '/_authenticated/app/users'
     | '/_authenticated/app/utilities'
     | '/_authenticated/app/work-orders'
@@ -874,6 +886,13 @@ declare module '@tanstack/react-router' {
       path: '/app/users'
       fullPath: '/app/users'
       preLoaderRoute: typeof AuthenticatedAppUsersRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/trends': {
+      id: '/_authenticated/app/trends'
+      path: '/app/trends'
+      fullPath: '/app/trends'
+      preLoaderRoute: typeof AuthenticatedAppTrendsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/tickets': {
@@ -1321,6 +1340,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppSuppliersComplianceRoute: typeof AuthenticatedAppSuppliersComplianceRoute
   AuthenticatedAppSustainabilityRoute: typeof AuthenticatedAppSustainabilityRoute
   AuthenticatedAppTicketsRoute: typeof AuthenticatedAppTicketsRouteWithChildren
+  AuthenticatedAppTrendsRoute: typeof AuthenticatedAppTrendsRoute
   AuthenticatedAppUsersRoute: typeof AuthenticatedAppUsersRoute
   AuthenticatedAppUtilitiesRoute: typeof AuthenticatedAppUtilitiesRoute
   AuthenticatedAppWorkOrdersRoute: typeof AuthenticatedAppWorkOrdersRoute
@@ -1375,6 +1395,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAppSuppliersComplianceRoute,
   AuthenticatedAppSustainabilityRoute: AuthenticatedAppSustainabilityRoute,
   AuthenticatedAppTicketsRoute: AuthenticatedAppTicketsRouteWithChildren,
+  AuthenticatedAppTrendsRoute: AuthenticatedAppTrendsRoute,
   AuthenticatedAppUsersRoute: AuthenticatedAppUsersRoute,
   AuthenticatedAppUtilitiesRoute: AuthenticatedAppUtilitiesRoute,
   AuthenticatedAppWorkOrdersRoute: AuthenticatedAppWorkOrdersRoute,
