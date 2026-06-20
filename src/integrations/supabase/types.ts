@@ -5343,6 +5343,22 @@ export type Database = {
         Args: { _from: string; _to: string }
         Returns: number
       }
+      get_invitation_by_token: {
+        Args: { _token: string }
+        Returns: {
+          accepted_at: string
+          app_role: string
+          email: string
+          expires_at: string
+          id: string
+          modules: string[]
+          org_id: string
+          org_name: string
+          org_role: string
+          revoked_at: string
+          structure_ids: string[]
+        }[]
+      }
       has_module_access: {
         Args: { _module: string; _structure?: string; _user: string }
         Returns: boolean
