@@ -1,3 +1,10 @@
+## Aggiornamento 2026-06-20 — Sincronizzazione robusta, notifiche e trial personalizzato
+
+- **Sincronizzazione abbonamenti più sicura**: il super admin può usare "Sincronizza ora" senza rischio di esecuzioni doppie — un lock cooperativo impedisce sovrapposizioni; ogni esecuzione (manuale, cron, retry) viene registrata con stato, durata e numero di organizzazioni aggiornate.
+- **Storico & retry**: nella pagina Piani il super admin vede la coda delle sincronizzazioni. Dai job falliti basta un click su **Retry** per rilanciarli.
+- **Notifiche automatiche in-app**: quando il trial scade o un abbonamento passa a *Sola lettura*, owner e admin dell'organizzazione ricevono subito una notifica con link diretto alla pagina **Abbonamento & piano**.
+- **Audit abbonamenti**: nuova voce di menu "Audit abbonamenti (super admin)" — elenco completo di chi ha forzato/esteso un piano, quando, vecchio→nuovo tier/stato, motivo.
+- **Trial personalizzato per organizzazione**: dal pannello Piani, accanto a ciascuna organizzazione, il super admin può impostare una durata trial custom (0..3650 giorni) con motivo opzionale; banner e modalità sola lettura si aggiornano immediatamente.
 # HotelOps — Manuale Utente
 
 > Guida completa all'uso della piattaforma HotelOps per direttori, facility manager, manutentori, fornitori e personale di struttura.
