@@ -4,6 +4,10 @@
 
 ## Changelog
 
+### 2026-06-20 — Fase 11: Audit esteso + Alerts unificate
+- **Funzione `public.audit_trigger_fn()`** — trigger AFTER INSERT/UPDATE/DELETE che inserisce in `audit_log` (`user_id = auth.uid()`, `entity_type = TG_TABLE_NAME`, `entity_id`, `action`, `diff` JSONB `{old?, new?}`). Attiva su: `invoices`, `cash_movements`, `integrations`, `supplier_documents`, `suppliers`.
+- **Funzione `public.alerts_for_structure(_structure uuid)`** — restituisce `(kind, severity, title, detail, ref_id, due_at)` unendo SLA aperte, contratti 30g, fatture 7g, documenti fornitori 30g. `SECURITY DEFINER`, eseguibile solo da `authenticated`.
+
 ### 2026-06-20 — Fasi 2-10 killer
 - `rooms`: nuovi `qr_token` (UNIQUE), `housekeeping_status` (clean/dirty/in_progress/inspected/out_of_order), `occupancy_status` (vacant/occupied/arrival/departure/stayover).
 - **housekeeping_tasks** — id, structure_id, room_id, task_date, task_type, status, assigned_to, priority, notes, started_at, completed_at, created_by. RLS per accesso struttura.
