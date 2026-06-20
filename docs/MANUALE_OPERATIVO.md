@@ -1,6 +1,7 @@
 # HotelOps — Manuale Operativo
 
 > Documento vivo: aggiornato a ogni interazione con l'utente.
+- **2026-06-20 — Fase 21.3 · Integrità backup, progress restore, notifiche backup/restore**: RF-BCK-16 ogni backup nel cloud calcola un **hash SHA-256** dello snapshot (`backup_runs.integrity_hash`, `integrity_status`, `verified_at`, `duration_ms`); pulsante "Verifica integrità" su ogni riga dello storico ricalcola l'hash dal file storage e marca lo stato (`verified` / `mismatch` / `missing` / `error`). I backup non ripristinabili (`mismatch`/`missing`) nascondono il bottone di restore. RF-BCK-17 il restore point-in-time mostra **barra di avanzamento** con step (Ricerca → Download → Pre-restore → Restore replace → Finalizzazione); ogni step viene salvato su `restore_runs.steps_total`, `steps_done`, `current_step` ed è consultabile in `/app/backup-audit`. RF-BCK-18 nuove notifiche in-app per owner/admin via RPC `notify_org_admins`: `backup_started`, `backup_completed` (con dimensione + durata + link audit), `backup_failed`, `restore_started`, `restore_completed`, `restore_failed`.
 
 ## Changelog
 - **2026-06-20 — Fase 21.2 · Backup cloud, point-in-time, audit, reset org, schemi import versionati**
