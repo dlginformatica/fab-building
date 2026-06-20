@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-20 — Fase 17**: rollback versionato delle regole di dipendenza (clona la versione target, la attiva e traccia l'evento in audit), nuovi avvisi automatici per gli admin di organizzazione quando un utente viene respinto per dipendenza mancante (con modulo, motivazione e link alla pagina deleghe).
 - **2026-06-20 — Fase 16**: editor versionato delle dipendenze tra moduli (validazione cicli/duplicati + anteprima impatto), pagina **Accessi negati** in Smart Inbox che mostra il motivo e le dipendenze mancanti, **Audit permessi & deleghe** con diff before/after, test di integrazione sull'espansione delle dipendenze nelle deleghe (`src/lib/module-deps.test.ts`).
 
 ### 2026-06-20 — Matrice permessi granulare con dipendenze obbligatorie

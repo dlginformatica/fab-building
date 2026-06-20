@@ -67,6 +67,7 @@ const groups: Array<{ label: string; items: Array<{ to: string; label: string; i
     { to: "/app/delegations-history", label: "Storico deleghe", icon: ScrollText },
     { to: "/app/permission-audit", label: "Audit permessi", icon: ScrollText },
     { to: "/app/access-denied", label: "Accessi negati", icon: ShieldCheck },
+    { to: "/app/admin-alerts", label: "Avvisi admin (deleghe)", icon: AlertTriangle },
     { to: "/app/audit", label: "Audit log", icon: ScrollText },
     { to: "/app/delegation-audit", label: "Audit deleghe", icon: ScrollText },
     { to: "/app/delivery-queue", label: "Coda invii report", icon: Activity },
