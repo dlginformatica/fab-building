@@ -129,6 +129,13 @@ function Anagrafica({ s }: { s: Structure }) {
 }
 
 // ============ Tipologie ============
+const DEFAULT_TYPE_CATEGORIES = [
+  "Standard", "Deluxe", "Junior Suite", "Suite", "Garden Suite", "Monolocale", "Bilocale",
+];
+
+type RoomTypeForm = { name: string; category: string; beds: string; capacity: string; base_price: string; description: string };
+const emptyTypeForm: RoomTypeForm = { name: "", category: "", beds: "", capacity: "", base_price: "", description: "" };
+
 function RoomTypesTab({ structureId }: { structureId: string }) {
   const qc = useQueryClient();
   const { data } = useQuery({
@@ -139,48 +146,112 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
       return data as any[];
     },
   });
-  const [form, setForm] = useState({ name: "", beds: "", capacity: "", base_price: "" });
-  const create = useMutation({
+
+  const categories = Array.from(new Set([
+    ...DEFAULT_TYPE_CATEGORIES,
+    ...((data ?? []).map((t: any) => t.category).filter(Boolean) as string[]),
+  ]));
+
+  const [editing, setEditing] = useState<{ id: string | null; form: RoomTypeForm } | null>(null);
+
+  const save = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("room_types" as any).insert({
-        structure_id: structureId, name: form.name,
-        beds: form.beds ? Number(form.beds) : null, capacity: form.capacity ? Number(form.capacity) : null,
-        base_price: form.base_price ? Number(form.base_price) : null,
-      } as any);
-      if (error) throw error;
+      if (!editing) return;
+      const payload: any = {
+        structure_id: structureId,
+        name: editing.form.name,
+        category: editing.form.category || null,
+        description: editing.form.description || null,
+        beds: editing.form.beds ? Number(editing.form.beds) : null,
+        capacity: editing.form.capacity ? Number(editing.form.capacity) : null,
+        base_price: editing.form.base_price ? Number(editing.form.base_price) : null,
+      };
+      if (editing.id) {
+        const { error } = await supabase.from("room_types" as any).update(payload).eq("id", editing.id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.from("room_types" as any).insert(payload);
+        if (error) throw error;
+      }
     },
-    onSuccess: () => { toast.success("Tipologia creata"); setForm({ name: "", beds: "", capacity: "", base_price: "" }); qc.invalidateQueries({ queryKey: ["room_types", structureId] }); },
+    onSuccess: () => {
+      toast.success("Tipologia salvata");
+      setEditing(null);
+      qc.invalidateQueries({ queryKey: ["room_types", structureId] });
+    },
     onError: (e: Error) => toast.error(e.message),
   });
+
   const del = useMutation({
     mutationFn: async (id: string) => { const { error } = await supabase.from("room_types" as any).delete().eq("id", id); if (error) throw error; },
     onSuccess: () => { toast.success("Eliminata"); qc.invalidateQueries({ queryKey: ["room_types", structureId] }); qc.invalidateQueries({ queryKey: ["rooms", structureId] }); },
     onError: (e: Error) => toast.error(e.message),
   });
+
   return (
     <Card>
-      <CardHeader><CardTitle>Tipologie camere</CardTitle></CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <CardTitle>Tipologie camere</CardTitle>
+        <Button size="sm" onClick={() => setEditing({ id: null, form: { ...emptyTypeForm } })}>
+          <Plus className="h-4 w-4 mr-1" />Nuova tipologia
+        </Button>
+      </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid gap-2 md:grid-cols-5">
-          <Input placeholder="Nome (es. Doppia)" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <Input placeholder="Letti" type="number" value={form.beds} onChange={(e) => setForm({ ...form, beds: e.target.value })} />
-          <Input placeholder="Capienza" type="number" value={form.capacity} onChange={(e) => setForm({ ...form, capacity: e.target.value })} />
-          <Input placeholder="Prezzo base €" type="number" value={form.base_price} onChange={(e) => setForm({ ...form, base_price: e.target.value })} />
-          <Button disabled={!form.name || create.isPending} onClick={() => create.mutate()}><Plus className="h-4 w-4 mr-1" />Aggiungi</Button>
-        </div>
         <div className="divide-y border rounded">
           {(data ?? []).map((t) => (
             <div key={t.id} className="flex items-center justify-between p-3 text-sm">
-              <div>
-                <div className="font-medium">{t.name}</div>
+              <div className="min-w-0">
+                <div className="font-medium">{t.name} {t.category && <span className="ml-2 text-xs px-1.5 py-0.5 rounded bg-accent text-accent-foreground">{t.category}</span>}</div>
                 <div className="text-xs text-muted-foreground">{t.beds ?? "—"} letti · cap. {t.capacity ?? "—"} · {t.base_price ? `€ ${Number(t.base_price).toFixed(2)}` : "—"}</div>
+                {t.description && <div className="text-xs text-muted-foreground mt-1 line-clamp-2">{t.description}</div>}
               </div>
-              <Button size="icon" variant="ghost" onClick={() => del.mutate(t.id)}><Trash2 className="h-4 w-4" /></Button>
+              <div className="flex gap-1">
+                <Button size="icon" variant="ghost" onClick={() => setEditing({ id: t.id, form: {
+                  name: t.name ?? "", category: t.category ?? "", beds: t.beds?.toString() ?? "",
+                  capacity: t.capacity?.toString() ?? "", base_price: t.base_price?.toString() ?? "",
+                  description: t.description ?? "",
+                } })}><Pencil className="h-4 w-4" /></Button>
+                <Button size="icon" variant="ghost" onClick={() => del.mutate(t.id)}><Trash2 className="h-4 w-4" /></Button>
+              </div>
             </div>
           ))}
           {(!data || data.length === 0) && <div className="p-6 text-center text-sm text-muted-foreground">Nessuna tipologia.</div>}
         </div>
       </CardContent>
+
+      <Dialog open={!!editing} onOpenChange={(v) => { if (!v) setEditing(null); }}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>{editing?.id ? "Modifica tipologia" : "Nuova tipologia"}</DialogTitle></DialogHeader>
+          {editing && (
+            <div className="space-y-3">
+              <div className="space-y-1"><Label>Nome *</Label>
+                <Input value={editing.form.name} onChange={(e) => setEditing({ ...editing, form: { ...editing.form, name: e.target.value } })} placeholder="Doppia" />
+              </div>
+              <div className="space-y-1"><Label>Categoria</Label>
+                <Input list="room-type-categories" value={editing.form.category}
+                  onChange={(e) => setEditing({ ...editing, form: { ...editing.form, category: e.target.value } })}
+                  placeholder="Standard / Deluxe / Suite…" />
+                <datalist id="room-type-categories">
+                  {categories.map(c => <option key={c} value={c} />)}
+                </datalist>
+                <p className="text-xs text-muted-foreground">Scegli un valore o digitane uno nuovo: l'elenco si arricchisce automaticamente.</p>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="space-y-1"><Label>Letti</Label><Input type="number" value={editing.form.beds} onChange={(e) => setEditing({ ...editing, form: { ...editing.form, beds: e.target.value } })} /></div>
+                <div className="space-y-1"><Label>Capienza</Label><Input type="number" value={editing.form.capacity} onChange={(e) => setEditing({ ...editing, form: { ...editing.form, capacity: e.target.value } })} /></div>
+                <div className="space-y-1"><Label>Prezzo base €</Label><Input type="number" value={editing.form.base_price} onChange={(e) => setEditing({ ...editing, form: { ...editing.form, base_price: e.target.value } })} /></div>
+              </div>
+              <div className="space-y-1"><Label>Descrizione</Label>
+                <Textarea value={editing.form.description} onChange={(e) => setEditing({ ...editing, form: { ...editing.form, description: e.target.value } })} rows={3} />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" onClick={() => setEditing(null)}>Annulla</Button>
+                <Button onClick={() => save.mutate()} disabled={!editing.form.name || save.isPending}>Salva</Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
