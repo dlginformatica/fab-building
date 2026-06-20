@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,15 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { ArrowLeft, Plus, Trash2, MapPin, Upload } from "lucide-react";
 import { toast } from "sonner";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import iconRetinaUrl from "leaflet/dist/images/marker-icon-2x.png";
-import iconUrl from "leaflet/dist/images/marker-icon.png";
-import shadowUrl from "leaflet/dist/images/marker-shadow.png";
-import { MapContainer, Marker, TileLayer, useMap } from "react-leaflet";
 
-// Fix default marker icon for Vite
-L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl });
+// Map is client-only (leaflet touches window). Lazy + Suspense + typeof window guard.
+const StructureMap = lazy(() => import("@/components/structures/StructureMap"));
 
 export const Route = createFileRoute("/_authenticated/app/structures/$id")({ component: Page });
 
@@ -459,11 +453,6 @@ function MapTab({ s }: { s: Structure }) {
     } catch (e: any) { toast.error("Errore geocodifica: " + e.message); }
   };
 
-  const center: [number, number] = useMemo(
-    () => (lat != null && lng != null ? [lat, lng] : [41.9028, 12.4964]),
-    [lat, lng],
-  );
-
   return (
     <Card>
       <CardHeader>
@@ -481,34 +470,20 @@ function MapTab({ s }: { s: Structure }) {
           <Button disabled={lat == null || lng == null || save.isPending} onClick={() => save.mutate({ lat: lat!, lng: lng! })}>Salva coordinate</Button>
         </div>
         <div className="h-[480px] w-full rounded overflow-hidden border">
-          <MapContainer center={center} zoom={lat != null ? 15 : 5} style={{ height: "100%", width: "100%" }}>
-            <TileLayer
-              attribution='&copy; <a href="https://osm.org/copyright">OpenStreetMap</a>'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            <RecenterMap center={center} />
-            {lat != null && lng != null && (
-              <Marker
-                position={[lat, lng]}
-                draggable
-                eventHandlers={{
-                  dragend: (e: any) => {
-                    const p = e.target.getLatLng();
-                    setLat(p.lat); setLng(p.lng); save.mutate({ lat: p.lat, lng: p.lng });
-                  },
-                }}
+          {typeof window === "undefined" ? (
+            <div className="h-full w-full bg-muted" />
+          ) : (
+            <Suspense fallback={<div className="h-full w-full bg-muted animate-pulse" />}>
+              <StructureMap
+                lat={lat}
+                lng={lng}
+                onDragEnd={(la, ln) => { setLat(la); setLng(ln); save.mutate({ lat: la, lng: ln }); }}
               />
-            )}
-          </MapContainer>
+            </Suspense>
+          )}
         </div>
         <p className="text-xs text-muted-foreground">Trascina il segnaposto per modificare le coordinate. Tile: OpenStreetMap.</p>
       </CardContent>
     </Card>
   );
-}
-
-function RecenterMap({ center }: { center: [number, number] }) {
-  const map = useMap();
-  useEffect(() => { map.setView(center); }, [center, map]);
-  return null;
 }
