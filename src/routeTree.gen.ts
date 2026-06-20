@@ -35,6 +35,7 @@ import { Route as AuthenticatedAppSlaEscalationsRouteImport } from './routes/_au
 import { Route as AuthenticatedAppSlaComplianceRouteImport } from './routes/_authenticated/app.sla-compliance'
 import { Route as AuthenticatedAppSlaRouteImport } from './routes/_authenticated/app.sla'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as AuthenticatedAppScheduledExportsRouteImport } from './routes/_authenticated/app.scheduled-exports'
 import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated/app.reports'
 import { Route as AuthenticatedAppReportBuilderRouteImport } from './routes/_authenticated/app.report-builder'
 import { Route as AuthenticatedAppReordersRouteImport } from './routes/_authenticated/app.reorders'
@@ -214,6 +215,12 @@ const AuthenticatedAppSettingsRoute =
   AuthenticatedAppSettingsRouteImport.update({
     id: '/app/settings',
     path: '/app/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppScheduledExportsRoute =
+  AuthenticatedAppScheduledExportsRouteImport.update({
+    id: '/app/scheduled-exports',
+    path: '/app/scheduled-exports',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppReportsRoute = AuthenticatedAppReportsRouteImport.update({
@@ -460,6 +467,7 @@ export interface FileRoutesByFullPath {
   '/app/reorders': typeof AuthenticatedAppReordersRouteWithChildren
   '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
+  '/app/scheduled-exports': typeof AuthenticatedAppScheduledExportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
   '/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
@@ -523,6 +531,7 @@ export interface FileRoutesByTo {
   '/app/reorders': typeof AuthenticatedAppReordersRouteWithChildren
   '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
+  '/app/scheduled-exports': typeof AuthenticatedAppScheduledExportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
   '/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
@@ -588,6 +597,7 @@ export interface FileRoutesById {
   '/_authenticated/app/reorders': typeof AuthenticatedAppReordersRouteWithChildren
   '/_authenticated/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
+  '/_authenticated/app/scheduled-exports': typeof AuthenticatedAppScheduledExportsRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/app/sla': typeof AuthenticatedAppSlaRoute
   '/_authenticated/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
@@ -653,6 +663,7 @@ export interface FileRouteTypes {
     | '/app/reorders'
     | '/app/report-builder'
     | '/app/reports'
+    | '/app/scheduled-exports'
     | '/app/settings'
     | '/app/sla'
     | '/app/sla-compliance'
@@ -716,6 +727,7 @@ export interface FileRouteTypes {
     | '/app/reorders'
     | '/app/report-builder'
     | '/app/reports'
+    | '/app/scheduled-exports'
     | '/app/settings'
     | '/app/sla'
     | '/app/sla-compliance'
@@ -780,6 +792,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/reorders'
     | '/_authenticated/app/report-builder'
     | '/_authenticated/app/reports'
+    | '/_authenticated/app/scheduled-exports'
     | '/_authenticated/app/settings'
     | '/_authenticated/app/sla'
     | '/_authenticated/app/sla-compliance'
@@ -1004,6 +1017,13 @@ declare module '@tanstack/react-router' {
       path: '/app/settings'
       fullPath: '/app/settings'
       preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/scheduled-exports': {
+      id: '/_authenticated/app/scheduled-exports'
+      path: '/app/scheduled-exports'
+      fullPath: '/app/scheduled-exports'
+      preLoaderRoute: typeof AuthenticatedAppScheduledExportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/reports': {
@@ -1347,6 +1367,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppReordersRoute: typeof AuthenticatedAppReordersRouteWithChildren
   AuthenticatedAppReportBuilderRoute: typeof AuthenticatedAppReportBuilderRoute
   AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
+  AuthenticatedAppScheduledExportsRoute: typeof AuthenticatedAppScheduledExportsRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppSlaRoute: typeof AuthenticatedAppSlaRoute
   AuthenticatedAppSlaComplianceRoute: typeof AuthenticatedAppSlaComplianceRoute
@@ -1402,6 +1423,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppReordersRoute: AuthenticatedAppReordersRouteWithChildren,
   AuthenticatedAppReportBuilderRoute: AuthenticatedAppReportBuilderRoute,
   AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
+  AuthenticatedAppScheduledExportsRoute: AuthenticatedAppScheduledExportsRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppSlaRoute: AuthenticatedAppSlaRoute,
   AuthenticatedAppSlaComplianceRoute: AuthenticatedAppSlaComplianceRoute,
