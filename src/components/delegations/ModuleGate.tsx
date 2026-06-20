@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
+import { useEffect, useRef } from "react";
 import { useModuleAccess } from "@/lib/use-permission";
+import { logAccessDenied } from "@/lib/access-denied";
 
 /**
  * Server-authoritative gate: wraps a control and disables it when the
@@ -17,6 +19,12 @@ export function ModuleGate({
   fallbackLabel?: string;
 }) {
   const { enabled, loading } = useModuleAccess(userId, module, structureId);
+  const logged = useRef(false);
+  useEffect(() => {
+    if (loading || enabled || logged.current || !userId) return;
+    logged.current = true;
+    logAccessDenied({ module, structureId }).catch(() => {});
+  }, [enabled, loading, userId, module, structureId]);
   return (
     <div
       data-testid={`module-gate-${module}`}
