@@ -1,3 +1,7 @@
+<!-- changelog 2026-06-20 -->
+- Nuova pagina **Notifiche backup** (/app/backup-notification-prefs): owner/admin gestiscono canali (email/in-app), eventi (start/success/failure/integrità), destinatari, frequenza (immediata/digest orario/giornaliero) e fascia oraria di silenzio.
+- Build number visibile in basso a destra di ogni schermata nel formato `yyyy.mm.dd.hh.mm` (UTC) per supporto e tracciabilità versioni.
+
 ## Aggiornamento 2026-06-20 — Backup cloud, point-in-time, audit e reset
 
 - **Backup nel cloud**: nella pagina **Backup, Restore & Import** trovi un nuovo bottone "Backup nel cloud" che salva uno snapshot completo della tua organizzazione su archivio sicuro, tracciato nel registro.
