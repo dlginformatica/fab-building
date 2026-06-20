@@ -1,5 +1,11 @@
 # HotelOps — Requisiti Non Funzionali
 
+## 2026-06-20 — Fase 19 · Vetrina prodotto & brochure
+- **RNF-MK-01** Le pagine pubbliche (`/`, `/features`, `/features/:slug`, `/manual`, `/brochure`) sono server-side rendered con metadata SEO dedicate (title, description, og:title, og:description per pagina).
+- **RNF-MK-02** La brochure PDF è generata client-side tramite `window.print()` con CSS `@page A4` e `print:break-before-page`, senza invio dati a servizi terzi.
+- **RNF-MK-03** Il catalogo funzionalità è single source of truth (`src/lib/features-catalog.ts`) usato da home, `/features`, `/brochure`: evita drift tra marketing e prodotto.
+- **RNF-MK-04** Gli screenshot mancanti degradano gracefully a wireframe stilizzati (componente `FeatureScreenshot`) — nessuna immagine rotta, nessuna fetch fallita visibile all'utente.
+
 ## 2026-06-20 — Matrice permessi
 - **RNF-PM-01** Tutti i check di accesso ai moduli sono in funzioni `STABLE SECURITY DEFINER` con `search_path=public`, eseguibili solo da `authenticated`.
 - **RNF-PM-02** UI e backend usano la stessa primitiva (`has_module_access`), evitando drift fra ciò che è visibile e ciò che è realmente autorizzato.
