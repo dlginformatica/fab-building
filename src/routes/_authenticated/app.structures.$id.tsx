@@ -259,6 +259,7 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
 // ============ Piani & Camere ============
 function RoomsTab({ structureId }: { structureId: string }) {
   const qc = useQueryClient();
+  const [openRoom, setOpenRoom] = useState<any | null>(null);
   const { data: floors } = useQuery({
     queryKey: ["floors", structureId],
     queryFn: async () => {
@@ -397,6 +398,7 @@ function RoomsTab({ structureId }: { structureId: string }) {
                     {["clean","dirty","in_progress","inspected","out_of_order"].map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                <Button size="icon" variant="ghost" title="Pianta & arredi" onClick={() => setOpenRoom(r)}><LayoutGrid className="h-4 w-4" /></Button>
                 <Button size="icon" variant="ghost" onClick={() => delRoom.mutate(r.id)}><Trash2 className="h-4 w-4" /></Button>
               </div>
             ))}
@@ -404,6 +406,15 @@ function RoomsTab({ structureId }: { structureId: string }) {
           </div>
         </CardContent>
       </Card>
+      {openRoom && typeof window !== "undefined" && (
+        <Suspense fallback={null}>
+          <RoomDetailDialog
+            room={{ id: openRoom.id, name: openRoom.name, structure_id: structureId, plan_path: openRoom.plan_path ?? null }}
+            open={!!openRoom}
+            onOpenChange={(v) => { if (!v) setOpenRoom(null); }}
+          />
+        </Suspense>
+      )}
     </div>
   );
 }
