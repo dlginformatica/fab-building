@@ -81,6 +81,7 @@ import { Route as ApiPublicHooksSlaEscalationsRouteImport } from './routes/api/p
 import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
 import { Route as ApiPublicHooksContractsNotifyRouteImport } from './routes/api/public/hooks/contracts-notify'
 import { Route as AuthenticatedAppTicketsIdRouteImport } from './routes/_authenticated/app.tickets.$id'
+import { Route as AuthenticatedAppSuperAdminPlansRouteImport } from './routes/_authenticated/app.super-admin.plans'
 import { Route as AuthenticatedAppReordersIdRouteImport } from './routes/_authenticated/app.reorders.$id'
 import { Route as AuthenticatedAppDeliveryQueueIdRouteImport } from './routes/_authenticated/app.delivery-queue.$id'
 import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
@@ -497,6 +498,12 @@ const AuthenticatedAppTicketsIdRoute =
     path: '/app/tickets/$id',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppSuperAdminPlansRoute =
+  AuthenticatedAppSuperAdminPlansRouteImport.update({
+    id: '/app/super-admin/plans',
+    path: '/app/super-admin/plans',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppReordersIdRoute =
   AuthenticatedAppReordersIdRouteImport.update({
     id: '/app/reorders/$id',
@@ -588,6 +595,7 @@ export interface FileRoutesByFullPath {
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
+  '/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
@@ -665,6 +673,7 @@ export interface FileRoutesByTo {
   '/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
+  '/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
   '/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
@@ -744,6 +753,7 @@ export interface FileRoutesById {
   '/_authenticated/app/assets/$id': typeof AuthenticatedAppAssetsIdRoute
   '/_authenticated/app/delivery-queue/$id': typeof AuthenticatedAppDeliveryQueueIdRoute
   '/_authenticated/app/reorders/$id': typeof AuthenticatedAppReordersIdRoute
+  '/_authenticated/app/super-admin/plans': typeof AuthenticatedAppSuperAdminPlansRoute
   '/_authenticated/app/tickets/$id': typeof AuthenticatedAppTicketsIdRoute
   '/api/public/hooks/contracts-notify': typeof ApiPublicHooksContractsNotifyRoute
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
@@ -823,6 +833,7 @@ export interface FileRouteTypes {
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
     | '/app/reorders/$id'
+    | '/app/super-admin/plans'
     | '/app/tickets/$id'
     | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
@@ -900,6 +911,7 @@ export interface FileRouteTypes {
     | '/app/assets/$id'
     | '/app/delivery-queue/$id'
     | '/app/reorders/$id'
+    | '/app/super-admin/plans'
     | '/app/tickets/$id'
     | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
@@ -978,6 +990,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/assets/$id'
     | '/_authenticated/app/delivery-queue/$id'
     | '/_authenticated/app/reorders/$id'
+    | '/_authenticated/app/super-admin/plans'
     | '/_authenticated/app/tickets/$id'
     | '/api/public/hooks/contracts-notify'
     | '/api/public/hooks/report-scheduler'
@@ -1512,6 +1525,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppTicketsIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/super-admin/plans': {
+      id: '/_authenticated/app/super-admin/plans'
+      path: '/app/super-admin/plans'
+      fullPath: '/app/super-admin/plans'
+      preLoaderRoute: typeof AuthenticatedAppSuperAdminPlansRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/reorders/$id': {
       id: '/_authenticated/app/reorders/$id'
       path: '/app/reorders/$id'
@@ -1601,6 +1621,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAssetsIdRoute: typeof AuthenticatedAppAssetsIdRoute
   AuthenticatedAppDeliveryQueueIdRoute: typeof AuthenticatedAppDeliveryQueueIdRoute
   AuthenticatedAppReordersIdRoute: typeof AuthenticatedAppReordersIdRoute
+  AuthenticatedAppSuperAdminPlansRoute: typeof AuthenticatedAppSuperAdminPlansRoute
   AuthenticatedAppTicketsIdRoute: typeof AuthenticatedAppTicketsIdRoute
   AuthenticatedAppAssetsIndexRoute: typeof AuthenticatedAppAssetsIndexRoute
   AuthenticatedAppDeliveryQueueIndexRoute: typeof AuthenticatedAppDeliveryQueueIndexRoute
@@ -1671,6 +1692,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAssetsIdRoute: AuthenticatedAppAssetsIdRoute,
   AuthenticatedAppDeliveryQueueIdRoute: AuthenticatedAppDeliveryQueueIdRoute,
   AuthenticatedAppReordersIdRoute: AuthenticatedAppReordersIdRoute,
+  AuthenticatedAppSuperAdminPlansRoute: AuthenticatedAppSuperAdminPlansRoute,
   AuthenticatedAppTicketsIdRoute: AuthenticatedAppTicketsIdRoute,
   AuthenticatedAppAssetsIndexRoute: AuthenticatedAppAssetsIndexRoute,
   AuthenticatedAppDeliveryQueueIndexRoute:
