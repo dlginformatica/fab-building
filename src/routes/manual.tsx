@@ -67,7 +67,7 @@ function ManualPage() {
     <div className="min-h-screen bg-background">
       <PublicHeader />
       <main className="container mx-auto px-6 py-10">
-        <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="no-print flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground">
               <BookOpen className="h-3 w-3" /> Documento vivo · aggiornato ad ogni iterazione
@@ -90,7 +90,7 @@ function ManualPage() {
           </div>
         </div>
 
-        <div className="mt-6 inline-flex rounded-lg border border-border bg-card p-1 text-sm">
+        <div className="no-print mt-6 inline-flex rounded-lg border border-border bg-card p-1 text-sm">
           <button
             onClick={() => setTab("utente")}
             className={`rounded-md px-3 py-1.5 ${tab === "utente" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
@@ -107,7 +107,7 @@ function ManualPage() {
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[260px_1fr]">
           {tab === "utente" ? (
-            <aside className="lg:sticky lg:top-6 lg:self-start rounded-xl border border-border bg-card p-4 text-sm">
+            <aside className="no-print lg:sticky lg:top-6 lg:self-start rounded-xl border border-border bg-card p-4 text-sm">
               <p className="mb-3 flex items-center gap-2 font-medium">
                 <List className="h-4 w-4" /> Capitoli
               </p>
