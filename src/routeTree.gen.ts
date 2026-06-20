@@ -21,6 +21,7 @@ import { Route as AuthenticatedAppWorkOrdersRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppUtilitiesRouteImport } from './routes/_authenticated/app.utilities'
 import { Route as AuthenticatedAppUsersRouteImport } from './routes/_authenticated/app.users'
 import { Route as AuthenticatedAppTicketsRouteImport } from './routes/_authenticated/app.tickets'
+import { Route as AuthenticatedAppSustainabilityRouteImport } from './routes/_authenticated/app.sustainability'
 import { Route as AuthenticatedAppSuppliersComplianceRouteImport } from './routes/_authenticated/app.suppliers-compliance'
 import { Route as AuthenticatedAppSuppliersRouteImport } from './routes/_authenticated/app.suppliers'
 import { Route as AuthenticatedAppStructuresRouteImport } from './routes/_authenticated/app.structures'
@@ -129,6 +130,12 @@ const AuthenticatedAppTicketsRoute = AuthenticatedAppTicketsRouteImport.update({
   path: '/app/tickets',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppSustainabilityRoute =
+  AuthenticatedAppSustainabilityRouteImport.update({
+    id: '/app/sustainability',
+    path: '/app/sustainability',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppSuppliersComplianceRoute =
   AuthenticatedAppSuppliersComplianceRouteImport.update({
     id: '/app/suppliers-compliance',
@@ -436,6 +443,7 @@ export interface FileRoutesByFullPath {
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
+  '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
@@ -494,6 +502,7 @@ export interface FileRoutesByTo {
   '/app/structures': typeof AuthenticatedAppStructuresRoute
   '/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
+  '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
@@ -554,6 +563,7 @@ export interface FileRoutesById {
   '/_authenticated/app/structures': typeof AuthenticatedAppStructuresRoute
   '/_authenticated/app/suppliers': typeof AuthenticatedAppSuppliersRoute
   '/_authenticated/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
+  '/_authenticated/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/_authenticated/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
   '/_authenticated/app/users': typeof AuthenticatedAppUsersRoute
   '/_authenticated/app/utilities': typeof AuthenticatedAppUtilitiesRoute
@@ -614,6 +624,7 @@ export interface FileRouteTypes {
     | '/app/structures'
     | '/app/suppliers'
     | '/app/suppliers-compliance'
+    | '/app/sustainability'
     | '/app/tickets'
     | '/app/users'
     | '/app/utilities'
@@ -672,6 +683,7 @@ export interface FileRouteTypes {
     | '/app/structures'
     | '/app/suppliers'
     | '/app/suppliers-compliance'
+    | '/app/sustainability'
     | '/app/tickets'
     | '/app/users'
     | '/app/utilities'
@@ -731,6 +743,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/structures'
     | '/_authenticated/app/suppliers'
     | '/_authenticated/app/suppliers-compliance'
+    | '/_authenticated/app/sustainability'
     | '/_authenticated/app/tickets'
     | '/_authenticated/app/users'
     | '/_authenticated/app/utilities'
@@ -843,6 +856,13 @@ declare module '@tanstack/react-router' {
       path: '/app/tickets'
       fullPath: '/app/tickets'
       preLoaderRoute: typeof AuthenticatedAppTicketsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/sustainability': {
+      id: '/_authenticated/app/sustainability'
+      path: '/app/sustainability'
+      fullPath: '/app/sustainability'
+      preLoaderRoute: typeof AuthenticatedAppSustainabilityRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/suppliers-compliance': {
@@ -1258,6 +1278,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppStructuresRoute: typeof AuthenticatedAppStructuresRoute
   AuthenticatedAppSuppliersRoute: typeof AuthenticatedAppSuppliersRoute
   AuthenticatedAppSuppliersComplianceRoute: typeof AuthenticatedAppSuppliersComplianceRoute
+  AuthenticatedAppSustainabilityRoute: typeof AuthenticatedAppSustainabilityRoute
   AuthenticatedAppTicketsRoute: typeof AuthenticatedAppTicketsRouteWithChildren
   AuthenticatedAppUsersRoute: typeof AuthenticatedAppUsersRoute
   AuthenticatedAppUtilitiesRoute: typeof AuthenticatedAppUtilitiesRoute
@@ -1309,6 +1330,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppSuppliersRoute: AuthenticatedAppSuppliersRoute,
   AuthenticatedAppSuppliersComplianceRoute:
     AuthenticatedAppSuppliersComplianceRoute,
+  AuthenticatedAppSustainabilityRoute: AuthenticatedAppSustainabilityRoute,
   AuthenticatedAppTicketsRoute: AuthenticatedAppTicketsRouteWithChildren,
   AuthenticatedAppUsersRoute: AuthenticatedAppUsersRoute,
   AuthenticatedAppUtilitiesRoute: AuthenticatedAppUtilitiesRoute,
