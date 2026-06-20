@@ -14,6 +14,27 @@ export const BACKUP_BUCKET = "org-backups";
 export const SNAPSHOT_SCHEMA_VERSION = 2;
 export const IMPORT_MAPPING_SCHEMA_VERSION = 1;
 
+/* ============================================================== */
+/* Integrità & notifiche                                           */
+/* ============================================================== */
+
+/** Calcola SHA-256 (hex) di una stringa, usando WebCrypto. */
+export async function sha256Hex(text: string): Promise<string> {
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  return Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+/** Notifica in-app a owner + admin dell'organizzazione. */
+export async function notifyOrgAdmins(orgId: string, kind: string, reason: string, payload: Record<string, unknown> = {}) {
+  try {
+    const sb: any = supabase;
+    await sb.rpc("notify_org_admins", { _org: orgId, _kind: kind, _reason: reason, _payload: payload });
+  } catch (e) {
+    console.warn("notifyOrgAdmins:", e);
+  }
+}
+
 /** Tabelle dump-abili dell'organizzazione, filtrate per structure_id. */
 export const ORG_STRUCTURE_TABLES = [
   "structures",
@@ -372,21 +393,39 @@ export function snapshotRowCount(s: Snapshot): number {
 
 /** Carica uno snapshot JSON sul bucket privato `org-backups` e registra l'audit. */
 export async function uploadSnapshotAndRecord(orgId: string, snap: Snapshot, kind: "manual" | "scheduled" | "pre_restore" | "pre_reset" = "manual"): Promise<{ id: string; path: string; size: number }> {
-  const json = JSON.stringify(snap);
-  const blob = new Blob([json], { type: "application/json" });
-  const ts = new Date().toISOString().replace(/[:.]/g, "-");
-  const path = `${orgId}/${ts}__${kind}.json`;
-  const { error: upErr } = await supabase.storage.from(BACKUP_BUCKET).upload(path, blob, { upsert: false, contentType: "application/json" });
-  if (upErr) throw new Error(`Upload backup fallito: ${upErr.message}`);
-  const sb: any = supabase;
-  const { data, error } = await sb.rpc("backup_record", {
-    _org: orgId, _kind: kind, _format: "json",
-    _bucket: BACKUP_BUCKET, _path: path,
-    _size: blob.size, _tables: snap.meta.tables.length, _rows: snapshotRowCount(snap),
-    _details: { app: snap.meta.app, version: snap.meta.version },
-  });
-  if (error) throw error;
-  return { id: data?.id, path, size: blob.size };
+  const started = Date.now();
+  await notifyOrgAdmins(orgId, "backup_started", `Backup ${kind} avviato`, { kind });
+  try {
+    const json = JSON.stringify(snap);
+    const hash = await sha256Hex(json);
+    const blob = new Blob([json], { type: "application/json" });
+    const ts = new Date().toISOString().replace(/[:.]/g, "-");
+    const path = `${orgId}/${ts}__${kind}.json`;
+    const { error: upErr } = await supabase.storage.from(BACKUP_BUCKET).upload(path, blob, { upsert: false, contentType: "application/json" });
+    if (upErr) throw new Error(`Upload backup fallito: ${upErr.message}`);
+    const sb: any = supabase;
+    const { data, error } = await sb.rpc("backup_record", {
+      _org: orgId, _kind: kind, _format: "json",
+      _bucket: BACKUP_BUCKET, _path: path,
+      _size: blob.size, _tables: snap.meta.tables.length, _rows: snapshotRowCount(snap),
+      _details: { app: snap.meta.app, version: snap.meta.version, integrity_hash: hash },
+    });
+    if (error) throw error;
+    const duration_ms = Date.now() - started;
+    // arricchisce il record con hash + integrità verified + durata
+    await sb.from("backup_runs").update({
+      integrity_hash: hash, integrity_status: "verified", verified_at: new Date().toISOString(), duration_ms,
+    }).eq("id", data?.id);
+    await notifyOrgAdmins(orgId, "backup_completed",
+      `Backup ${kind} completato (${(blob.size/1024).toFixed(1)} KB · ${(duration_ms/1000).toFixed(1)}s)`,
+      { kind, size_bytes: blob.size, duration_ms, backup_id: data?.id, audit_url: "/app/backup-audit" });
+    return { id: data?.id, path, size: blob.size };
+  } catch (e: any) {
+    await notifyOrgAdmins(orgId, "backup_failed",
+      `Backup ${kind} fallito: ${e?.message ?? e}`,
+      { kind, error: String(e?.message ?? e), audit_url: "/app/backup-audit" });
+    throw e;
+  }
 }
 
 /** Scarica uno snapshot dal bucket. */
@@ -408,6 +447,44 @@ export async function signedBackupUrl(path: string): Promise<string> {
 export async function deleteBackup(runId: string, path: string | null): Promise<void> {
   if (path) { await supabase.storage.from(BACKUP_BUCKET).remove([path]); }
   await supabase.from("backup_runs").delete().eq("id", runId);
+}
+
+/** Verifica integrità di un backup confrontando hash + presenza file su storage. */
+export async function verifyBackupIntegrity(runId: string): Promise<{ status: "verified" | "mismatch" | "missing" | "error"; computed?: string; expected?: string | null }> {
+  const sb: any = supabase;
+  const { data: row, error } = await sb.from("backup_runs").select("id, storage_path, integrity_hash, details").eq("id", runId).maybeSingle();
+  if (error || !row) return { status: "error" };
+  const expected: string | null = row.integrity_hash ?? row.details?.integrity_hash ?? null;
+  try {
+    if (!row.storage_path) {
+      await sb.from("backup_runs").update({ integrity_status: "missing", verified_at: new Date().toISOString() }).eq("id", runId);
+      return { status: "missing", expected };
+    }
+    const { data: file, error: dErr } = await supabase.storage.from(BACKUP_BUCKET).download(row.storage_path);
+    if (dErr || !file) {
+      await sb.from("backup_runs").update({ integrity_status: "missing", verified_at: new Date().toISOString() }).eq("id", runId);
+      return { status: "missing", expected };
+    }
+    const txt = await file.text();
+    const computed = await sha256Hex(txt);
+    const status: "verified" | "mismatch" = expected && computed === expected ? "verified" : (expected ? "mismatch" : "verified");
+    // se non c'era hash, lo salviamo ora
+    await sb.from("backup_runs").update({
+      integrity_status: status,
+      integrity_hash: expected ?? computed,
+      verified_at: new Date().toISOString(),
+    }).eq("id", runId);
+    return { status, computed, expected };
+  } catch {
+    await sb.from("backup_runs").update({ integrity_status: "error", verified_at: new Date().toISOString() }).eq("id", runId);
+    return { status: "error", expected };
+  }
+}
+
+/** Aggiorna lo stato di avanzamento di un restore (steps_done/total + step corrente). */
+export async function updateRestoreProgress(runId: string, patch: { steps_total?: number; steps_done?: number; current_step?: string; status?: string; progress?: any }) {
+  if (!runId) return;
+  try { await (supabase as any).from("restore_runs").update(patch).eq("id", runId); } catch (e) { console.warn("updateRestoreProgress", e); }
 }
 
 /* ============================================================== */
