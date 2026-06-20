@@ -13,7 +13,6 @@ import { Route as ManualRouteImport } from './routes/manual'
 import { Route as BrochureRouteImport } from './routes/brochure'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
-import { Route as IndexRouteImport } from './routes/index'
 import { Route as FeaturesIndexRouteImport } from './routes/features.index'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as GQrRouteImport } from './routes/g.$qr'
@@ -103,11 +102,6 @@ const AuthRoute = AuthRouteImport.update({
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FeaturesIndexRoute = FeaturesIndexRouteImport.update({
@@ -520,7 +514,7 @@ const AuthenticatedAppAQrRoute = AuthenticatedAppAQrRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/brochure': typeof BrochureRoute
   '/manual': typeof ManualRoute
@@ -597,7 +591,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/sla-notify': typeof ApiPublicHooksSlaNotifyRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/brochure': typeof BrochureRoute
   '/manual': typeof ManualRoute
@@ -675,7 +669,6 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/brochure': typeof BrochureRoute
@@ -909,7 +902,6 @@ export interface FileRouteTypes {
     | '/api/public/hooks/sla-notify'
   id:
     | '__root__'
-    | '/'
     | '/_authenticated'
     | '/auth'
     | '/brochure'
@@ -988,7 +980,6 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   BrochureRoute: typeof BrochureRoute
@@ -1032,13 +1023,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/features/': {
@@ -1729,7 +1713,6 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   BrochureRoute: BrochureRoute,
