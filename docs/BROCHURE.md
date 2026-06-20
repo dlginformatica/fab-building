@@ -4,6 +4,7 @@
 > Aggiornato ad ogni iterazione (regola permanente).
 
 ## Changelog
+- **2026-06-20** — Introdotto **Manuale Utente** completo (10 capitoli, FAQ, glossario, screenshot reali) accessibile da `/manual` con toggle Utente/Tecnico.
 - **2026-06-20** — Screenshot reali completi per tutti i 13 moduli (compresi asset detail, ticket detail, TTS speaker panel, documenti, trend YoY, report builder). Routing detail pages risolto.
 - **2026-06-20** — Prima edizione completa, 13 moduli documentati, pagine pubbliche `/features`, `/features/:slug`, `/manual`, `/brochure`.
 
