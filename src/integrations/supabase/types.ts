@@ -2160,6 +2160,65 @@ export type Database = {
           },
         ]
       }
+      org_subscriptions: {
+        Row: {
+          activated_at: string | null
+          activated_by: string | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          manual_payment_notes: string | null
+          manual_payment_ref: string | null
+          org_id: string
+          status: Database["public"]["Enums"]["subscription_status"]
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          trial_ends_at: string
+          trial_started_at: string
+          updated_at: string
+        }
+        Insert: {
+          activated_at?: string | null
+          activated_by?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          manual_payment_notes?: string | null
+          manual_payment_ref?: string | null
+          org_id: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          trial_ends_at?: string
+          trial_started_at?: string
+          updated_at?: string
+        }
+        Update: {
+          activated_at?: string | null
+          activated_by?: string | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          manual_payment_notes?: string | null
+          manual_payment_ref?: string | null
+          org_id?: string
+          status?: Database["public"]["Enums"]["subscription_status"]
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          trial_ends_at?: string
+          trial_started_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_subscriptions_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           created_at: string
@@ -3438,6 +3497,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subscription_plans: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          features_highlight: string[]
+          id: string
+          max_structures: number
+          max_users: number
+          modules: string[]
+          name: string
+          price_monthly_eur: number
+          price_yearly_eur: number | null
+          sort_order: number
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          trial_days: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          features_highlight?: string[]
+          id?: string
+          max_structures?: number
+          max_users?: number
+          modules?: string[]
+          name: string
+          price_monthly_eur?: number
+          price_yearly_eur?: number | null
+          sort_order?: number
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          trial_days?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          features_highlight?: string[]
+          id?: string
+          max_structures?: number
+          max_users?: number
+          modules?: string[]
+          name?: string
+          price_monthly_eur?: number
+          price_yearly_eur?: number | null
+          sort_order?: number
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          trial_days?: number
+          updated_at?: string
+        }
+        Relationships: []
       }
       supplier_documents: {
         Row: {
@@ -4792,6 +4905,15 @@ export type Database = {
       is_org_member: { Args: { _org: string; _user: string }; Returns: boolean }
       is_org_owner: { Args: { _org: string; _user: string }; Returns: boolean }
       missing_module_deps: { Args: { _modules: string[] }; Returns: string[] }
+      org_can_write: { Args: { _org: string }; Returns: boolean }
+      org_effective_status: {
+        Args: { _org: string }
+        Returns: Database["public"]["Enums"]["subscription_status"]
+      }
+      org_effective_tier: {
+        Args: { _org: string }
+        Returns: Database["public"]["Enums"]["subscription_tier"]
+      }
       org_user_count: { Args: { _org: string }; Returns: number }
       permission_matrix: {
         Args: { _org?: string }
@@ -4802,6 +4924,13 @@ export type Database = {
           module: string
           source: string
           user_id: string
+        }[]
+      }
+      plan_validate_modules: {
+        Args: { _modules: string[] }
+        Returns: {
+          missing_dependency: string
+          module: string
         }[]
       }
       rollback_dependency_version: {
@@ -4936,6 +5065,13 @@ export type Database = {
         | "ordinato"
         | "ricevuto"
         | "annullato"
+      subscription_status:
+        | "trial"
+        | "active"
+        | "expired"
+        | "readonly"
+        | "cancelled"
+      subscription_tier: "small" | "medium" | "large"
       supplier_doc_status: "pending" | "confirmed" | "rejected" | "expired"
       supplier_doc_type:
         | "visura"
@@ -5192,6 +5328,14 @@ export const Constants = {
         "ricevuto",
         "annullato",
       ],
+      subscription_status: [
+        "trial",
+        "active",
+        "expired",
+        "readonly",
+        "cancelled",
+      ],
+      subscription_tier: ["small", "medium", "large"],
       supplier_doc_status: ["pending", "confirmed", "rejected", "expired"],
       supplier_doc_type: [
         "visura",
