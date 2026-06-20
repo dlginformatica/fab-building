@@ -28,7 +28,7 @@ function Page() {
     queryKey: ["ticket", id],
     queryFn: async () => {
       const { data, error } = await supabase.from("tickets")
-        .select("*, assets(name,code), asset_categories(name), rooms(name), reporter:reported_by(full_name,email), assignee:assigned_to(full_name,email)")
+        .select("*, assets(name,code), asset_categories(name), rooms(name)")
         .eq("id", id).single();
       if (error) throw error;
       return data;
@@ -36,7 +36,7 @@ function Page() {
   });
   const { data: comments } = useQuery({
     queryKey: ["ticket-comments", id],
-    queryFn: async () => (await supabase.from("ticket_comments").select("*, profiles:author_id(full_name,email)").eq("ticket_id", id).order("created_at")).data ?? [],
+    queryFn: async () => (await supabase.from("ticket_comments").select("*").eq("ticket_id", id).order("created_at")).data ?? [],
   });
 
   const updateStatus = useMutation({
