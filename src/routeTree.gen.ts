@@ -43,7 +43,6 @@ import { Route as AuthenticatedAppReordersRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppPurchaseOrdersRouteImport } from './routes/_authenticated/app.purchase-orders'
 import { Route as AuthenticatedAppPermissionsMatrixRouteImport } from './routes/_authenticated/app.permissions-matrix'
 import { Route as AuthenticatedAppPermissionsRouteImport } from './routes/_authenticated/app.permissions'
-import { Route as AuthenticatedAppPermissionAuditRouteImport } from './routes/_authenticated/app.permission-audit'
 import { Route as AuthenticatedAppPenaltiesRouteImport } from './routes/_authenticated/app.penalties'
 import { Route as AuthenticatedAppOverviewRouteImport } from './routes/_authenticated/app.overview'
 import { Route as AuthenticatedAppOrganizationRouteImport } from './routes/_authenticated/app.organization'
@@ -270,12 +269,6 @@ const AuthenticatedAppPermissionsRoute =
   AuthenticatedAppPermissionsRouteImport.update({
     id: '/app/permissions',
     path: '/app/permissions',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedAppPermissionAuditRoute =
-  AuthenticatedAppPermissionAuditRouteImport.update({
-    id: '/app/permission-audit',
-    path: '/app/permission-audit',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppPenaltiesRoute =
@@ -529,7 +522,6 @@ export interface FileRoutesByFullPath {
   '/app/organization': typeof AuthenticatedAppOrganizationRoute
   '/app/overview': typeof AuthenticatedAppOverviewRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
-  '/app/permission-audit': typeof AuthenticatedAppPermissionAuditRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/permissions-matrix': typeof AuthenticatedAppPermissionsMatrixRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -602,7 +594,6 @@ export interface FileRoutesByTo {
   '/app/organization': typeof AuthenticatedAppOrganizationRoute
   '/app/overview': typeof AuthenticatedAppOverviewRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
-  '/app/permission-audit': typeof AuthenticatedAppPermissionAuditRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/permissions-matrix': typeof AuthenticatedAppPermissionsMatrixRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -677,7 +668,6 @@ export interface FileRoutesById {
   '/_authenticated/app/organization': typeof AuthenticatedAppOrganizationRoute
   '/_authenticated/app/overview': typeof AuthenticatedAppOverviewRoute
   '/_authenticated/app/penalties': typeof AuthenticatedAppPenaltiesRoute
-  '/_authenticated/app/permission-audit': typeof AuthenticatedAppPermissionAuditRoute
   '/_authenticated/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/_authenticated/app/permissions-matrix': typeof AuthenticatedAppPermissionsMatrixRoute
   '/_authenticated/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -752,7 +742,6 @@ export interface FileRouteTypes {
     | '/app/organization'
     | '/app/overview'
     | '/app/penalties'
-    | '/app/permission-audit'
     | '/app/permissions'
     | '/app/permissions-matrix'
     | '/app/purchase-orders'
@@ -825,7 +814,6 @@ export interface FileRouteTypes {
     | '/app/organization'
     | '/app/overview'
     | '/app/penalties'
-    | '/app/permission-audit'
     | '/app/permissions'
     | '/app/permissions-matrix'
     | '/app/purchase-orders'
@@ -899,7 +887,6 @@ export interface FileRouteTypes {
     | '/_authenticated/app/organization'
     | '/_authenticated/app/overview'
     | '/_authenticated/app/penalties'
-    | '/_authenticated/app/permission-audit'
     | '/_authenticated/app/permissions'
     | '/_authenticated/app/permissions-matrix'
     | '/_authenticated/app/purchase-orders'
@@ -1190,13 +1177,6 @@ declare module '@tanstack/react-router' {
       path: '/app/permissions'
       fullPath: '/app/permissions'
       preLoaderRoute: typeof AuthenticatedAppPermissionsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/app/permission-audit': {
-      id: '/_authenticated/app/permission-audit'
-      path: '/app/permission-audit'
-      fullPath: '/app/permission-audit'
-      preLoaderRoute: typeof AuthenticatedAppPermissionAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/penalties': {
@@ -1547,7 +1527,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppOrganizationRoute: typeof AuthenticatedAppOrganizationRoute
   AuthenticatedAppOverviewRoute: typeof AuthenticatedAppOverviewRoute
   AuthenticatedAppPenaltiesRoute: typeof AuthenticatedAppPenaltiesRoute
-  AuthenticatedAppPermissionAuditRoute: typeof AuthenticatedAppPermissionAuditRoute
   AuthenticatedAppPermissionsRoute: typeof AuthenticatedAppPermissionsRoute
   AuthenticatedAppPermissionsMatrixRoute: typeof AuthenticatedAppPermissionsMatrixRoute
   AuthenticatedAppPurchaseOrdersRoute: typeof AuthenticatedAppPurchaseOrdersRoute
@@ -1612,7 +1591,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppOrganizationRoute: AuthenticatedAppOrganizationRoute,
   AuthenticatedAppOverviewRoute: AuthenticatedAppOverviewRoute,
   AuthenticatedAppPenaltiesRoute: AuthenticatedAppPenaltiesRoute,
-  AuthenticatedAppPermissionAuditRoute: AuthenticatedAppPermissionAuditRoute,
   AuthenticatedAppPermissionsRoute: AuthenticatedAppPermissionsRoute,
   AuthenticatedAppPermissionsMatrixRoute:
     AuthenticatedAppPermissionsMatrixRoute,
