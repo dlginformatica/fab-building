@@ -2497,6 +2497,71 @@ export type Database = {
           },
         ]
       }
+      scheduled_exports: {
+        Row: {
+          created_at: string
+          created_by: string
+          enabled: boolean
+          filters: Json
+          format: string
+          frequency: string
+          id: string
+          last_artifact_url: string | null
+          last_run_at: string | null
+          module: string
+          name: string
+          next_run_at: string | null
+          recipients: Json
+          share_token: string | null
+          structure_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          enabled?: boolean
+          filters?: Json
+          format?: string
+          frequency?: string
+          id?: string
+          last_artifact_url?: string | null
+          last_run_at?: string | null
+          module: string
+          name: string
+          next_run_at?: string | null
+          recipients?: Json
+          share_token?: string | null
+          structure_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          enabled?: boolean
+          filters?: Json
+          format?: string
+          frequency?: string
+          id?: string
+          last_artifact_url?: string | null
+          last_run_at?: string | null
+          module?: string
+          name?: string
+          next_run_at?: string | null
+          recipients?: Json
+          share_token?: string | null
+          structure_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_exports_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scheduled_report_runs: {
         Row: {
           attempts: number
@@ -2637,6 +2702,10 @@ export type Database = {
           id: string
           kind: string
           payload: Json
+          read_at: string | null
+          read_by: string | null
+          resolved_at: string | null
+          resolved_by: string | null
           structure_id: string | null
           ticket_id: string
         }
@@ -2650,6 +2719,10 @@ export type Database = {
           id?: string
           kind: string
           payload?: Json
+          read_at?: string | null
+          read_by?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
           structure_id?: string | null
           ticket_id: string
         }
@@ -2663,6 +2736,10 @@ export type Database = {
           id?: string
           kind?: string
           payload?: Json
+          read_at?: string | null
+          read_by?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
           structure_id?: string | null
           ticket_id?: string
         }
@@ -2733,6 +2810,59 @@ export type Database = {
           },
           {
             foreignKeyName: "sla_rules_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sla_user_settings: {
+        Row: {
+          channel_email: boolean
+          channel_in_app: boolean
+          channel_push: boolean
+          created_at: string
+          id: string
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          reminder_interval_minutes: number
+          structure_id: string | null
+          updated_at: string
+          user_id: string
+          warning_threshold_minutes: number
+        }
+        Insert: {
+          channel_email?: boolean
+          channel_in_app?: boolean
+          channel_push?: boolean
+          created_at?: string
+          id?: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          reminder_interval_minutes?: number
+          structure_id?: string | null
+          updated_at?: string
+          user_id: string
+          warning_threshold_minutes?: number
+        }
+        Update: {
+          channel_email?: boolean
+          channel_in_app?: boolean
+          channel_push?: boolean
+          created_at?: string
+          id?: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          reminder_interval_minutes?: number
+          structure_id?: string | null
+          updated_at?: string
+          user_id?: string
+          warning_threshold_minutes?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sla_user_settings_structure_id_fkey"
             columns: ["structure_id"]
             isOneToOne: false
             referencedRelation: "structures"
@@ -4245,6 +4375,21 @@ export type Database = {
           structure_id: string
           ticket_id: string
           violation_id: string
+        }[]
+      }
+      trends_monthly: {
+        Args: { _from: string; _structure: string; _to: string }
+        Returns: {
+          energy_kwh: number
+          gas_smc: number
+          guest_issues: number
+          housekeeping_done: number
+          invoices_total: number
+          month: string
+          sla_compliance_pct: number
+          tickets_opened: number
+          tickets_resolved: number
+          water_mc: number
         }[]
       }
       user_has_ticket_access: {

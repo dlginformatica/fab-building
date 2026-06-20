@@ -20,6 +20,7 @@ import { Route as AuthenticatedAppWorkflowsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppWorkOrdersRouteImport } from './routes/_authenticated/app.work-orders'
 import { Route as AuthenticatedAppUtilitiesRouteImport } from './routes/_authenticated/app.utilities'
 import { Route as AuthenticatedAppUsersRouteImport } from './routes/_authenticated/app.users'
+import { Route as AuthenticatedAppTrendsRouteImport } from './routes/_authenticated/app.trends'
 import { Route as AuthenticatedAppTicketsRouteImport } from './routes/_authenticated/app.tickets'
 import { Route as AuthenticatedAppSustainabilityRouteImport } from './routes/_authenticated/app.sustainability'
 import { Route as AuthenticatedAppSuppliersComplianceRouteImport } from './routes/_authenticated/app.suppliers-compliance'
@@ -28,11 +29,13 @@ import { Route as AuthenticatedAppStructuresRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppStructureKpiRouteImport } from './routes/_authenticated/app.structure-kpi'
 import { Route as AuthenticatedAppStatisticsRouteImport } from './routes/_authenticated/app.statistics'
 import { Route as AuthenticatedAppSmartInboxRouteImport } from './routes/_authenticated/app.smart-inbox'
+import { Route as AuthenticatedAppSlaSettingsRouteImport } from './routes/_authenticated/app.sla-settings'
 import { Route as AuthenticatedAppSlaNotificationsRouteImport } from './routes/_authenticated/app.sla-notifications'
 import { Route as AuthenticatedAppSlaEscalationsRouteImport } from './routes/_authenticated/app.sla-escalations'
 import { Route as AuthenticatedAppSlaComplianceRouteImport } from './routes/_authenticated/app.sla-compliance'
 import { Route as AuthenticatedAppSlaRouteImport } from './routes/_authenticated/app.sla'
 import { Route as AuthenticatedAppSettingsRouteImport } from './routes/_authenticated/app.settings'
+import { Route as AuthenticatedAppScheduledExportsRouteImport } from './routes/_authenticated/app.scheduled-exports'
 import { Route as AuthenticatedAppReportsRouteImport } from './routes/_authenticated/app.reports'
 import { Route as AuthenticatedAppReportBuilderRouteImport } from './routes/_authenticated/app.report-builder'
 import { Route as AuthenticatedAppReordersRouteImport } from './routes/_authenticated/app.reorders'
@@ -127,6 +130,11 @@ const AuthenticatedAppUsersRoute = AuthenticatedAppUsersRouteImport.update({
   path: '/app/users',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppTrendsRoute = AuthenticatedAppTrendsRouteImport.update({
+  id: '/app/trends',
+  path: '/app/trends',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAppTicketsRoute = AuthenticatedAppTicketsRouteImport.update({
   id: '/app/tickets',
   path: '/app/tickets',
@@ -174,6 +182,12 @@ const AuthenticatedAppSmartInboxRoute =
     path: '/app/smart-inbox',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppSlaSettingsRoute =
+  AuthenticatedAppSlaSettingsRouteImport.update({
+    id: '/app/sla-settings',
+    path: '/app/sla-settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppSlaNotificationsRoute =
   AuthenticatedAppSlaNotificationsRouteImport.update({
     id: '/app/sla-notifications',
@@ -201,6 +215,12 @@ const AuthenticatedAppSettingsRoute =
   AuthenticatedAppSettingsRouteImport.update({
     id: '/app/settings',
     path: '/app/settings',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppScheduledExportsRoute =
+  AuthenticatedAppScheduledExportsRouteImport.update({
+    id: '/app/scheduled-exports',
+    path: '/app/scheduled-exports',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppReportsRoute = AuthenticatedAppReportsRouteImport.update({
@@ -447,11 +467,13 @@ export interface FileRoutesByFullPath {
   '/app/reorders': typeof AuthenticatedAppReordersRouteWithChildren
   '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
+  '/app/scheduled-exports': typeof AuthenticatedAppScheduledExportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
   '/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
   '/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
+  '/app/sla-settings': typeof AuthenticatedAppSlaSettingsRoute
   '/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
@@ -460,6 +482,7 @@ export interface FileRoutesByFullPath {
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
+  '/app/trends': typeof AuthenticatedAppTrendsRoute
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
@@ -508,11 +531,13 @@ export interface FileRoutesByTo {
   '/app/reorders': typeof AuthenticatedAppReordersRouteWithChildren
   '/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/app/reports': typeof AuthenticatedAppReportsRoute
+  '/app/scheduled-exports': typeof AuthenticatedAppScheduledExportsRoute
   '/app/settings': typeof AuthenticatedAppSettingsRoute
   '/app/sla': typeof AuthenticatedAppSlaRoute
   '/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
   '/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
+  '/app/sla-settings': typeof AuthenticatedAppSlaSettingsRoute
   '/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
@@ -521,6 +546,7 @@ export interface FileRoutesByTo {
   '/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
+  '/app/trends': typeof AuthenticatedAppTrendsRoute
   '/app/users': typeof AuthenticatedAppUsersRoute
   '/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
@@ -571,11 +597,13 @@ export interface FileRoutesById {
   '/_authenticated/app/reorders': typeof AuthenticatedAppReordersRouteWithChildren
   '/_authenticated/app/report-builder': typeof AuthenticatedAppReportBuilderRoute
   '/_authenticated/app/reports': typeof AuthenticatedAppReportsRoute
+  '/_authenticated/app/scheduled-exports': typeof AuthenticatedAppScheduledExportsRoute
   '/_authenticated/app/settings': typeof AuthenticatedAppSettingsRoute
   '/_authenticated/app/sla': typeof AuthenticatedAppSlaRoute
   '/_authenticated/app/sla-compliance': typeof AuthenticatedAppSlaComplianceRoute
   '/_authenticated/app/sla-escalations': typeof AuthenticatedAppSlaEscalationsRoute
   '/_authenticated/app/sla-notifications': typeof AuthenticatedAppSlaNotificationsRoute
+  '/_authenticated/app/sla-settings': typeof AuthenticatedAppSlaSettingsRoute
   '/_authenticated/app/smart-inbox': typeof AuthenticatedAppSmartInboxRoute
   '/_authenticated/app/statistics': typeof AuthenticatedAppStatisticsRoute
   '/_authenticated/app/structure-kpi': typeof AuthenticatedAppStructureKpiRoute
@@ -584,6 +612,7 @@ export interface FileRoutesById {
   '/_authenticated/app/suppliers-compliance': typeof AuthenticatedAppSuppliersComplianceRoute
   '/_authenticated/app/sustainability': typeof AuthenticatedAppSustainabilityRoute
   '/_authenticated/app/tickets': typeof AuthenticatedAppTicketsRouteWithChildren
+  '/_authenticated/app/trends': typeof AuthenticatedAppTrendsRoute
   '/_authenticated/app/users': typeof AuthenticatedAppUsersRoute
   '/_authenticated/app/utilities': typeof AuthenticatedAppUtilitiesRoute
   '/_authenticated/app/work-orders': typeof AuthenticatedAppWorkOrdersRoute
@@ -634,11 +663,13 @@ export interface FileRouteTypes {
     | '/app/reorders'
     | '/app/report-builder'
     | '/app/reports'
+    | '/app/scheduled-exports'
     | '/app/settings'
     | '/app/sla'
     | '/app/sla-compliance'
     | '/app/sla-escalations'
     | '/app/sla-notifications'
+    | '/app/sla-settings'
     | '/app/smart-inbox'
     | '/app/statistics'
     | '/app/structure-kpi'
@@ -647,6 +678,7 @@ export interface FileRouteTypes {
     | '/app/suppliers-compliance'
     | '/app/sustainability'
     | '/app/tickets'
+    | '/app/trends'
     | '/app/users'
     | '/app/utilities'
     | '/app/work-orders'
@@ -695,11 +727,13 @@ export interface FileRouteTypes {
     | '/app/reorders'
     | '/app/report-builder'
     | '/app/reports'
+    | '/app/scheduled-exports'
     | '/app/settings'
     | '/app/sla'
     | '/app/sla-compliance'
     | '/app/sla-escalations'
     | '/app/sla-notifications'
+    | '/app/sla-settings'
     | '/app/smart-inbox'
     | '/app/statistics'
     | '/app/structure-kpi'
@@ -708,6 +742,7 @@ export interface FileRouteTypes {
     | '/app/suppliers-compliance'
     | '/app/sustainability'
     | '/app/tickets'
+    | '/app/trends'
     | '/app/users'
     | '/app/utilities'
     | '/app/work-orders'
@@ -757,11 +792,13 @@ export interface FileRouteTypes {
     | '/_authenticated/app/reorders'
     | '/_authenticated/app/report-builder'
     | '/_authenticated/app/reports'
+    | '/_authenticated/app/scheduled-exports'
     | '/_authenticated/app/settings'
     | '/_authenticated/app/sla'
     | '/_authenticated/app/sla-compliance'
     | '/_authenticated/app/sla-escalations'
     | '/_authenticated/app/sla-notifications'
+    | '/_authenticated/app/sla-settings'
     | '/_authenticated/app/smart-inbox'
     | '/_authenticated/app/statistics'
     | '/_authenticated/app/structure-kpi'
@@ -770,6 +807,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/suppliers-compliance'
     | '/_authenticated/app/sustainability'
     | '/_authenticated/app/tickets'
+    | '/_authenticated/app/trends'
     | '/_authenticated/app/users'
     | '/_authenticated/app/utilities'
     | '/_authenticated/app/work-orders'
@@ -876,6 +914,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppUsersRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/trends': {
+      id: '/_authenticated/app/trends'
+      path: '/app/trends'
+      fullPath: '/app/trends'
+      preLoaderRoute: typeof AuthenticatedAppTrendsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/tickets': {
       id: '/_authenticated/app/tickets'
       path: '/app/tickets'
@@ -932,6 +977,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppSmartInboxRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/sla-settings': {
+      id: '/_authenticated/app/sla-settings'
+      path: '/app/sla-settings'
+      fullPath: '/app/sla-settings'
+      preLoaderRoute: typeof AuthenticatedAppSlaSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/sla-notifications': {
       id: '/_authenticated/app/sla-notifications'
       path: '/app/sla-notifications'
@@ -965,6 +1017,13 @@ declare module '@tanstack/react-router' {
       path: '/app/settings'
       fullPath: '/app/settings'
       preLoaderRoute: typeof AuthenticatedAppSettingsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/scheduled-exports': {
+      id: '/_authenticated/app/scheduled-exports'
+      path: '/app/scheduled-exports'
+      fullPath: '/app/scheduled-exports'
+      preLoaderRoute: typeof AuthenticatedAppScheduledExportsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/reports': {
@@ -1308,11 +1367,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppReordersRoute: typeof AuthenticatedAppReordersRouteWithChildren
   AuthenticatedAppReportBuilderRoute: typeof AuthenticatedAppReportBuilderRoute
   AuthenticatedAppReportsRoute: typeof AuthenticatedAppReportsRoute
+  AuthenticatedAppScheduledExportsRoute: typeof AuthenticatedAppScheduledExportsRoute
   AuthenticatedAppSettingsRoute: typeof AuthenticatedAppSettingsRoute
   AuthenticatedAppSlaRoute: typeof AuthenticatedAppSlaRoute
   AuthenticatedAppSlaComplianceRoute: typeof AuthenticatedAppSlaComplianceRoute
   AuthenticatedAppSlaEscalationsRoute: typeof AuthenticatedAppSlaEscalationsRoute
   AuthenticatedAppSlaNotificationsRoute: typeof AuthenticatedAppSlaNotificationsRoute
+  AuthenticatedAppSlaSettingsRoute: typeof AuthenticatedAppSlaSettingsRoute
   AuthenticatedAppSmartInboxRoute: typeof AuthenticatedAppSmartInboxRoute
   AuthenticatedAppStatisticsRoute: typeof AuthenticatedAppStatisticsRoute
   AuthenticatedAppStructureKpiRoute: typeof AuthenticatedAppStructureKpiRoute
@@ -1321,6 +1382,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppSuppliersComplianceRoute: typeof AuthenticatedAppSuppliersComplianceRoute
   AuthenticatedAppSustainabilityRoute: typeof AuthenticatedAppSustainabilityRoute
   AuthenticatedAppTicketsRoute: typeof AuthenticatedAppTicketsRouteWithChildren
+  AuthenticatedAppTrendsRoute: typeof AuthenticatedAppTrendsRoute
   AuthenticatedAppUsersRoute: typeof AuthenticatedAppUsersRoute
   AuthenticatedAppUtilitiesRoute: typeof AuthenticatedAppUtilitiesRoute
   AuthenticatedAppWorkOrdersRoute: typeof AuthenticatedAppWorkOrdersRoute
@@ -1361,11 +1423,13 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppReordersRoute: AuthenticatedAppReordersRouteWithChildren,
   AuthenticatedAppReportBuilderRoute: AuthenticatedAppReportBuilderRoute,
   AuthenticatedAppReportsRoute: AuthenticatedAppReportsRoute,
+  AuthenticatedAppScheduledExportsRoute: AuthenticatedAppScheduledExportsRoute,
   AuthenticatedAppSettingsRoute: AuthenticatedAppSettingsRoute,
   AuthenticatedAppSlaRoute: AuthenticatedAppSlaRoute,
   AuthenticatedAppSlaComplianceRoute: AuthenticatedAppSlaComplianceRoute,
   AuthenticatedAppSlaEscalationsRoute: AuthenticatedAppSlaEscalationsRoute,
   AuthenticatedAppSlaNotificationsRoute: AuthenticatedAppSlaNotificationsRoute,
+  AuthenticatedAppSlaSettingsRoute: AuthenticatedAppSlaSettingsRoute,
   AuthenticatedAppSmartInboxRoute: AuthenticatedAppSmartInboxRoute,
   AuthenticatedAppStatisticsRoute: AuthenticatedAppStatisticsRoute,
   AuthenticatedAppStructureKpiRoute: AuthenticatedAppStructureKpiRoute,
@@ -1375,6 +1439,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedAppSuppliersComplianceRoute,
   AuthenticatedAppSustainabilityRoute: AuthenticatedAppSustainabilityRoute,
   AuthenticatedAppTicketsRoute: AuthenticatedAppTicketsRouteWithChildren,
+  AuthenticatedAppTrendsRoute: AuthenticatedAppTrendsRoute,
   AuthenticatedAppUsersRoute: AuthenticatedAppUsersRoute,
   AuthenticatedAppUtilitiesRoute: AuthenticatedAppUtilitiesRoute,
   AuthenticatedAppWorkOrdersRoute: AuthenticatedAppWorkOrdersRoute,

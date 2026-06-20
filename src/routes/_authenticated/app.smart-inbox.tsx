@@ -1,15 +1,18 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useActiveStructure } from "@/lib/structure-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Inbox, MessageSquare, Ticket, AlertTriangle, Bell } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Inbox, MessageSquare, Ticket, AlertTriangle, Bell, Eye, CheckCircle2 } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/app/smart-inbox")({ component: Page });
 
 function Page() {
   const { activeStructureId } = useActiveStructure();
+  const qc = useQueryClient();
 
   const { data: guests = [] } = useQuery({
     queryKey: ["si_guests", activeStructureId],
@@ -32,8 +35,35 @@ function Page() {
     queryFn: async () => (await (supabase as any).rpc("alerts_for_structure", { _structure: activeStructureId })).data ?? [],
     refetchInterval: 60_000,
   });
+  const { data: slaNotifs = [] } = useQuery({
+    queryKey: ["si_sla_notifs", activeStructureId],
+    enabled: !!activeStructureId,
+    queryFn: async () => (await (supabase as any).from("sla_notifications")
+      .select("id,kind,due_at,delay_minutes,read_at,resolved_at,acknowledged_at,created_at,tickets(ticket_number,title)")
+      .eq("structure_id", activeStructureId).is("resolved_at", null)
+      .order("created_at", { ascending: false }).limit(30)).data ?? [],
+    refetchInterval: 30_000,
+  });
 
-  const total = guests.length + urgentTickets.length + convs.length + alerts.length;
+  const markRead = useMutation({
+    mutationFn: async (id: string) => {
+      const u = (await supabase.auth.getUser()).data.user;
+      const { error } = await (supabase as any).from("sla_notifications").update({ read_at: new Date().toISOString(), read_by: u?.id }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["si_sla_notifs"] }),
+  });
+  const markResolved = useMutation({
+    mutationFn: async (id: string) => {
+      const u = (await supabase.auth.getUser()).data.user;
+      const { error } = await (supabase as any).from("sla_notifications").update({ resolved_at: new Date().toISOString(), resolved_by: u?.id }).eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Notifica risolta"); qc.invalidateQueries({ queryKey: ["si_sla_notifs"] }); },
+  });
+
+  const newSla = slaNotifs.filter((n: any) => !n.read_at).length;
+  const total = guests.length + urgentTickets.length + convs.length + alerts.length + slaNotifs.length;
 
   return (
     <div className="space-y-6 p-6">
@@ -55,6 +85,28 @@ function Page() {
             </div>
           ))}
           {alerts.length === 0 && <p className="text-xs text-muted-foreground">Nessun alert attivo</p>}
+        </Section>
+
+        <Section icon={<AlertTriangle className="h-4 w-4"/>} title={`Notifiche SLA${newSla ? ` · ${newSla} nuove` : ""}`} tone="amber" count={slaNotifs.length} href="/app/sla-notifications">
+          {slaNotifs.slice(0, 10).map((n: any) => {
+            const isNew = !n.read_at;
+            const violated = n.kind?.startsWith("violated");
+            return (
+              <div key={n.id} className={`rounded-md border p-2 text-sm ${isNew ? "border-amber-500/40 bg-amber-500/5" : "border-border/40"}`}>
+                <div className="flex items-center justify-between">
+                  <Badge variant="outline" className={violated ? "bg-red-500/15 text-red-600" : "bg-amber-500/15 text-amber-600"}>{violated ? "Violazione" : "Pre-allerta"}</Badge>
+                  <Badge variant="outline" className={isNew ? "bg-sky-500/15 text-sky-600" : "bg-slate-500/15"}>{isNew ? "Nuovo" : "Letto"}</Badge>
+                </div>
+                <p className="mt-1 font-medium line-clamp-1">#{n.tickets?.ticket_number} · {n.tickets?.title}</p>
+                <p className="text-xs text-muted-foreground">{n.delay_minutes != null ? `+${n.delay_minutes} min` : ""} {n.due_at ? `· scad. ${new Date(n.due_at).toLocaleString("it-IT")}` : ""}</p>
+                <div className="mt-1 flex gap-1">
+                  {isNew && <Button size="sm" variant="ghost" className="h-6 px-2" onClick={() => markRead.mutate(n.id)}><Eye className="h-3 w-3 mr-1"/>Letto</Button>}
+                  <Button size="sm" variant="ghost" className="h-6 px-2" onClick={() => markResolved.mutate(n.id)}><CheckCircle2 className="h-3 w-3 mr-1"/>Risolto</Button>
+                </div>
+              </div>
+            );
+          })}
+          {slaNotifs.length === 0 && <p className="text-xs text-muted-foreground">Nessuna notifica SLA aperta</p>}
         </Section>
 
         <Section icon={<MessageSquare className="h-4 w-4"/>} title="Segnalazioni ospiti" tone="sky" count={guests.length} href="/app/guest-issues">

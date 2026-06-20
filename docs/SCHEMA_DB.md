@@ -4,6 +4,12 @@
 
 ## Changelog
 
+### 2026-06-20 — Fase 12
+- `sla_notifications` + colonne: `read_at`, `read_by`, `resolved_at`, `resolved_by`.
+- Nuova tabella `sla_user_settings` (per utente+struttura): `warning_threshold_minutes`, `reminder_interval_minutes`, canali in_app/email/push, quiet hours. RLS: ognuno gestisce solo le proprie preferenze.
+- Nuova tabella `scheduled_exports`: `module`, `format`, `frequency`, `next_run_at`, `last_artifact_url`, `share_token` (unique), `recipients`, `filters`, `enabled`. RLS: `has_structure_access`.
+- Nuova funzione `trends_monthly(_structure, _from, _to)` `STABLE SECURITY DEFINER`: aggregato mensile di ticket aperti/risolti, SLA %, fatture, energia/acqua/gas (utility_meters.type), housekeeping done, guest issues.
+
 ### 2026-06-20 — Fase 11: Audit esteso + Alerts unificate
 - **Funzione `public.audit_trigger_fn()`** — trigger AFTER INSERT/UPDATE/DELETE che inserisce in `audit_log` (`user_id = auth.uid()`, `entity_type = TG_TABLE_NAME`, `entity_id`, `action`, `diff` JSONB `{old?, new?}`). Attiva su: `invoices`, `cash_movements`, `integrations`, `supplier_documents`, `suppliers`.
 - **Funzione `public.alerts_for_structure(_structure uuid)`** — restituisce `(kind, severity, title, detail, ref_id, due_at)` unendo SLA aperte, contratti 30g, fatture 7g, documenti fornitori 30g. `SECURITY DEFINER`, eseguibile solo da `authenticated`.
