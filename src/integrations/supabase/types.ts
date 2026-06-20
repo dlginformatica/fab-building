@@ -3242,12 +3242,74 @@ export type Database = {
           },
         ]
       }
+      room_furnishings: {
+        Row: {
+          created_at: string
+          id: string
+          kind: string | null
+          locale: string | null
+          name: string
+          notes: string | null
+          pos_x: number | null
+          pos_y: number | null
+          quantity: number | null
+          room_id: string
+          structure_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind?: string | null
+          locale?: string | null
+          name: string
+          notes?: string | null
+          pos_x?: number | null
+          pos_y?: number | null
+          quantity?: number | null
+          room_id: string
+          structure_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: string | null
+          locale?: string | null
+          name?: string
+          notes?: string | null
+          pos_x?: number | null
+          pos_y?: number | null
+          quantity?: number | null
+          room_id?: string
+          structure_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "room_furnishings_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "room_furnishings_structure_id_fkey"
+            columns: ["structure_id"]
+            isOneToOne: false
+            referencedRelation: "structures"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       room_types: {
         Row: {
           base_price: number | null
           beds: number | null
           capacity: number | null
+          category: string | null
           created_at: string
+          description: string | null
           id: string
           name: string
           structure_id: string
@@ -3256,7 +3318,9 @@ export type Database = {
           base_price?: number | null
           beds?: number | null
           capacity?: number | null
+          category?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           name: string
           structure_id: string
@@ -3265,7 +3329,9 @@ export type Database = {
           base_price?: number | null
           beds?: number | null
           capacity?: number | null
+          category?: string | null
           created_at?: string
+          description?: string | null
           id?: string
           name?: string
           structure_id?: string
@@ -3288,6 +3354,7 @@ export type Database = {
           id: string
           name: string
           occupancy_status: string
+          plan_path: string | null
           qr_token: string | null
           room_type: string | null
           room_type_id: string | null
@@ -3300,6 +3367,7 @@ export type Database = {
           id?: string
           name: string
           occupancy_status?: string
+          plan_path?: string | null
           qr_token?: string | null
           room_type?: string | null
           room_type_id?: string | null
@@ -3312,6 +3380,7 @@ export type Database = {
           id?: string
           name?: string
           occupancy_status?: string
+          plan_path?: string | null
           qr_token?: string | null
           room_type?: string | null
           room_type_id?: string | null
