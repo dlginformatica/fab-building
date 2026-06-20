@@ -1,6 +1,7 @@
 # HotelOps — Requisiti Funzionali
 
 ## Changelog
+- **2026-06-20 — Fix routing & screenshot**: RF-NAV-04 le pagine di dettaglio `/app/assets/$id`, `/app/tickets/$id`, `/app/delivery-queue/$id`, `/app/reorders/$id` devono caricarsi senza schermata vuota (regressione causata da file padre senza `<Outlet />`, risolta convertendo i file padre in `*.index.tsx`). RF-MK-05 ogni pagina `/features/:slug` deve mostrare screenshot reali dell'applicazione; il wireframe è ammesso solo come fallback temporaneo.
 - **2026-06-20 — Fase 19 · Vetrina prodotto**: RF-MK-01 home pubblica deve elencare TUTTI i moduli correnti raggruppati per categoria; RF-MK-02 ogni modulo ha una pagina pubblica dedicata `/features/:slug` con descrizione, benefici, flusso operativo, schermate, requisiti referenziati; RF-MK-03 manuale operativo accessibile pubblicamente da `/manual` con download del sorgente markdown; RF-MK-04 brochure prodotto disponibile su `/brochure` come HTML stampabile + esportazione PDF tramite browser print; RF-DOC-02 ogni modifica funzionale deve aggiornare in contestuale il catalogo `src/lib/features-catalog.ts`, `docs/BROCHURE.md`, e le pagine descrittive.
 - **2026-06-20 — Fase 16**: RF-PERM-04 editor versionato delle dipendenze moduli con validazione e anteprima; RF-PERM-05 audit unificato per modifiche a deleghe, permessi e ruoli; RF-PERM-06 log accessi negati con motivo (dipendenza mancante / ruolo insufficiente / delega scaduta).
 
