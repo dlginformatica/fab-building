@@ -487,6 +487,33 @@ export async function updateRestoreProgress(runId: string, patch: { steps_total?
   try { await (supabase as any).from("restore_runs").update(patch).eq("id", runId); } catch (e) { console.warn("updateRestoreProgress", e); }
 }
 
+/** Crea un restore_runs in stato in_progress e ritorna l'id per aggiornamenti progressivi. */
+export async function startRestoreRun(orgId: string, params: { mode: "merge" | "replace" | "point_in_time"; sourceBackupId?: string | null; sourceFilename?: string | null; pitTarget?: string | null; stepsTotal?: number }): Promise<string | null> {
+  try {
+    const { data, error } = await (supabase as any).from("restore_runs").insert({
+      org_id: orgId, actor_id: (await supabase.auth.getUser()).data.user?.id ?? null,
+      mode: params.mode, source_backup_id: params.sourceBackupId ?? null,
+      source_filename: params.sourceFilename ?? null, pit_target: params.pitTarget ?? null,
+      status: "in_progress", rows_inserted: 0, errors_count: 0,
+      steps_total: params.stepsTotal ?? null, steps_done: 0,
+      current_step: "Inizializzazione",
+    }).select("id").single();
+    if (error) { console.warn("startRestoreRun", error); return null; }
+    await notifyOrgAdmins(orgId, "restore_started", `Ripristino ${params.mode} avviato`, { mode: params.mode, restore_id: data?.id, audit_url: "/app/backup-audit" });
+    return data?.id ?? null;
+  } catch (e) { console.warn("startRestoreRun", e); return null; }
+}
+
+/** Chiude un restore_runs e invia notifica finale. */
+export async function finishRestoreRun(runId: string | null, orgId: string, patch: { status: "success" | "partial" | "failed"; rows_inserted?: number; errors_count?: number; details?: any; error_message?: string | null; pit_resolved_to?: string | null }) {
+  if (runId) await updateRestoreProgress(runId, { ...patch, current_step: "Completato" });
+  const kind = patch.status === "failed" ? "restore_failed" : "restore_completed";
+  const reason = patch.status === "failed"
+    ? `Ripristino fallito: ${patch.error_message ?? "errore"}`
+    : `Ripristino completato: ${patch.rows_inserted ?? 0} righe, ${patch.errors_count ?? 0} errori`;
+  await notifyOrgAdmins(orgId, kind, reason, { restore_id: runId, ...patch, audit_url: "/app/backup-audit" });
+}
+
 /* ============================================================== */
 /* Audit registro & restore                                        */
 /* ============================================================== */
