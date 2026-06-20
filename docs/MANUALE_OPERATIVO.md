@@ -4,6 +4,11 @@
 
 ## Changelog
 
+### 2026-06-20 — Fase 13 · Notifiche SLA push/email con template editabili
+- **Template editabili** (`/app/notifications` → tab *Template*): subject + corpo markdown con placeholder `{{ticket_number}}`, `{{title}}`, `{{priority}}`, `{{due_at}}`, `{{delay_minutes}}`; scope globale o per struttura; canali supportati: email, Teams, push in-app.
+- **Dispatcher cron** `/api/public/hooks/sla-notify` (ogni minuto): scansiona `sla_notifications` non ancora dispatchate, risolve il template appropriato per evento+canale e invia via canali attivi configurati. Tracking `dispatched_at` + `dispatched_count`. Logga tutto in `notification_log`.
+- **Stati riconoscimento**: già attivi nella Smart Inbox (nuovo / letto / risolto) e nello storico `/app/sla-notifications`. Ora ogni notifica viene anche dispatchata sui canali email/Teams/push secondo il template scelto.
+
 ### 2026-06-20 — Fase 12 · Trend, Preferenze SLA, Stato notifiche, Export schedulati
 - **Trend YoY** (`/app/trends`): selettore KPI (ticket, SLA, fatture, energia, acqua, gas, housekeeping, guest issues) con confronto anno corrente vs precedente, benchmark per camera/anno, export CSV.
 - **Preferenze SLA** (`/app/sla-settings`): per utente e struttura — soglia pre-allerta, intervallo reminder, canali (in-app/email/push), orario silenzioso. Anteprima impatto in tempo reale sui ticket aperti.
