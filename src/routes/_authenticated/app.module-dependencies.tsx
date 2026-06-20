@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash2, Save, Play, AlertTriangle, CheckCircle2, GitBranch } from "lucide-react";
+import { Plus, Trash2, Save, Play, AlertTriangle, CheckCircle2, GitBranch, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDateTime } from "@/lib/format";
 
@@ -88,6 +88,16 @@ function Page() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const rollback = useMutation({
+    mutationFn: async (id: string) => {
+      const reason = window.prompt("Motivo del rollback (facoltativo):") ?? undefined;
+      const { error } = await (supabase as any).rpc("rollback_dependency_version", { _target: id, _note: reason });
+      if (error) throw error;
+    },
+    onSuccess: () => { toast.success("Rollback eseguito: nuova versione attiva"); qc.invalidateQueries(); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const errors = cycles.length + dups.length + selfRefs.length;
 
   return (
@@ -157,6 +167,7 @@ function Page() {
                   <td className="px-3 py-2 text-right">
                     {!v.active && <Button size="sm" variant="outline" onClick={() => activate.mutate(v.id)}>Attiva</Button>}
                     <Button size="sm" variant="ghost" onClick={() => setRules(v.rules as Rule[])}>Carica in bozza</Button>
+                    <Button size="sm" variant="ghost" onClick={() => rollback.mutate(v.id)} title="Crea una nuova versione clonando questa e attivala"><Undo2 className="mr-1 h-3 w-3" />Rollback</Button>
                   </td>
                 </tr>
               ))}
