@@ -53,6 +53,7 @@ import { Route as AuthenticatedAppDelegationsRouteImport } from './routes/_authe
 import { Route as AuthenticatedAppDelegationAuditRouteImport } from './routes/_authenticated/app.delegation-audit'
 import { Route as AuthenticatedAppCostAnalyticsRouteImport } from './routes/_authenticated/app.cost-analytics'
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
+import { Route as AuthenticatedAppCashbookRouteImport } from './routes/_authenticated/app.cashbook'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
@@ -316,6 +317,12 @@ const AuthenticatedAppContractsRoute =
     path: '/app/contracts',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppCashbookRoute =
+  AuthenticatedAppCashbookRouteImport.update({
+    id: '/app/cashbook',
+    path: '/app/cashbook',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppAuditRoute = AuthenticatedAppAuditRouteImport.update({
   id: '/app/audit',
   path: '/app/audit',
@@ -388,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
+  '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
@@ -444,6 +452,7 @@ export interface FileRoutesByTo {
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
+  '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
@@ -502,6 +511,7 @@ export interface FileRoutesById {
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
+  '/_authenticated/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
   '/_authenticated/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
   '/_authenticated/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
@@ -560,6 +570,7 @@ export interface FileRouteTypes {
     | '/app/area-mapping'
     | '/app/assets'
     | '/app/audit'
+    | '/app/cashbook'
     | '/app/contracts'
     | '/app/cost-analytics'
     | '/app/delegation-audit'
@@ -616,6 +627,7 @@ export interface FileRouteTypes {
     | '/app/area-mapping'
     | '/app/assets'
     | '/app/audit'
+    | '/app/cashbook'
     | '/app/contracts'
     | '/app/cost-analytics'
     | '/app/delegation-audit'
@@ -673,6 +685,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/assets'
     | '/_authenticated/app/audit'
+    | '/_authenticated/app/cashbook'
     | '/_authenticated/app/contracts'
     | '/_authenticated/app/cost-analytics'
     | '/_authenticated/app/delegation-audit'
@@ -1043,6 +1056,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppContractsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/cashbook': {
+      id: '/_authenticated/app/cashbook'
+      path: '/app/cashbook'
+      fullPath: '/app/cashbook'
+      preLoaderRoute: typeof AuthenticatedAppCashbookRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/audit': {
       id: '/_authenticated/app/audit'
       path: '/app/audit'
@@ -1184,6 +1204,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAreaMappingRoute: typeof AuthenticatedAppAreaMappingRoute
   AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
+  AuthenticatedAppCashbookRoute: typeof AuthenticatedAppCashbookRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
   AuthenticatedAppCostAnalyticsRoute: typeof AuthenticatedAppCostAnalyticsRoute
   AuthenticatedAppDelegationAuditRoute: typeof AuthenticatedAppDelegationAuditRoute
@@ -1230,6 +1251,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAreaMappingRoute: AuthenticatedAppAreaMappingRoute,
   AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
+  AuthenticatedAppCashbookRoute: AuthenticatedAppCashbookRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
   AuthenticatedAppCostAnalyticsRoute: AuthenticatedAppCostAnalyticsRoute,
   AuthenticatedAppDelegationAuditRoute: AuthenticatedAppDelegationAuditRoute,
