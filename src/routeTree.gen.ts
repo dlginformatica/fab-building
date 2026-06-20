@@ -71,11 +71,11 @@ import { Route as AuthenticatedAppCostAnalyticsRouteImport } from './routes/_aut
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
 import { Route as AuthenticatedAppCashbookRouteImport } from './routes/_authenticated/app.cashbook'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
-import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
 import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/app.alerts'
 import { Route as AuthenticatedAppAdminAlertsRouteImport } from './routes/_authenticated/app.admin-alerts'
 import { Route as AuthenticatedAppAccessDeniedRouteImport } from './routes/_authenticated/app.access-denied'
+import { Route as AuthenticatedAppAssetsIndexRouteImport } from './routes/_authenticated/app.assets.index'
 import { Route as ApiPublicHooksSlaNotifyRouteImport } from './routes/api/public/hooks/sla-notify'
 import { Route as ApiPublicHooksSlaEscalationsRouteImport } from './routes/api/public/hooks/sla-escalations'
 import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
@@ -438,11 +438,6 @@ const AuthenticatedAppAuditRoute = AuthenticatedAppAuditRouteImport.update({
   path: '/app/audit',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAppAssetsRoute = AuthenticatedAppAssetsRouteImport.update({
-  id: '/app/assets',
-  path: '/app/assets',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAppAreaMappingRoute =
   AuthenticatedAppAreaMappingRouteImport.update({
     id: '/app/area-mapping',
@@ -464,6 +459,12 @@ const AuthenticatedAppAccessDeniedRoute =
   AuthenticatedAppAccessDeniedRouteImport.update({
     id: '/app/access-denied',
     path: '/app/access-denied',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppAssetsIndexRoute =
+  AuthenticatedAppAssetsIndexRouteImport.update({
+    id: '/app/assets/',
+    path: '/app/assets/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const ApiPublicHooksSlaNotifyRoute = ApiPublicHooksSlaNotifyRouteImport.update({
@@ -509,9 +510,9 @@ const AuthenticatedAppDeliveryQueueIdRoute =
   } as any)
 const AuthenticatedAppAssetsIdRoute =
   AuthenticatedAppAssetsIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedAppAssetsRoute,
+    id: '/app/assets/$id',
+    path: '/app/assets/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppAQrRoute = AuthenticatedAppAQrRouteImport.update({
   id: '/app/a/$qr',
@@ -533,7 +534,6 @@ export interface FileRoutesByFullPath {
   '/app/admin-alerts': typeof AuthenticatedAppAdminAlertsRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
-  '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
@@ -595,6 +595,7 @@ export interface FileRoutesByFullPath {
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
   '/api/public/hooks/sla-escalations': typeof ApiPublicHooksSlaEscalationsRoute
   '/api/public/hooks/sla-notify': typeof ApiPublicHooksSlaNotifyRoute
+  '/app/assets/': typeof AuthenticatedAppAssetsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -610,7 +611,6 @@ export interface FileRoutesByTo {
   '/app/admin-alerts': typeof AuthenticatedAppAdminAlertsRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
-  '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
@@ -672,6 +672,7 @@ export interface FileRoutesByTo {
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
   '/api/public/hooks/sla-escalations': typeof ApiPublicHooksSlaEscalationsRoute
   '/api/public/hooks/sla-notify': typeof ApiPublicHooksSlaNotifyRoute
+  '/app/assets': typeof AuthenticatedAppAssetsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -689,7 +690,6 @@ export interface FileRoutesById {
   '/_authenticated/app/admin-alerts': typeof AuthenticatedAppAdminAlertsRoute
   '/_authenticated/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
-  '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
   '/_authenticated/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
@@ -751,6 +751,7 @@ export interface FileRoutesById {
   '/api/public/hooks/report-scheduler': typeof ApiPublicHooksReportSchedulerRoute
   '/api/public/hooks/sla-escalations': typeof ApiPublicHooksSlaEscalationsRoute
   '/api/public/hooks/sla-notify': typeof ApiPublicHooksSlaNotifyRoute
+  '/_authenticated/app/assets/': typeof AuthenticatedAppAssetsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -768,7 +769,6 @@ export interface FileRouteTypes {
     | '/app/admin-alerts'
     | '/app/alerts'
     | '/app/area-mapping'
-    | '/app/assets'
     | '/app/audit'
     | '/app/cashbook'
     | '/app/contracts'
@@ -830,6 +830,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/report-scheduler'
     | '/api/public/hooks/sla-escalations'
     | '/api/public/hooks/sla-notify'
+    | '/app/assets/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -845,7 +846,6 @@ export interface FileRouteTypes {
     | '/app/admin-alerts'
     | '/app/alerts'
     | '/app/area-mapping'
-    | '/app/assets'
     | '/app/audit'
     | '/app/cashbook'
     | '/app/contracts'
@@ -907,6 +907,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/report-scheduler'
     | '/api/public/hooks/sla-escalations'
     | '/api/public/hooks/sla-notify'
+    | '/app/assets'
   id:
     | '__root__'
     | '/'
@@ -923,7 +924,6 @@ export interface FileRouteTypes {
     | '/_authenticated/app/admin-alerts'
     | '/_authenticated/app/alerts'
     | '/_authenticated/app/area-mapping'
-    | '/_authenticated/app/assets'
     | '/_authenticated/app/audit'
     | '/_authenticated/app/cashbook'
     | '/_authenticated/app/contracts'
@@ -985,6 +985,7 @@ export interface FileRouteTypes {
     | '/api/public/hooks/report-scheduler'
     | '/api/public/hooks/sla-escalations'
     | '/api/public/hooks/sla-notify'
+    | '/_authenticated/app/assets/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1440,13 +1441,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/app/assets': {
-      id: '/_authenticated/app/assets'
-      path: '/app/assets'
-      fullPath: '/app/assets'
-      preLoaderRoute: typeof AuthenticatedAppAssetsRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/app/area-mapping': {
       id: '/_authenticated/app/area-mapping'
       path: '/app/area-mapping'
@@ -1473,6 +1467,13 @@ declare module '@tanstack/react-router' {
       path: '/app/access-denied'
       fullPath: '/app/access-denied'
       preLoaderRoute: typeof AuthenticatedAppAccessDeniedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/assets/': {
+      id: '/_authenticated/app/assets/'
+      path: '/app/assets'
+      fullPath: '/app/assets/'
+      preLoaderRoute: typeof AuthenticatedAppAssetsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/api/public/hooks/sla-notify': {
@@ -1526,10 +1527,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/app/assets/$id': {
       id: '/_authenticated/app/assets/$id'
-      path: '/$id'
+      path: '/app/assets/$id'
       fullPath: '/app/assets/$id'
       preLoaderRoute: typeof AuthenticatedAppAssetsIdRouteImport
-      parentRoute: typeof AuthenticatedAppAssetsRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/a/$qr': {
       id: '/_authenticated/app/a/$qr'
@@ -1540,20 +1541,6 @@ declare module '@tanstack/react-router' {
     }
   }
 }
-
-interface AuthenticatedAppAssetsRouteChildren {
-  AuthenticatedAppAssetsIdRoute: typeof AuthenticatedAppAssetsIdRoute
-}
-
-const AuthenticatedAppAssetsRouteChildren: AuthenticatedAppAssetsRouteChildren =
-  {
-    AuthenticatedAppAssetsIdRoute: AuthenticatedAppAssetsIdRoute,
-  }
-
-const AuthenticatedAppAssetsRouteWithChildren =
-  AuthenticatedAppAssetsRoute._addFileChildren(
-    AuthenticatedAppAssetsRouteChildren,
-  )
 
 interface AuthenticatedAppDeliveryQueueRouteChildren {
   AuthenticatedAppDeliveryQueueIdRoute: typeof AuthenticatedAppDeliveryQueueIdRoute
@@ -1603,7 +1590,6 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAdminAlertsRoute: typeof AuthenticatedAppAdminAlertsRoute
   AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
   AuthenticatedAppAreaMappingRoute: typeof AuthenticatedAppAreaMappingRoute
-  AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
   AuthenticatedAppCashbookRoute: typeof AuthenticatedAppCashbookRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
@@ -1656,6 +1642,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppWorkflowsRoute: typeof AuthenticatedAppWorkflowsRoute
   AuthenticatedAppIndexRoute: typeof AuthenticatedAppIndexRoute
   AuthenticatedAppAQrRoute: typeof AuthenticatedAppAQrRoute
+  AuthenticatedAppAssetsIdRoute: typeof AuthenticatedAppAssetsIdRoute
+  AuthenticatedAppAssetsIndexRoute: typeof AuthenticatedAppAssetsIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -1664,7 +1652,6 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAdminAlertsRoute: AuthenticatedAppAdminAlertsRoute,
   AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
   AuthenticatedAppAreaMappingRoute: AuthenticatedAppAreaMappingRoute,
-  AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
   AuthenticatedAppCashbookRoute: AuthenticatedAppCashbookRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
@@ -1723,6 +1710,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppWorkflowsRoute: AuthenticatedAppWorkflowsRoute,
   AuthenticatedAppIndexRoute: AuthenticatedAppIndexRoute,
   AuthenticatedAppAQrRoute: AuthenticatedAppAQrRoute,
+  AuthenticatedAppAssetsIdRoute: AuthenticatedAppAssetsIdRoute,
+  AuthenticatedAppAssetsIndexRoute: AuthenticatedAppAssetsIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
