@@ -3,6 +3,8 @@
 > Documento sorgente per la brochure. La versione HTML stampabile e PDF è disponibile su `/brochure`.
 > Aggiornato ad ogni iterazione (regola permanente).
 
+**Novità 2026-06-20**: scadenze trial e abbonamenti gestite automaticamente da job orario (passaggio a sola lettura senza intervento). Il super admin può forzare attivazione/blocco/proroghe in qualsiasi momento.
+
 ## Changelog
 - **2026-06-20** — Introdotti tre piani **Small / Medium / Large** (default 200/400/800 €/mese, configurabili dal super_admin) con **30 giorni di prova gratuita** in modalità Large; alla scadenza l'account passa in sola lettura fino al rinnovo. Pagamento manuale in Fase 1, integrazione Stripe in Fase 2.
 - **2026-06-20** — Introdotto **Manuale Utente** completo (10 capitoli, FAQ, glossario, screenshot reali) accessibile da `/manual` con toggle Utente/Tecnico.

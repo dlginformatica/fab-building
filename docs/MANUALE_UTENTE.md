@@ -3,6 +3,8 @@
 > Guida completa all'uso della piattaforma HotelOps per direttori, facility manager, manutentori, fornitori e personale di struttura.
 > Documento vivo: aggiornato ad ogni iterazione (regola permanente).
 
+**Aggiornamento 2026-06-20 — Abbonamenti**: la scadenza del trial 30 giorni e degli abbonamenti attivi viene rilevata automaticamente da un job che gira ogni ora; alla scadenza l'app passa in **sola lettura** senza intervento manuale. Il super admin può sempre forzare attivazione, blocco o estensione dalla pagina "Configurazione piani".
+
 ## Changelog
 - **2026-06-20** — Aggiunto capitolo **Abbonamenti e livelli (Small/Medium/Large)**: come funziona il trial 30 giorni, cosa cambia tra i tre piani, come gestire upgrade/downgrade, cosa succede alla scadenza (sola lettura), come l'admin di organizzazione consulta `/app/billing` e come il super_admin configura prezzi e moduli in `/app/super-admin/plans`.
 - **2026-06-20** — Il pulsante "Scarica PDF" in /manual produce ora un **PDF reale** con copertina, indice cliccabile, immagini e numerazione pagine. Nome file: `hotelops_manuale_utente_v{versione}_{data}.pdf`.
