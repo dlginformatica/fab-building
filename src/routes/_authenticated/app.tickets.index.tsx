@@ -19,7 +19,7 @@ import { PriorityBadge, StatusBadge } from "./app.index";
 
 const searchSchema = z.object({ asset: z.string().optional() });
 
-export const Route = createFileRoute("/_authenticated/app/tickets")({
+export const Route = createFileRoute("/_authenticated/app/tickets/")({
   validateSearch: (s) => searchSchema.parse(s),
   component: Page,
 });

@@ -14,7 +14,7 @@ import { Package, ShoppingCart, AlertTriangle, CheckCircle2, Truck, ListTree } f
 import { Link } from "@tanstack/react-router";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/app/reorders")({ component: Page });
+export const Route = createFileRoute("/_authenticated/app/reorders/")({ component: Page });
 
 const eur = (n:number) => `€ ${(n||0).toLocaleString("it-IT",{minimumFractionDigits:2,maximumFractionDigits:2})}`;
 const STATUS_LABEL: Record<string, string> = {
