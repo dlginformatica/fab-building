@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ArrowLeft, Clock } from "lucide-react";
 import { fmtDateTime, timeUntil } from "@/lib/format";
 import { PriorityBadge, StatusBadge } from "./app.index";
-import { STATUSES } from "./app.tickets";
+import { STATUSES } from "./app.tickets.index";
 import { toast } from "sonner";
 import { useSpeaker } from "@/components/tts/SpeakerProvider";
 import { Attachments } from "@/components/tickets/Attachments";
