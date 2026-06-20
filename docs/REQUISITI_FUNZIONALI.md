@@ -1,5 +1,11 @@
 # HotelOps — Requisiti Funzionali
 
+## 2026-06-20 — Fase 12
+- **RF-TR-01** Trend avanzati YoY con confronto anno-corrente vs anno-precedente, benchmark per camera/anno (energia 3200 kWh, acqua 130 mc, gas 380 Smc, SLA target 90%).
+- **RF-SLP-01** Preferenze SLA per utente e struttura: soglia pre-allerta, reminder periodico, canali (in-app/email/push), orario silenzioso. Anteprima impatto su ticket aperti.
+- **RF-SLN-01** Stato esteso notifiche SLA: nuovo/letto/risolto con timestamp e utente. Visualizzazione in Smart Inbox e azioni rapide.
+- **RF-EX-01** Export schedulati per modulo (fatture SDI, cashbook, housekeeping KPI, SLA, ESG) in PDF/CSV/XML SDI con frequenza giornaliera/settimanale/mensile e link condivisibile.
+
 ## 2026-06-20 — Fase 11
 - **RF-OV-01** Overview unificata: KPI Housekeeping + Guest + SLA + Fatture + trend consumi, filtrabile per periodo, export PDF.
 - **RF-AL-01** Alert & Scadenze: aggregazione di SLA aperte, contratti 30g, fatture 7g, documenti fornitori 30g via `alerts_for_structure`.
