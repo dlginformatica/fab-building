@@ -2113,6 +2113,53 @@ export type Database = {
           },
         ]
       }
+      org_notification_prefs: {
+        Row: {
+          categories: string[]
+          channels: string[]
+          created_at: string
+          frequency: string
+          id: string
+          org_id: string
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          categories?: string[]
+          channels?: string[]
+          created_at?: string
+          frequency?: string
+          id?: string
+          org_id: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          categories?: string[]
+          channels?: string[]
+          created_at?: string
+          frequency?: string
+          id?: string
+          org_id?: string
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "org_notification_prefs_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           created_at: string
@@ -4662,6 +4709,26 @@ export type Database = {
           opened: number
           resolved: number
           week_start: string
+        }[]
+      }
+      dependency_version_diff: {
+        Args: { _from: string; _to: string }
+        Returns: {
+          change: string
+          depends_on: string
+          module: string
+        }[]
+      }
+      dependency_version_impact: {
+        Args: { _target: string }
+        Returns: {
+          current_modules: string[]
+          delegate_email: string
+          delegate_id: string
+          delegation_id: string
+          missing_modules: string[]
+          required_modules: string[]
+          structure_id: string
         }[]
       }
       enqueue_sla_warnings: {
