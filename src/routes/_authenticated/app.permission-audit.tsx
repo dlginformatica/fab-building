@@ -42,12 +42,12 @@ function Page() {
   });
   const { data: structures } = useQuery({
     queryKey: ["structures_orgs"],
-    queryFn: async () => (await supabase.from("structures").select("id,name,org_id")).data ?? [],
+    queryFn: async () => ((await (supabase as any).from("structures").select("id,name,organization_id")).data ?? []),
   });
 
   const emailOf = (id?: string | null) => (profiles ?? []).find((p) => p.id === id)?.email ?? "—";
   const orgOfUser = (uid?: string | null) => (memberships ?? []).find((m: any) => m.user_id === uid)?.org_id ?? null;
-  const orgOfStruct = (sid?: string | null) => (structures ?? []).find((s: any) => s.id === sid)?.org_id ?? null;
+  const orgOfStruct = (sid?: string | null) => (structures ?? []).find((s: any) => s.id === sid)?.organization_id ?? null;
   const orgName = (oid?: string | null) => (organizations ?? []).find((o: any) => o.id === oid)?.name ?? "—";
   const moduleOf = (r: any) => {
     const a = r.after ?? {}; const b = r.before ?? {};
