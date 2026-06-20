@@ -39,7 +39,7 @@ function Page() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("tickets")
-        .select("id,ticket_number,title,priority,status,resolve_due_at,ack_due_at,created_at,assigned_to,asset_id")
+        .select("id,ticket_number,title,priority,status,resolve_due_at,ack_due_at,resolved_at,closed_at,created_at,assigned_to,asset_id")
         .eq("structure_id", activeStructureId!)
         .order("created_at", { ascending: false });
       if (error) throw error;
@@ -71,7 +71,7 @@ function Page() {
               </thead>
               <tbody>
                 {(tickets ?? []).map((t) => {
-                  const sla = timeUntil(t.resolve_due_at);
+                  const sla = timeUntil(t.resolve_due_at, t.resolved_at ?? t.closed_at ?? null);
                   return (
                     <tr key={t.id} className="border-b border-border/60 hover:bg-accent/40">
                       <td className="px-4 py-2 font-mono text-xs">#{t.ticket_number}</td>
