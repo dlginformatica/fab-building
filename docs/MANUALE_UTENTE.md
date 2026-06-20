@@ -1,4 +1,7 @@
 <!-- changelog 2026-06-20 -->
+- Nuova **gestione completa Strutture** (/app/structures/$id) con tab: Anagrafica editabile, Camere & Piani (CRUD + preset rapido), Tipologie camere (nuova tabella `room_types` org-scoped), Galleria foto (bucket privato `structure-photos`, RLS per struttura), Mappa OpenStreetMap (react-leaflet) con geocodifica Nominatim, marker draggable, salvataggio coordinate `lat`/`lng` su `structures`.
+
+<!-- changelog 2026-06-20 -->
 - Seed dati demo completo (2 organizzazioni Hotel Demo A/B isolate, 16 utenti uno per ruolo, strutture, asset, fornitori, contratti, magazzino, contatori, ticket con SLA, abbonamenti) e checklist passo-passo in `docs/CHECKLIST_TEST_UMANO.md` per il primo test umano. Password demo: `Demo1234!`.
 - Verificato isolamento multi-tenant via `has_structure_access`: ogni utente vede solo i dati della propria struttura/org; super admin vede tutto.
 

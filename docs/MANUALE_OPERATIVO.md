@@ -1,3 +1,6 @@
+<!-- changelog 2026-06-20 -->
+- Nuova **gestione completa Strutture** (/app/structures/$id) con tab: Anagrafica editabile, Camere & Piani (CRUD + preset rapido), Tipologie camere (nuova tabella `room_types` org-scoped), Galleria foto (bucket privato `structure-photos`, RLS per struttura), Mappa OpenStreetMap (react-leaflet) con geocodifica Nominatim, marker draggable, salvataggio coordinate `lat`/`lng` su `structures`.
+
 ## Changelog 2026-06-20
 - Hardening RLS: `is_org_admin`, `structure_org`, estensione di `has_structure_access` con membership org.
 - Drop policy `structures read accessible` e `structures admin manage` (bypass org).

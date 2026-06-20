@@ -1,3 +1,6 @@
+<!-- changelog 2026-06-20 -->
+- Nuova **gestione completa Strutture** (/app/structures/$id) con tab: Anagrafica editabile, Camere & Piani (CRUD + preset rapido), Tipologie camere (nuova tabella `room_types` org-scoped), Galleria foto (bucket privato `structure-photos`, RLS per struttura), Mappa OpenStreetMap (react-leaflet) con geocodifica Nominatim, marker draggable, salvataggio coordinate `lat`/`lng` su `structures`.
+
 ## Changelog 2026-06-20
 - Sicurezza multi-tenant: nuova funzione `is_org_admin` e isolamento per organizzazione su ticket, SLA, penali, audit, deleghe e permessi modulo.
 - `handle_new_user` non assegna più il ruolo globale "direttore" ai nuovi iscritti.
