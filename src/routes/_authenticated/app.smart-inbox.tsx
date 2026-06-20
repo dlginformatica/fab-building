@@ -42,7 +42,7 @@ function Page() {
         <p className="text-sm text-muted-foreground">Tutto ciò che richiede la tua attenzione, in un solo posto. {total} elementi.</p>
       </header>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Section icon={<Bell className="h-4 w-4"/>} title="Alert & Scadenze" tone="amber" count={alerts.length} href="/app/alerts">
           {alerts.slice(0, 8).map((a: any, i: number) => (
             <div key={`${a.ref_id}-${i}`} className="rounded-md border border-border/40 p-2 text-sm">
