@@ -4,7 +4,7 @@ import { FeatureIcon } from "@/components/features/FeatureIcon";
 import { PublicHeader, PublicFooter } from "@/components/features/PublicHeader";
 import { ArrowRight } from "lucide-react";
 
-export const Route = createFileRoute("/features")({
+export const Route = createFileRoute("/features/")({
   head: () => ({
     meta: [
       { title: "Funzionalità — HotelOps" },

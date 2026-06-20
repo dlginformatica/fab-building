@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { FEATURE_CATALOG, getFeature } from "@/lib/features-catalog";
+import { FEATURE_CATALOG, getFeature, type FeatureItem } from "@/lib/features-catalog";
 import { FeatureIcon } from "@/components/features/FeatureIcon";
 import { FeatureScreenshot } from "@/components/features/FeatureScreenshot";
 import { PublicHeader, PublicFooter } from "@/components/features/PublicHeader";
@@ -36,7 +36,8 @@ export const Route = createFileRoute("/features/$slug")({
 });
 
 function FeatureDetail() {
-  const { feature: f } = Route.useLoaderData();
+  const data = Route.useLoaderData() as { feature: FeatureItem };
+  const f = data.feature;
   const idx = FEATURE_CATALOG.findIndex((x) => x.slug === f.slug);
   const prev = idx > 0 ? FEATURE_CATALOG[idx - 1] : null;
   const next = idx < FEATURE_CATALOG.length - 1 ? FEATURE_CATALOG[idx + 1] : null;

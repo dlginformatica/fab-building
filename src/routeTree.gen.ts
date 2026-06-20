@@ -9,11 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ManualRouteImport } from './routes/manual'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FeaturesIndexRouteImport } from './routes/features.index'
 import { Route as InviteTokenRouteImport } from './routes/invite.$token'
 import { Route as GQrRouteImport } from './routes/g.$qr'
+import { Route as FeaturesSlugRouteImport } from './routes/features.$slug'
 import { Route as AuthenticatedPortalRouteImport } from './routes/_authenticated/portal'
 import { Route as AuthenticatedAppIndexRouteImport } from './routes/_authenticated/app.index'
 import { Route as ApiTtsSpeakRouteImport } from './routes/api/tts/speak'
@@ -82,6 +85,11 @@ import { Route as AuthenticatedAppDeliveryQueueIdRouteImport } from './routes/_a
 import { Route as AuthenticatedAppAssetsIdRouteImport } from './routes/_authenticated/app.assets.$id'
 import { Route as AuthenticatedAppAQrRouteImport } from './routes/_authenticated/app.a.$qr'
 
+const ManualRoute = ManualRouteImport.update({
+  id: '/manual',
+  path: '/manual',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -96,6 +104,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const FeaturesIndexRoute = FeaturesIndexRouteImport.update({
+  id: '/features/',
+  path: '/features/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InviteTokenRoute = InviteTokenRouteImport.update({
   id: '/invite/$token',
   path: '/invite/$token',
@@ -104,6 +117,11 @@ const InviteTokenRoute = InviteTokenRouteImport.update({
 const GQrRoute = GQrRouteImport.update({
   id: '/g/$qr',
   path: '/g/$qr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FeaturesSlugRoute = FeaturesSlugRouteImport.update({
+  id: '/features/$slug',
+  path: '/features/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPortalRoute = AuthenticatedPortalRouteImport.update({
@@ -498,9 +516,12 @@ const AuthenticatedAppAQrRoute = AuthenticatedAppAQrRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/manual': typeof ManualRoute
   '/portal': typeof AuthenticatedPortalRoute
+  '/features/$slug': typeof FeaturesSlugRoute
   '/g/$qr': typeof GQrRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/features/': typeof FeaturesIndexRoute
   '/app/access-denied': typeof AuthenticatedAppAccessDeniedRoute
   '/app/admin-alerts': typeof AuthenticatedAppAdminAlertsRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
@@ -571,9 +592,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/manual': typeof ManualRoute
   '/portal': typeof AuthenticatedPortalRoute
+  '/features/$slug': typeof FeaturesSlugRoute
   '/g/$qr': typeof GQrRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/features': typeof FeaturesIndexRoute
   '/app/access-denied': typeof AuthenticatedAppAccessDeniedRoute
   '/app/admin-alerts': typeof AuthenticatedAppAdminAlertsRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
@@ -646,9 +670,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/manual': typeof ManualRoute
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
+  '/features/$slug': typeof FeaturesSlugRoute
   '/g/$qr': typeof GQrRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/features/': typeof FeaturesIndexRoute
   '/_authenticated/app/access-denied': typeof AuthenticatedAppAccessDeniedRoute
   '/_authenticated/app/admin-alerts': typeof AuthenticatedAppAdminAlertsRoute
   '/_authenticated/app/alerts': typeof AuthenticatedAppAlertsRoute
@@ -721,9 +748,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/manual'
     | '/portal'
+    | '/features/$slug'
     | '/g/$qr'
     | '/invite/$token'
+    | '/features/'
     | '/app/access-denied'
     | '/app/admin-alerts'
     | '/app/alerts'
@@ -794,9 +824,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/manual'
     | '/portal'
+    | '/features/$slug'
     | '/g/$qr'
     | '/invite/$token'
+    | '/features'
     | '/app/access-denied'
     | '/app/admin-alerts'
     | '/app/alerts'
@@ -868,9 +901,12 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/manual'
     | '/_authenticated/portal'
+    | '/features/$slug'
     | '/g/$qr'
     | '/invite/$token'
+    | '/features/'
     | '/_authenticated/app/access-denied'
     | '/_authenticated/app/admin-alerts'
     | '/_authenticated/app/alerts'
@@ -943,8 +979,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  ManualRoute: typeof ManualRoute
+  FeaturesSlugRoute: typeof FeaturesSlugRoute
   GQrRoute: typeof GQrRoute
   InviteTokenRoute: typeof InviteTokenRoute
+  FeaturesIndexRoute: typeof FeaturesIndexRoute
   ApiTtsSpeakRoute: typeof ApiTtsSpeakRoute
   ApiPublicHooksContractsNotifyRoute: typeof ApiPublicHooksContractsNotifyRoute
   ApiPublicHooksReportSchedulerRoute: typeof ApiPublicHooksReportSchedulerRoute
@@ -954,6 +993,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/manual': {
+      id: '/manual'
+      path: '/manual'
+      fullPath: '/manual'
+      preLoaderRoute: typeof ManualRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -975,6 +1021,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/features/': {
+      id: '/features/'
+      path: '/features'
+      fullPath: '/features/'
+      preLoaderRoute: typeof FeaturesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/invite/$token': {
       id: '/invite/$token'
       path: '/invite/$token'
@@ -987,6 +1040,13 @@ declare module '@tanstack/react-router' {
       path: '/g/$qr'
       fullPath: '/g/$qr'
       preLoaderRoute: typeof GQrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/features/$slug': {
+      id: '/features/$slug'
+      path: '/features/$slug'
+      fullPath: '/features/$slug'
+      preLoaderRoute: typeof FeaturesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/portal': {
@@ -1652,8 +1712,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  ManualRoute: ManualRoute,
+  FeaturesSlugRoute: FeaturesSlugRoute,
   GQrRoute: GQrRoute,
   InviteTokenRoute: InviteTokenRoute,
+  FeaturesIndexRoute: FeaturesIndexRoute,
   ApiTtsSpeakRoute: ApiTtsSpeakRoute,
   ApiPublicHooksContractsNotifyRoute: ApiPublicHooksContractsNotifyRoute,
   ApiPublicHooksReportSchedulerRoute: ApiPublicHooksReportSchedulerRoute,
