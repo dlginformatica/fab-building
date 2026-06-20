@@ -1,4 +1,8 @@
 <!-- changelog 2026-06-20 -->
+- Seed dati demo completo (2 organizzazioni Hotel Demo A/B isolate, 16 utenti uno per ruolo, strutture, asset, fornitori, contratti, magazzino, contatori, ticket con SLA, abbonamenti) e checklist passo-passo in `docs/CHECKLIST_TEST_UMANO.md` per il primo test umano. Password demo: `Demo1234!`.
+- Verificato isolamento multi-tenant via `has_structure_access`: ogni utente vede solo i dati della propria struttura/org; super admin vede tutto.
+
+<!-- changelog 2026-06-20 -->
 - Numero di build (`yyyy.mm.dd.hh.mm`) ora presente anche nei footer di: CSV esportati (riga finale), PDF esportati (footer di ogni pagina), PDF Manuale Utente, anteprima HTML stampabile, e nuovo helper `emailFooterHtml/Text` per i template email.
 
 <!-- changelog 2026-06-20 -->
