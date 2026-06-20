@@ -98,7 +98,6 @@ function Page() {
     onSuccess: () => { toast.success("Fattura registrata"); qc.invalidateQueries({queryKey:["invoices"]}); setOpen(false); setOcrPreview(null); setFile(null); },
     onError: (e: Error) => toast.error(e.message),
   });
-  if (!activeStructureId) return <div className="p-10 text-center text-sm text-muted-foreground">Seleziona una struttura.</div>;
 
   const upcoming = useMemo(() => {
     const today = new Date(); today.setHours(0,0,0,0);
@@ -110,6 +109,8 @@ function Page() {
   }, [items]);
   const totalDue = upcoming.reduce((s, i) => s + Number(i.amount_total || 0), 0);
   const overdueCount = upcoming.filter((i) => i._overdue).length;
+
+  if (!activeStructureId) return <div className="p-10 text-center text-sm text-muted-foreground">Seleziona una struttura.</div>;
 
   const newInvoiceDialog = (
     <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (!v) { setOcrPreview(null); } }}>
