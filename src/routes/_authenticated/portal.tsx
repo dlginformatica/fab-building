@@ -118,7 +118,7 @@ function Portal() {
 }
 
 function TicketRow({ t, active, onClick }: { t: any; active: boolean; onClick: ()=>void }) {
-  const sla = timeUntil(t.resolve_due_at);
+  const sla = timeUntil(t.resolve_due_at, t.resolved_at ?? t.closed_at ?? null);
   return (
     <button onClick={onClick} className={`block w-full text-left px-3 py-2 hover:bg-accent/40 ${active?"bg-accent":""}`}>
       <div className="flex items-center justify-between gap-2">

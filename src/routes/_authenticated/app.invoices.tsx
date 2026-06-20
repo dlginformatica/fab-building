@@ -17,6 +17,7 @@ import { SimpleList, ListCard } from "@/components/SimpleList";
 import { Plus, Sparkles, Loader2, AlertTriangle, CalendarClock } from "lucide-react";
 import { toast } from "sonner";
 import { downloadFatturaPaXml } from "@/lib/sdi/fatturapa";
+import { fmtEUR } from "@/lib/format";
 
 export const Route = createFileRoute("/_authenticated/app/invoices")({ component: Page });
 
@@ -181,7 +182,7 @@ function Page() {
               const overdue = i.due_date && i.status!=="pagata" && new Date(i.due_date) < new Date();
               return <ListCard title={`Fatt. ${i.number}`} meta={<>{i.suppliers?.name ?? "—"} · {i.issue_date}</>}
                 badges={<><Badge variant={overdue?"destructive":"default"}>{overdue?"scaduta":i.status}</Badge>{i.utility_type && <Badge variant="outline">{i.utility_type}</Badge>}{i.ocr_data && <Badge variant="secondary">OCR</Badge>}</>}
-                footer={<div className="space-y-1"><div>Totale: <b>€{i.amount_total}</b>{i.due_date && <span> · Scade: {i.due_date}</span>}{i.pdf_url && <> · <a href={i.pdf_url} target="_blank" className="text-primary underline">PDF</a></>}</div>
+                footer={<div className="space-y-1"><div>Totale: <b>{fmtEUR(i.amount_total)}</b>{i.due_date && <span> · Scade: {i.due_date}</span>}{i.pdf_url && <> · <a href={i.pdf_url} target="_blank" className="text-primary underline">PDF</a></>}</div>
                   <Button size="sm" variant="outline" onClick={() => {
                     if (!structure?.vat_number) { toast.error("Inserisci prima la P.IVA della struttura in Impostazioni"); return; }
                     downloadFatturaPaXml({ structure, supplier: i.suppliers ? { name: i.suppliers.name } : null, invoice: { number: i.number, issue_date: i.issue_date, amount_net: i.amount_net, vat: i.vat, amount_total: i.amount_total, description: i.utility_type || "Servizi" } });
@@ -194,7 +195,7 @@ function Page() {
         <TabsContent value="schedule" className="space-y-3">
           <div className="grid gap-3 md:grid-cols-3">
             <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Totale da pagare (30gg + scadute)</CardTitle></CardHeader>
-              <CardContent className="font-display text-2xl font-bold">€{totalDue.toFixed(2)}</CardContent></Card>
+              <CardContent className="font-display text-2xl font-bold">{fmtEUR(totalDue)}</CardContent></Card>
             <Card><CardHeader className="pb-2"><CardTitle className="text-sm">Fatture scadute</CardTitle></CardHeader>
               <CardContent className="flex items-center gap-2 font-display text-2xl font-bold">{overdueCount > 0 && <AlertTriangle className="h-5 w-5 text-destructive"/>}{overdueCount}</CardContent></Card>
             <Card><CardHeader className="pb-2"><CardTitle className="text-sm">In scadenza ≤ 30 giorni</CardTitle></CardHeader>
@@ -211,7 +212,7 @@ function Page() {
                     <td className="px-4 py-2 font-mono text-xs">{i.due_date}</td>
                     <td className="px-4 py-2">{i.number}</td>
                     <td className="px-4 py-2">{i.suppliers?.name ?? "—"}</td>
-                    <td className="px-4 py-2 text-right font-medium">€{Number(i.amount_total).toFixed(2)}</td>
+                    <td className="px-4 py-2 text-right font-medium">{fmtEUR(i.amount_total)}</td>
                     <td className="px-4 py-2"><Badge variant={i._overdue ? "destructive" : "outline"}>{i._overdue ? "scaduta" : i.status}</Badge></td>
                   </tr>
                 ))}
