@@ -8,9 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash2, Save, Play, AlertTriangle, CheckCircle2, GitBranch, Undo2 } from "lucide-react";
+import { Plus, Trash2, Save, Play, AlertTriangle, CheckCircle2, GitBranch, Undo2, GitCompare, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { fmtDateTime } from "@/lib/format";
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/app/module-dependencies")({ component: Page });
 
@@ -89,16 +93,35 @@ function Page() {
   });
 
   const rollback = useMutation({
-    mutationFn: async (id: string) => {
-      const reason = window.prompt("Motivo del rollback (facoltativo):") ?? undefined;
-      const { error } = await (supabase as any).rpc("rollback_dependency_version", { _target: id, _note: reason });
+    mutationFn: async (args: { id: string; reason?: string }) => {
+      const { error } = await (supabase as any).rpc("rollback_dependency_version", { _target: args.id, _note: args.reason });
       if (error) throw error;
     },
-    onSuccess: () => { toast.success("Rollback eseguito: nuova versione attiva"); qc.invalidateQueries(); },
+    onSuccess: () => { toast.success("Rollback eseguito: nuova versione attiva"); setRbOpen(false); qc.invalidateQueries(); },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const errors = cycles.length + dups.length + selfRefs.length;
+
+  // Rollback dialog state
+  const [rbOpen, setRbOpen] = useState(false);
+  const [rbTargetId, setRbTargetId] = useState<string | undefined>();
+  const [rbReason, setRbReason] = useState("");
+
+  const rbTarget = (versions ?? []).find((v: any) => v.id === rbTargetId);
+
+  const { data: diff } = useQuery({
+    queryKey: ["dep_diff", active?.id, rbTargetId],
+    enabled: !!rbTargetId && !!active?.id && rbOpen,
+    queryFn: async () => ((await (supabase as any).rpc("dependency_version_diff", { _from: active.id, _to: rbTargetId })).data ?? []),
+  });
+  const { data: impact } = useQuery({
+    queryKey: ["dep_impact", rbTargetId],
+    enabled: !!rbTargetId && rbOpen,
+    queryFn: async () => ((await (supabase as any).rpc("dependency_version_impact", { _target: rbTargetId })).data ?? []),
+  });
+
+  const incompatible = (impact ?? []).length > 0;
 
   return (
     <div className="space-y-6">
@@ -106,6 +129,28 @@ function Page() {
         <h1 className="font-display text-2xl font-bold flex items-center gap-2"><GitBranch className="h-6 w-6" />Dipendenze tra moduli</h1>
         <p className="text-sm text-muted-foreground">Configura le dipendenze obbligatorie, valida le regole e attiva una versione. Ogni modifica è tracciata in audit.</p>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-display text-base flex items-center gap-2"><Undo2 className="h-4 w-4" />Rollback a versione precedente</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-wrap items-end gap-2">
+          <div className="space-y-1">
+            <Label>Versione di destinazione</Label>
+            <Select value={rbTargetId} onValueChange={setRbTargetId}>
+              <SelectTrigger className="w-[280px]"><SelectValue placeholder="Seleziona versione" /></SelectTrigger>
+              <SelectContent>
+                {(versions ?? []).filter((v: any) => !v.active).map((v: any) => (
+                  <SelectItem key={v.id} value={v.id}>#{v.version} · {fmtDateTime(v.created_at)} {v.note ? `· ${v.note}` : ""}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button variant="outline" disabled={!rbTargetId} onClick={() => setRbOpen(true)}>
+            <GitCompare className="mr-1 h-4 w-4" />Confronta e prepara rollback
+          </Button>
+        </CardContent>
+      </Card>
 
       <Card>
         <CardHeader><CardTitle className="font-display text-base">Bozza versione #{nextVersion}</CardTitle></CardHeader>
@@ -167,7 +212,7 @@ function Page() {
                   <td className="px-3 py-2 text-right">
                     {!v.active && <Button size="sm" variant="outline" onClick={() => activate.mutate(v.id)}>Attiva</Button>}
                     <Button size="sm" variant="ghost" onClick={() => setRules(v.rules as Rule[])}>Carica in bozza</Button>
-                    <Button size="sm" variant="ghost" onClick={() => rollback.mutate(v.id)} title="Crea una nuova versione clonando questa e attivala"><Undo2 className="mr-1 h-3 w-3" />Rollback</Button>
+                    {!v.active && <Button size="sm" variant="ghost" onClick={() => { setRbTargetId(v.id); setRbOpen(true); }} title="Anteprima impatto e conferma rollback"><Undo2 className="mr-1 h-3 w-3" />Rollback</Button>}
                   </td>
                 </tr>
               ))}
@@ -175,6 +220,65 @@ function Page() {
           </table>
         </CardContent>
       </Card>
+
+      <Dialog open={rbOpen} onOpenChange={setRbOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Undo2 className="h-4 w-4" />Rollback alla versione #{rbTarget?.version}</DialogTitle>
+            <DialogDescription>Confronta le regole con la versione attiva e verifica l'impatto sulle deleghe correnti prima di confermare.</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 max-h-[60vh] overflow-auto">
+            <div className="rounded-md border border-border/60 p-3 text-xs space-y-1">
+              <div className="font-semibold flex items-center gap-2"><GitCompare className="h-4 w-4" />Differenze (attiva #{active?.version} → bersaglio #{rbTarget?.version})</div>
+              {(diff ?? []).length === 0 && <div className="text-muted-foreground">Nessuna differenza.</div>}
+              {(diff ?? []).map((d: any, i: number) => (
+                <div key={i} className={d.change === "added" ? "text-emerald-500" : "text-destructive"}>
+                  {d.change === "added" ? "+" : "−"} {d.module} → {d.depends_on}
+                </div>
+              ))}
+            </div>
+
+            <div className={`rounded-md border p-3 text-xs space-y-1 ${incompatible ? "border-destructive/60" : "border-border/60"}`}>
+              <div className="font-semibold flex items-center gap-2">
+                {incompatible ? <ShieldAlert className="h-4 w-4 text-destructive" /> : <CheckCircle2 className="h-4 w-4 text-emerald-500" />}
+                Impatto sulle deleghe attive
+              </div>
+              {!incompatible && <div className="text-muted-foreground">Tutte le deleghe attive restano compatibili.</div>}
+              {incompatible && (
+                <>
+                  <div className="text-destructive">{(impact ?? []).length} delega/e diventerebbero non conformi (dipendenze mancanti).</div>
+                  <ul className="space-y-1 mt-2">
+                    {(impact ?? []).map((row: any) => (
+                      <li key={row.delegation_id} className="font-mono">
+                        <span className="text-foreground">{row.delegate_email ?? row.delegate_id}</span>
+                        <span className="text-muted-foreground"> · mancanti:</span>{" "}
+                        <span className="text-amber-500">{(row.missing_modules ?? []).join(", ")}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </div>
+
+            <div className="space-y-1">
+              <Label>Motivo del rollback</Label>
+              <Textarea rows={2} value={rbReason} onChange={(e) => setRbReason(e.target.value)} placeholder="Descrivi il motivo (verrà registrato nell'audit)" />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setRbOpen(false)}>Annulla</Button>
+            <Button
+              disabled={!rbTargetId || incompatible || rollback.isPending}
+              onClick={() => rollback.mutate({ id: rbTargetId!, reason: rbReason || undefined })}
+              title={incompatible ? "Risolvi prima le deleghe non compatibili" : ""}
+            >
+              <Undo2 className="mr-1 h-4 w-4" />Conferma rollback
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
