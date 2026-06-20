@@ -4,6 +4,16 @@
 
 ## Changelog
 
+### 2026-06-20 — Fasi 2-10 killer
+- `rooms`: nuovi `qr_token` (UNIQUE), `housekeeping_status` (clean/dirty/in_progress/inspected/out_of_order), `occupancy_status` (vacant/occupied/arrival/departure/stayover).
+- **housekeeping_tasks** — id, structure_id, room_id, task_date, task_type, status, assigned_to, priority, notes, started_at, completed_at, created_by. RLS per accesso struttura.
+- **guest_issues** — id, structure_id, room_id, category, description, guest_name, guest_contact, language, status (new/triaged/converted/dismissed), ticket_id, source. INSERT abilitato anche per `anon` (necessario per QR ospite), tutte le altre operazioni solo staff.
+- RPC **room_by_qr(_token)** SECURITY DEFINER — lookup pubblico camera senza PII.
+- **integrations** — id, structure_id, provider, kind (pms/channel_manager/accounting/messaging/energy), enabled, config jsonb, last_sync_at/status/error. UNIQUE (structure_id, provider). Policy: solo admin.
+- **cash_movements** — id, structure_id, movement_date, kind (entrata/uscita), category, description, amount, payment_method (contanti/pos/bonifico/assegno/altro), invoice_id, supplier_id, notes, created_by.
+- `structures`: nuovi `vat_number`, `fiscal_code`, `address`, `postal_code`, `province`, `regime_fiscale` (default `RF01`) per export FatturaPA.
+- RPC **housekeeping_kpi(_structure,_date)** — KPI giornaliero camere.
+
 ### 2026-06-19 — Fase 1 killer: onboarding wizard
 **structures** — nuovi campi: `onboarded_at` (timestamptz), `onboarding_preset` (text: `bb`/`piccolo`/`boutique`).
 
