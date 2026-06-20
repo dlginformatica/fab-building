@@ -69,6 +69,7 @@ import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAppCashbookRouteImport } from './routes/_authenticated/app.cashbook'
 import { Route as AuthenticatedAppBillingRouteImport } from './routes/_authenticated/app.billing'
 import { Route as AuthenticatedAppBackupSchedulesRouteImport } from './routes/_authenticated/app.backup-schedules'
+import { Route as AuthenticatedAppBackupAuditRouteImport } from './routes/_authenticated/app.backup-audit'
 import { Route as AuthenticatedAppBackupRouteImport } from './routes/_authenticated/app.backup'
 import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticated/app.audit'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
@@ -434,6 +435,12 @@ const AuthenticatedAppBackupSchedulesRoute =
     path: '/app/backup-schedules',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppBackupAuditRoute =
+  AuthenticatedAppBackupAuditRouteImport.update({
+    id: '/app/backup-audit',
+    path: '/app/backup-audit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppBackupRoute = AuthenticatedAppBackupRouteImport.update({
   id: '/app/backup',
   path: '/app/backup',
@@ -584,6 +591,7 @@ export interface FileRoutesByFullPath {
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/backup': typeof AuthenticatedAppBackupRoute
+  '/app/backup-audit': typeof AuthenticatedAppBackupAuditRoute
   '/app/backup-schedules': typeof AuthenticatedAppBackupSchedulesRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
@@ -668,6 +676,7 @@ export interface FileRoutesByTo {
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/audit': typeof AuthenticatedAppAuditRoute
   '/app/backup': typeof AuthenticatedAppBackupRoute
+  '/app/backup-audit': typeof AuthenticatedAppBackupAuditRoute
   '/app/backup-schedules': typeof AuthenticatedAppBackupSchedulesRoute
   '/app/billing': typeof AuthenticatedAppBillingRoute
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
@@ -754,6 +763,7 @@ export interface FileRoutesById {
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/audit': typeof AuthenticatedAppAuditRoute
   '/_authenticated/app/backup': typeof AuthenticatedAppBackupRoute
+  '/_authenticated/app/backup-audit': typeof AuthenticatedAppBackupAuditRoute
   '/_authenticated/app/backup-schedules': typeof AuthenticatedAppBackupSchedulesRoute
   '/_authenticated/app/billing': typeof AuthenticatedAppBillingRoute
   '/_authenticated/app/cashbook': typeof AuthenticatedAppCashbookRoute
@@ -840,6 +850,7 @@ export interface FileRouteTypes {
     | '/app/area-mapping'
     | '/app/audit'
     | '/app/backup'
+    | '/app/backup-audit'
     | '/app/backup-schedules'
     | '/app/billing'
     | '/app/cashbook'
@@ -924,6 +935,7 @@ export interface FileRouteTypes {
     | '/app/area-mapping'
     | '/app/audit'
     | '/app/backup'
+    | '/app/backup-audit'
     | '/app/backup-schedules'
     | '/app/billing'
     | '/app/cashbook'
@@ -1009,6 +1021,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/audit'
     | '/_authenticated/app/backup'
+    | '/_authenticated/app/backup-audit'
     | '/_authenticated/app/backup-schedules'
     | '/_authenticated/app/billing'
     | '/_authenticated/app/cashbook'
@@ -1517,6 +1530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppBackupSchedulesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/backup-audit': {
+      id: '/_authenticated/app/backup-audit'
+      path: '/app/backup-audit'
+      fullPath: '/app/backup-audit'
+      preLoaderRoute: typeof AuthenticatedAppBackupAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/backup': {
       id: '/_authenticated/app/backup'
       path: '/app/backup'
@@ -1689,6 +1709,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppAreaMappingRoute: typeof AuthenticatedAppAreaMappingRoute
   AuthenticatedAppAuditRoute: typeof AuthenticatedAppAuditRoute
   AuthenticatedAppBackupRoute: typeof AuthenticatedAppBackupRoute
+  AuthenticatedAppBackupAuditRoute: typeof AuthenticatedAppBackupAuditRoute
   AuthenticatedAppBackupSchedulesRoute: typeof AuthenticatedAppBackupSchedulesRoute
   AuthenticatedAppBillingRoute: typeof AuthenticatedAppBillingRoute
   AuthenticatedAppCashbookRoute: typeof AuthenticatedAppCashbookRoute
@@ -1761,6 +1782,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppAreaMappingRoute: AuthenticatedAppAreaMappingRoute,
   AuthenticatedAppAuditRoute: AuthenticatedAppAuditRoute,
   AuthenticatedAppBackupRoute: AuthenticatedAppBackupRoute,
+  AuthenticatedAppBackupAuditRoute: AuthenticatedAppBackupAuditRoute,
   AuthenticatedAppBackupSchedulesRoute: AuthenticatedAppBackupSchedulesRoute,
   AuthenticatedAppBillingRoute: AuthenticatedAppBillingRoute,
   AuthenticatedAppCashbookRoute: AuthenticatedAppCashbookRoute,
