@@ -137,13 +137,14 @@ export async function restoreOrgSnapshot(orgId: string, snapshot: Snapshot, mode
     for (let i = tables.length - 1; i >= 0; i--) {
       const t = tables[i];
       if (t === "structures" || t === "organizations") continue;
-      try {
-        if (ORG_STRUCTURE_TABLES.includes(t as any) && structureIds.length) {
-          await supabase.from(t as any).delete().in("structure_id", structureIds);
+    try {
+        const sb: any = supabase;
+        if ((ORG_STRUCTURE_TABLES as readonly string[]).includes(t) && structureIds.length) {
+          await sb.from(t).delete().in("structure_id", structureIds);
         } else if (t === "profiles") {
-          await supabase.from("profiles").delete().eq("organization_id", orgId);
+          await sb.from("profiles").delete().eq("organization_id", orgId);
         } else if (["org_memberships","org_invitations","org_notification_prefs","org_subscriptions"].includes(t)) {
-          await supabase.from(t as any).delete().eq("org_id", orgId);
+          await sb.from(t).delete().eq("org_id", orgId);
         }
       } catch (e: any) { errors[`delete:${t}`] = e?.message ?? String(e); }
     }
@@ -154,8 +155,8 @@ export async function restoreOrgSnapshot(orgId: string, snapshot: Snapshot, mode
     const rows = snapshot.data[t];
     if (!rows?.length) { inserted[t] = 0; continue; }
     try {
-      // upsert per id (tutte le tabelle hanno id uuid)
-      const { error } = await supabase.from(t as any).upsert(rows as any, { onConflict: "id", ignoreDuplicates: mode === "merge" ? false : false });
+      const sb: any = supabase;
+      const { error } = await sb.from(t).upsert(rows, { onConflict: "id" });
       if (error) { errors[t] = error.message; continue; }
       inserted[t] = rows.length;
     } catch (e: any) {
