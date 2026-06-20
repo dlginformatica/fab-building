@@ -43,11 +43,13 @@ import { Route as AuthenticatedAppReordersRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAppPurchaseOrdersRouteImport } from './routes/_authenticated/app.purchase-orders'
 import { Route as AuthenticatedAppPermissionsMatrixRouteImport } from './routes/_authenticated/app.permissions-matrix'
 import { Route as AuthenticatedAppPermissionsRouteImport } from './routes/_authenticated/app.permissions'
+import { Route as AuthenticatedAppPermissionAuditRouteImport } from './routes/_authenticated/app.permission-audit'
 import { Route as AuthenticatedAppPenaltiesRouteImport } from './routes/_authenticated/app.penalties'
 import { Route as AuthenticatedAppOverviewRouteImport } from './routes/_authenticated/app.overview'
 import { Route as AuthenticatedAppOrganizationRouteImport } from './routes/_authenticated/app.organization'
 import { Route as AuthenticatedAppOnboardingRouteImport } from './routes/_authenticated/app.onboarding'
 import { Route as AuthenticatedAppNotificationsRouteImport } from './routes/_authenticated/app.notifications'
+import { Route as AuthenticatedAppModuleDependenciesRouteImport } from './routes/_authenticated/app.module-dependencies'
 import { Route as AuthenticatedAppMessagesRouteImport } from './routes/_authenticated/app.messages'
 import { Route as AuthenticatedAppMaintenanceRouteImport } from './routes/_authenticated/app.maintenance'
 import { Route as AuthenticatedAppInvoicesRouteImport } from './routes/_authenticated/app.invoices'
@@ -67,6 +69,7 @@ import { Route as AuthenticatedAppAuditRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedAppAssetsRouteImport } from './routes/_authenticated/app.assets'
 import { Route as AuthenticatedAppAreaMappingRouteImport } from './routes/_authenticated/app.area-mapping'
 import { Route as AuthenticatedAppAlertsRouteImport } from './routes/_authenticated/app.alerts'
+import { Route as AuthenticatedAppAccessDeniedRouteImport } from './routes/_authenticated/app.access-denied'
 import { Route as ApiPublicHooksSlaNotifyRouteImport } from './routes/api/public/hooks/sla-notify'
 import { Route as ApiPublicHooksSlaEscalationsRouteImport } from './routes/api/public/hooks/sla-escalations'
 import { Route as ApiPublicHooksReportSchedulerRouteImport } from './routes/api/public/hooks/report-scheduler'
@@ -267,6 +270,12 @@ const AuthenticatedAppPermissionsRoute =
     path: '/app/permissions',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppPermissionAuditRoute =
+  AuthenticatedAppPermissionAuditRouteImport.update({
+    id: '/app/permission-audit',
+    path: '/app/permission-audit',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppPenaltiesRoute =
   AuthenticatedAppPenaltiesRouteImport.update({
     id: '/app/penalties',
@@ -295,6 +304,12 @@ const AuthenticatedAppNotificationsRoute =
   AuthenticatedAppNotificationsRouteImport.update({
     id: '/app/notifications',
     path: '/app/notifications',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedAppModuleDependenciesRoute =
+  AuthenticatedAppModuleDependenciesRouteImport.update({
+    id: '/app/module-dependencies',
+    path: '/app/module-dependencies',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedAppMessagesRoute =
@@ -407,6 +422,12 @@ const AuthenticatedAppAlertsRoute = AuthenticatedAppAlertsRouteImport.update({
   path: '/app/alerts',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedAppAccessDeniedRoute =
+  AuthenticatedAppAccessDeniedRouteImport.update({
+    id: '/app/access-denied',
+    path: '/app/access-denied',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const ApiPublicHooksSlaNotifyRoute = ApiPublicHooksSlaNotifyRouteImport.update({
   id: '/api/public/hooks/sla-notify',
   path: '/api/public/hooks/sla-notify',
@@ -466,6 +487,7 @@ export interface FileRoutesByFullPath {
   '/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/app/access-denied': typeof AuthenticatedAppAccessDeniedRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -485,11 +507,13 @@ export interface FileRoutesByFullPath {
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/app/messages': typeof AuthenticatedAppMessagesRoute
+  '/app/module-dependencies': typeof AuthenticatedAppModuleDependenciesRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
   '/app/organization': typeof AuthenticatedAppOrganizationRoute
   '/app/overview': typeof AuthenticatedAppOverviewRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
+  '/app/permission-audit': typeof AuthenticatedAppPermissionAuditRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/permissions-matrix': typeof AuthenticatedAppPermissionsMatrixRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -534,6 +558,7 @@ export interface FileRoutesByTo {
   '/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/app/access-denied': typeof AuthenticatedAppAccessDeniedRoute
   '/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -553,11 +578,13 @@ export interface FileRoutesByTo {
   '/app/invoices': typeof AuthenticatedAppInvoicesRoute
   '/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/app/messages': typeof AuthenticatedAppMessagesRoute
+  '/app/module-dependencies': typeof AuthenticatedAppModuleDependenciesRoute
   '/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/app/onboarding': typeof AuthenticatedAppOnboardingRoute
   '/app/organization': typeof AuthenticatedAppOrganizationRoute
   '/app/overview': typeof AuthenticatedAppOverviewRoute
   '/app/penalties': typeof AuthenticatedAppPenaltiesRoute
+  '/app/permission-audit': typeof AuthenticatedAppPermissionAuditRoute
   '/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/app/permissions-matrix': typeof AuthenticatedAppPermissionsMatrixRoute
   '/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -604,6 +631,7 @@ export interface FileRoutesById {
   '/_authenticated/portal': typeof AuthenticatedPortalRoute
   '/g/$qr': typeof GQrRoute
   '/invite/$token': typeof InviteTokenRoute
+  '/_authenticated/app/access-denied': typeof AuthenticatedAppAccessDeniedRoute
   '/_authenticated/app/alerts': typeof AuthenticatedAppAlertsRoute
   '/_authenticated/app/area-mapping': typeof AuthenticatedAppAreaMappingRoute
   '/_authenticated/app/assets': typeof AuthenticatedAppAssetsRouteWithChildren
@@ -623,11 +651,13 @@ export interface FileRoutesById {
   '/_authenticated/app/invoices': typeof AuthenticatedAppInvoicesRoute
   '/_authenticated/app/maintenance': typeof AuthenticatedAppMaintenanceRoute
   '/_authenticated/app/messages': typeof AuthenticatedAppMessagesRoute
+  '/_authenticated/app/module-dependencies': typeof AuthenticatedAppModuleDependenciesRoute
   '/_authenticated/app/notifications': typeof AuthenticatedAppNotificationsRoute
   '/_authenticated/app/onboarding': typeof AuthenticatedAppOnboardingRoute
   '/_authenticated/app/organization': typeof AuthenticatedAppOrganizationRoute
   '/_authenticated/app/overview': typeof AuthenticatedAppOverviewRoute
   '/_authenticated/app/penalties': typeof AuthenticatedAppPenaltiesRoute
+  '/_authenticated/app/permission-audit': typeof AuthenticatedAppPermissionAuditRoute
   '/_authenticated/app/permissions': typeof AuthenticatedAppPermissionsRoute
   '/_authenticated/app/permissions-matrix': typeof AuthenticatedAppPermissionsMatrixRoute
   '/_authenticated/app/purchase-orders': typeof AuthenticatedAppPurchaseOrdersRoute
@@ -674,6 +704,7 @@ export interface FileRouteTypes {
     | '/portal'
     | '/g/$qr'
     | '/invite/$token'
+    | '/app/access-denied'
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
@@ -693,11 +724,13 @@ export interface FileRouteTypes {
     | '/app/invoices'
     | '/app/maintenance'
     | '/app/messages'
+    | '/app/module-dependencies'
     | '/app/notifications'
     | '/app/onboarding'
     | '/app/organization'
     | '/app/overview'
     | '/app/penalties'
+    | '/app/permission-audit'
     | '/app/permissions'
     | '/app/permissions-matrix'
     | '/app/purchase-orders'
@@ -742,6 +775,7 @@ export interface FileRouteTypes {
     | '/portal'
     | '/g/$qr'
     | '/invite/$token'
+    | '/app/access-denied'
     | '/app/alerts'
     | '/app/area-mapping'
     | '/app/assets'
@@ -761,11 +795,13 @@ export interface FileRouteTypes {
     | '/app/invoices'
     | '/app/maintenance'
     | '/app/messages'
+    | '/app/module-dependencies'
     | '/app/notifications'
     | '/app/onboarding'
     | '/app/organization'
     | '/app/overview'
     | '/app/penalties'
+    | '/app/permission-audit'
     | '/app/permissions'
     | '/app/permissions-matrix'
     | '/app/purchase-orders'
@@ -811,6 +847,7 @@ export interface FileRouteTypes {
     | '/_authenticated/portal'
     | '/g/$qr'
     | '/invite/$token'
+    | '/_authenticated/app/access-denied'
     | '/_authenticated/app/alerts'
     | '/_authenticated/app/area-mapping'
     | '/_authenticated/app/assets'
@@ -830,11 +867,13 @@ export interface FileRouteTypes {
     | '/_authenticated/app/invoices'
     | '/_authenticated/app/maintenance'
     | '/_authenticated/app/messages'
+    | '/_authenticated/app/module-dependencies'
     | '/_authenticated/app/notifications'
     | '/_authenticated/app/onboarding'
     | '/_authenticated/app/organization'
     | '/_authenticated/app/overview'
     | '/_authenticated/app/penalties'
+    | '/_authenticated/app/permission-audit'
     | '/_authenticated/app/permissions'
     | '/_authenticated/app/permissions-matrix'
     | '/_authenticated/app/purchase-orders'
@@ -1127,6 +1166,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppPermissionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/permission-audit': {
+      id: '/_authenticated/app/permission-audit'
+      path: '/app/permission-audit'
+      fullPath: '/app/permission-audit'
+      preLoaderRoute: typeof AuthenticatedAppPermissionAuditRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/penalties': {
       id: '/_authenticated/app/penalties'
       path: '/app/penalties'
@@ -1160,6 +1206,13 @@ declare module '@tanstack/react-router' {
       path: '/app/notifications'
       fullPath: '/app/notifications'
       preLoaderRoute: typeof AuthenticatedAppNotificationsRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/app/module-dependencies': {
+      id: '/_authenticated/app/module-dependencies'
+      path: '/app/module-dependencies'
+      fullPath: '/app/module-dependencies'
+      preLoaderRoute: typeof AuthenticatedAppModuleDependenciesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/app/messages': {
@@ -1295,6 +1348,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppAlertsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/access-denied': {
+      id: '/_authenticated/app/access-denied'
+      path: '/app/access-denied'
+      fullPath: '/app/access-denied'
+      preLoaderRoute: typeof AuthenticatedAppAccessDeniedRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/api/public/hooks/sla-notify': {
       id: '/api/public/hooks/sla-notify'
       path: '/api/public/hooks/sla-notify'
@@ -1419,6 +1479,7 @@ const AuthenticatedAppTicketsRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPortalRoute: typeof AuthenticatedPortalRoute
+  AuthenticatedAppAccessDeniedRoute: typeof AuthenticatedAppAccessDeniedRoute
   AuthenticatedAppAlertsRoute: typeof AuthenticatedAppAlertsRoute
   AuthenticatedAppAreaMappingRoute: typeof AuthenticatedAppAreaMappingRoute
   AuthenticatedAppAssetsRoute: typeof AuthenticatedAppAssetsRouteWithChildren
@@ -1438,11 +1499,13 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppInvoicesRoute: typeof AuthenticatedAppInvoicesRoute
   AuthenticatedAppMaintenanceRoute: typeof AuthenticatedAppMaintenanceRoute
   AuthenticatedAppMessagesRoute: typeof AuthenticatedAppMessagesRoute
+  AuthenticatedAppModuleDependenciesRoute: typeof AuthenticatedAppModuleDependenciesRoute
   AuthenticatedAppNotificationsRoute: typeof AuthenticatedAppNotificationsRoute
   AuthenticatedAppOnboardingRoute: typeof AuthenticatedAppOnboardingRoute
   AuthenticatedAppOrganizationRoute: typeof AuthenticatedAppOrganizationRoute
   AuthenticatedAppOverviewRoute: typeof AuthenticatedAppOverviewRoute
   AuthenticatedAppPenaltiesRoute: typeof AuthenticatedAppPenaltiesRoute
+  AuthenticatedAppPermissionAuditRoute: typeof AuthenticatedAppPermissionAuditRoute
   AuthenticatedAppPermissionsRoute: typeof AuthenticatedAppPermissionsRoute
   AuthenticatedAppPermissionsMatrixRoute: typeof AuthenticatedAppPermissionsMatrixRoute
   AuthenticatedAppPurchaseOrdersRoute: typeof AuthenticatedAppPurchaseOrdersRoute
@@ -1475,6 +1538,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPortalRoute: AuthenticatedPortalRoute,
+  AuthenticatedAppAccessDeniedRoute: AuthenticatedAppAccessDeniedRoute,
   AuthenticatedAppAlertsRoute: AuthenticatedAppAlertsRoute,
   AuthenticatedAppAreaMappingRoute: AuthenticatedAppAreaMappingRoute,
   AuthenticatedAppAssetsRoute: AuthenticatedAppAssetsRouteWithChildren,
@@ -1496,11 +1560,14 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppInvoicesRoute: AuthenticatedAppInvoicesRoute,
   AuthenticatedAppMaintenanceRoute: AuthenticatedAppMaintenanceRoute,
   AuthenticatedAppMessagesRoute: AuthenticatedAppMessagesRoute,
+  AuthenticatedAppModuleDependenciesRoute:
+    AuthenticatedAppModuleDependenciesRoute,
   AuthenticatedAppNotificationsRoute: AuthenticatedAppNotificationsRoute,
   AuthenticatedAppOnboardingRoute: AuthenticatedAppOnboardingRoute,
   AuthenticatedAppOrganizationRoute: AuthenticatedAppOrganizationRoute,
   AuthenticatedAppOverviewRoute: AuthenticatedAppOverviewRoute,
   AuthenticatedAppPenaltiesRoute: AuthenticatedAppPenaltiesRoute,
+  AuthenticatedAppPermissionAuditRoute: AuthenticatedAppPermissionAuditRoute,
   AuthenticatedAppPermissionsRoute: AuthenticatedAppPermissionsRoute,
   AuthenticatedAppPermissionsMatrixRoute:
     AuthenticatedAppPermissionsMatrixRoute,

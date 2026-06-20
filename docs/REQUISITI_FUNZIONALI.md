@@ -1,5 +1,8 @@
 # HotelOps — Requisiti Funzionali
 
+## Changelog
+- **2026-06-20 — Fase 16**: RF-PERM-04 editor versionato delle dipendenze moduli con validazione e anteprima; RF-PERM-05 audit unificato per modifiche a deleghe, permessi e ruoli; RF-PERM-06 log accessi negati con motivo (dipendenza mancante / ruolo insufficiente / delega scaduta).
+
 ## 2026-06-20 — RF Matrice permessi & dipendenze
 - RF-PM-01: ogni funzione/modulo è esposta in UI solo se `has_module_access(user, module, structure)` restituisce true; lo stesso check è eseguito anche lato server prima della scrittura.
 - RF-PM-02: la concessione di un modulo via delega comporta automaticamente la concessione delle sue dipendenze (trigger DB).

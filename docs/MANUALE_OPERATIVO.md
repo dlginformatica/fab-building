@@ -3,6 +3,7 @@
 > Documento vivo: aggiornato a ogni interazione con l'utente.
 
 ## Changelog
+- **2026-06-20 — Fase 16**: editor versionato delle dipendenze tra moduli (validazione cicli/duplicati + anteprima impatto), pagina **Accessi negati** in Smart Inbox che mostra il motivo e le dipendenze mancanti, **Audit permessi & deleghe** con diff before/after, test di integrazione sull'espansione delle dipendenze nelle deleghe (`src/lib/module-deps.test.ts`).
 
 ### 2026-06-20 — Matrice permessi granulare con dipendenze obbligatorie
 - Aggiunta funzione SQL `has_module_access(user, module, structure)` — verifica server-authoritative (super_admin, owner organizzazione, direttore/facility_manager, delega attiva, permesso granulare).

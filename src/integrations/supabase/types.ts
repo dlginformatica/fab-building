@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      access_denied_log: {
+        Row: {
+          acknowledged_at: string | null
+          created_at: string
+          id: string
+          missing_deps: string[] | null
+          module: string
+          path: string | null
+          reason: string
+          structure_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          created_at?: string
+          id?: string
+          missing_deps?: string[] | null
+          module: string
+          path?: string | null
+          reason: string
+          structure_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          created_at?: string
+          id?: string
+          missing_deps?: string[] | null
+          module?: string
+          path?: string | null
+          reason?: string
+          structure_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       asset_categories: {
         Row: {
           color: string | null
@@ -1708,6 +1744,36 @@ export type Database = {
         }
         Relationships: []
       }
+      module_dependency_versions: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          id: string
+          note: string | null
+          rules: Json
+          version: number
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          rules: Json
+          version: number
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          note?: string | null
+          rules?: Json
+          version?: number
+        }
+        Relationships: []
+      }
       module_permissions: {
         Row: {
           action: string
@@ -2097,6 +2163,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      permission_audit: {
+        Row: {
+          action: string
+          actor_id: string | null
+          after: Json | null
+          before: Json | null
+          created_at: string
+          entity: string
+          entity_id: string | null
+          id: string
+          reason: string | null
+          structure_id: string | null
+          target_user_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          entity: string
+          entity_id?: string | null
+          id?: string
+          reason?: string | null
+          structure_id?: string | null
+          target_user_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          after?: Json | null
+          before?: Json | null
+          created_at?: string
+          entity?: string
+          entity_id?: string | null
+          id?: string
+          reason?: string | null
+          structure_id?: string | null
+          target_user_id?: string | null
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -4410,6 +4518,10 @@ export type Database = {
     }
     Functions: {
       accept_org_invitation: { Args: { _token: string }; Returns: string }
+      activate_dependency_version: {
+        Args: { _version_id: string }
+        Returns: undefined
+      }
       alerts_for_structure: {
         Args: { _structure: string }
         Returns: {
@@ -4506,6 +4618,10 @@ export type Database = {
       expand_modules_with_deps: {
         Args: { _modules: string[] }
         Returns: string[]
+      }
+      explain_module_access: {
+        Args: { _module: string; _structure?: string; _user: string }
+        Returns: Json
       }
       generate_maintenance_tasks: {
         Args: { _from: string; _to: string }
