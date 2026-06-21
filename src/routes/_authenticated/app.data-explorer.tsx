@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -115,7 +115,6 @@ function TablesIndex() {
 
 function TableView({ table }: { table: string }) {
   const navigate = useNavigate();
-  const router = useRouter();
   const search = Route.useSearch();
   const qc = useQueryClient();
   const entry = getTableEntry(table);
