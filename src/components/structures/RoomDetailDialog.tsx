@@ -175,6 +175,11 @@ function FurnitureList({ room }: { room: Room }) {
       if (patch.quantity != null && (!Number.isFinite(Number(patch.quantity)) || Number(patch.quantity) < 0)) {
         throw new Error("Quantità non valida");
       }
+      // Traccia undo per quantity
+      if (Object.prototype.hasOwnProperty.call(patch, "quantity")) {
+        const cur = (data ?? []).find((f) => f.id === id);
+        if (cur) pushUndo(room.id, { kind: "qty", id, from: cur.quantity ?? null, to: (patch.quantity as number) ?? null });
+      }
       const { error } = await (supabase as any).from("room_furnishings").update(patch).eq("id", id);
       if (error) throw error;
     },
@@ -349,6 +354,16 @@ function PlanAndFurniture({ room }: { room: Room }) {
       const ny = norm(y);
       // Se uno solo dei due è null, normalizziamo a entrambi null (coerenza)
       const payload = (nx === null || ny === null) ? { pos_x: null, pos_y: null } : { pos_x: nx, pos_y: ny };
+      // Traccia undo per posizione
+      const cur = (furn ?? []).find((f) => f.id === id);
+      if (cur) {
+        pushUndo(room.id, {
+          kind: "pos",
+          id,
+          from: { x: cur.pos_x, y: cur.pos_y },
+          to: { x: payload.pos_x ?? null, y: payload.pos_y ?? null },
+        });
+      }
       const { error } = await (supabase as any).from("room_furnishings").update(payload).eq("id", id);
       if (error) throw error;
     },
