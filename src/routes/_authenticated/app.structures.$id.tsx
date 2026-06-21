@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Trash2, MapPin, Upload, Pencil, LayoutGrid } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, MapPin, Upload, Pencil, LayoutGrid, X } from "lucide-react";
 import { toast } from "sonner";
 
 // Map is client-only (leaflet touches window). Lazy + Suspense + typeof window guard.
@@ -147,10 +147,21 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
     },
   });
 
+  const catsStorageKey = `roomtype-cats:${structureId}`;
+  const [customCats, setCustomCats] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try { return JSON.parse(localStorage.getItem(catsStorageKey) ?? "[]"); } catch { return []; }
+  });
+  const persistCats = (next: string[]) => {
+    setCustomCats(next);
+    if (typeof window !== "undefined") localStorage.setItem(catsStorageKey, JSON.stringify(next));
+  };
   const categories = Array.from(new Set([
     ...DEFAULT_TYPE_CATEGORIES,
+    ...customCats,
     ...((data ?? []).map((t: any) => t.category).filter(Boolean) as string[]),
   ]));
+  const [newCat, setNewCat] = useState("");
 
   const [editing, setEditing] = useState<{ id: string | null; form: RoomTypeForm } | null>(null);
 
@@ -197,6 +208,31 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="border rounded p-3 space-y-2 bg-muted/30">
+          <div className="text-xs font-medium uppercase text-muted-foreground">Categorie disponibili</div>
+          <div className="flex flex-wrap gap-1">
+            {categories.map((c) => {
+              const removable = customCats.includes(c) && !DEFAULT_TYPE_CATEGORIES.includes(c);
+              return (
+                <span key={c} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded bg-accent text-accent-foreground">
+                  {c}
+                  {removable && (
+                    <button type="button" className="hover:text-destructive" onClick={() => persistCats(customCats.filter(x => x !== c))} aria-label={`Rimuovi ${c}`}>
+                      <X className="h-3 w-3" />
+                    </button>
+                  )}
+                </span>
+              );
+            })}
+          </div>
+          <div className="flex gap-2">
+            <Input className="h-8" placeholder="Nuova categoria…" value={newCat} onChange={(e) => setNewCat(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && newCat.trim()) { persistCats(Array.from(new Set([...customCats, newCat.trim()]))); setNewCat(""); } }} />
+            <Button size="sm" variant="outline" onClick={() => { if (newCat.trim()) { persistCats(Array.from(new Set([...customCats, newCat.trim()]))); setNewCat(""); } }}>
+              <Plus className="h-4 w-4 mr-1" />Aggiungi
+            </Button>
+          </div>
+        </div>
         <div className="divide-y border rounded">
           {(data ?? []).map((t) => (
             <div key={t.id} className="flex items-center justify-between p-3 text-sm">
@@ -279,6 +315,24 @@ function RoomsTab({ structureId }: { structureId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase.from("room_types" as any).select("id,name").eq("structure_id", structureId);
       if (error) throw error; return (data ?? []) as any[];
+    },
+  });
+  const { data: furnByRoom } = useQuery({
+    queryKey: ["room_furnishings_summary", structureId],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from("room_furnishings")
+        .select("room_id,kind,locale,quantity").eq("structure_id", structureId);
+      if (error) throw error;
+      const m: Record<string, { total: number; byKind: Record<string, number>; locales: Set<string> }> = {};
+      for (const f of (data ?? []) as any[]) {
+        const q = Number(f.quantity ?? 1);
+        const r = (m[f.room_id] ||= { total: 0, byKind: {}, locales: new Set() });
+        r.total += q;
+        const k = f.kind ?? "altro";
+        r.byKind[k] = (r.byKind[k] ?? 0) + q;
+        if (f.locale) r.locales.add(f.locale);
+      }
+      return m;
     },
   });
 
@@ -382,7 +436,8 @@ function RoomsTab({ structureId }: { structureId: string }) {
           </div>
           <div className="divide-y border rounded max-h-[420px] overflow-auto">
             {(rooms ?? []).map((r: any) => (
-              <div key={r.id} className="flex items-center justify-between gap-2 p-2 text-sm">
+              <div key={r.id} className="flex flex-col gap-1 p-2 text-sm">
+                <div className="flex items-center justify-between gap-2">
                 <span className="font-medium w-20">{r.name}</span>
                 <Select value={r.floor_id ?? ""} onValueChange={(v) => updRoom.mutate({ id: r.id, patch: { floor_id: v || null } })}>
                   <SelectTrigger className="h-8"><SelectValue placeholder="Piano" /></SelectTrigger>
@@ -398,8 +453,29 @@ function RoomsTab({ structureId }: { structureId: string }) {
                     {["clean","dirty","in_progress","inspected","out_of_order"].map((x) => <SelectItem key={x} value={x}>{x}</SelectItem>)}
                   </SelectContent>
                 </Select>
-                <Button size="icon" variant="ghost" title="Pianta & arredi" onClick={() => setOpenRoom(r)}><LayoutGrid className="h-4 w-4" /></Button>
+                <Button size="sm" variant="outline" title="Pianta & arredi" onClick={() => setOpenRoom(r)}>
+                  <LayoutGrid className="h-4 w-4 mr-1" />Pianta & arredi
+                  {r.plan_path && <span className="ml-1 h-1.5 w-1.5 rounded-full bg-emerald-500" title="Pianta caricata" />}
+                </Button>
                 <Button size="icon" variant="ghost" onClick={() => delRoom.mutate(r.id)}><Trash2 className="h-4 w-4" /></Button>
+                </div>
+                {(() => {
+                  const sum = furnByRoom?.[r.id];
+                  if (!sum || sum.total === 0) return <div className="text-[11px] text-muted-foreground pl-20">Nessun arredo registrato</div>;
+                  return (
+                    <div className="flex flex-wrap gap-1 pl-20">
+                      <span className="text-[11px] text-muted-foreground">Tot. {sum.total} ·</span>
+                      {Object.entries(sum.byKind).map(([k, n]) => (
+                        <span key={k} className="text-[10px] px-1.5 py-0.5 rounded bg-accent text-accent-foreground">{k}: {n}</span>
+                      ))}
+                      {sum.locales.size > 0 && (
+                        <span className="text-[10px] px-1.5 py-0.5 rounded border border-border text-muted-foreground">
+                          {Array.from(sum.locales).join(", ")}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             ))}
             {(!rooms || rooms.length === 0) && <div className="p-4 text-center text-sm text-muted-foreground">Nessuna camera.</div>}
@@ -411,7 +487,13 @@ function RoomsTab({ structureId }: { structureId: string }) {
           <RoomDetailDialog
             room={{ id: openRoom.id, name: openRoom.name, structure_id: structureId, plan_path: openRoom.plan_path ?? null }}
             open={!!openRoom}
-            onOpenChange={(v) => { if (!v) setOpenRoom(null); }}
+            onOpenChange={(v) => {
+              if (!v) {
+                setOpenRoom(null);
+                qc.invalidateQueries({ queryKey: ["room_furnishings_summary", structureId] });
+                qc.invalidateQueries({ queryKey: ["rooms", structureId] });
+              }
+            }}
           />
         </Suspense>
       )}

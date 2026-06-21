@@ -200,6 +200,42 @@ function PlanAndFurniture({ room }: { room: Room }) {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const draggingRef = useRef<string | null>(null);
+  const [dragPos, setDragPos] = useState<{ id: string; x: number; y: number } | null>(null);
+
+  const computePct = (clientX: number, clientY: number) => {
+    const wrap = imgWrapRef.current;
+    if (!wrap) return null;
+    const rect = wrap.getBoundingClientRect();
+    const clamp = (v: number) => Math.max(0, Math.min(100, v));
+    return { x: clamp(((clientX - rect.left) / rect.width) * 100), y: clamp(((clientY - rect.top) / rect.height) * 100) };
+  };
+
+  const onMarkerDragStart = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    draggingRef.current = id;
+    setSelectedId(id);
+  };
+
+  useEffect(() => {
+    const move = (ev: MouseEvent) => {
+      const id = draggingRef.current; if (!id) return;
+      const p = computePct(ev.clientX, ev.clientY); if (!p) return;
+      setDragPos({ id, x: p.x, y: p.y });
+    };
+    const up = (ev: MouseEvent) => {
+      const id = draggingRef.current; if (!id) return;
+      draggingRef.current = null;
+      const p = computePct(ev.clientX, ev.clientY);
+      if (p) setPos.mutate({ id, x: p.x, y: p.y });
+      setDragPos(null);
+    };
+    window.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", up);
+    return () => { window.removeEventListener("mousemove", move); window.removeEventListener("mouseup", up); };
+  }, [setPos]);
+
   const onMapClick = (e: React.MouseEvent) => {
     if (!placingMode || !selectedId) return;
     const wrap = imgWrapRef.current;
@@ -214,7 +250,7 @@ function PlanAndFurniture({ room }: { room: Room }) {
   };
 
   const onPanStart = (e: React.MouseEvent) => {
-    if (placingMode) return;
+    if (placingMode || draggingRef.current) return;
     dragRef.current = { x: e.clientX, y: e.clientY, px: pan.x, py: pan.y };
   };
   const onPanMove = (e: React.MouseEvent) => {
@@ -254,10 +290,14 @@ function PlanAndFurniture({ room }: { room: Room }) {
               {(furn ?? []).filter(f => f.pos_x != null && f.pos_y != null).map(f => (
                 <button key={f.id}
                   onClick={(e) => { e.stopPropagation(); setSelectedId(f.id); }}
-                  className={"absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow border " +
+                  onMouseDown={(e) => onMarkerDragStart(e, f.id)}
+                  className={"absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow border cursor-move select-none " +
                     (selectedId === f.id ? "bg-primary text-primary-foreground border-primary ring-2 ring-primary" : "bg-background border-border")}
-                  style={{ left: `${f.pos_x}%`, top: `${f.pos_y}%` }}
-                  title={f.name}
+                  style={{
+                    left: `${dragPos?.id === f.id ? dragPos.x : f.pos_x}%`,
+                    top: `${dragPos?.id === f.id ? dragPos.y : f.pos_y}%`,
+                  }}
+                  title={`${f.name} — trascina per spostare`}
                 >{f.name}</button>
               ))}
             </div>
@@ -268,7 +308,7 @@ function PlanAndFurniture({ room }: { room: Room }) {
         <p className="text-xs text-muted-foreground">
           {placingMode
             ? "Modalità posizionamento: clicca sulla pianta per piazzare il segnaposto."
-            : "Trascina per spostare la vista, usa i pulsanti zoom. Seleziona un arredo a destra e clicca \"Posiziona\" per collocarlo."}
+            : "Trascina la vista per spostarti, usa zoom. I segnaposti possono essere trascinati direttamente sulla pianta; in alternativa seleziona un arredo e clicca \"Posiziona\"."}
         </p>
       </div>
       <div className="space-y-2">
