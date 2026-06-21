@@ -348,6 +348,24 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
 function RoomsTab({ structureId }: { structureId: string }) {
   const qc = useQueryClient();
   const [openRoom, setOpenRoom] = useState<any | null>(null);
+
+  // Realtime: arredi e camere → invalida il summary e la lista camere
+  useEffect(() => {
+    const ch = supabase.channel(`rtc-rooms-${structureId}`)
+      .on("postgres_changes",
+        { event: "*", schema: "public", table: "room_furnishings", filter: `structure_id=eq.${structureId}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["room_furnishings_summary", structureId] });
+        })
+      .on("postgres_changes",
+        { event: "*", schema: "public", table: "rooms", filter: `structure_id=eq.${structureId}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["rooms", structureId] });
+        })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [structureId, qc]);
+
   const { data: floors } = useQuery({
     queryKey: ["floors", structureId],
     queryFn: async () => {
