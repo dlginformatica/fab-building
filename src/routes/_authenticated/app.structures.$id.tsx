@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Trash2, MapPin, Upload, Pencil, LayoutGrid } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, MapPin, Upload, Pencil, LayoutGrid, X } from "lucide-react";
 import { toast } from "sonner";
 
 // Map is client-only (leaflet touches window). Lazy + Suspense + typeof window guard.
@@ -147,10 +147,21 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
     },
   });
 
+  const catsStorageKey = `roomtype-cats:${structureId}`;
+  const [customCats, setCustomCats] = useState<string[]>(() => {
+    if (typeof window === "undefined") return [];
+    try { return JSON.parse(localStorage.getItem(catsStorageKey) ?? "[]"); } catch { return []; }
+  });
+  const persistCats = (next: string[]) => {
+    setCustomCats(next);
+    if (typeof window !== "undefined") localStorage.setItem(catsStorageKey, JSON.stringify(next));
+  };
   const categories = Array.from(new Set([
     ...DEFAULT_TYPE_CATEGORIES,
+    ...customCats,
     ...((data ?? []).map((t: any) => t.category).filter(Boolean) as string[]),
   ]));
+  const [newCat, setNewCat] = useState("");
 
   const [editing, setEditing] = useState<{ id: string | null; form: RoomTypeForm } | null>(null);
 
@@ -197,6 +208,31 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
         </Button>
       </CardHeader>
       <CardContent className="space-y-4">
+        <div className="border rounded p-3 space-y-2 bg-muted/30">
+          <div className="text-xs font-medium uppercase text-muted-foreground">Categorie disponibili</div>
+          <div className="flex flex-wrap gap-1">
+            {categories.map((c) => {
+              const removable = customCats.includes(c) && !DEFAULT_TYPE_CATEGORIES.includes(c);
+              return (
+                <span key={c} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded bg-accent text-accent-foreground">
+                  {c}
+                  {removable && (
+                    <button type="button" className="hover:text-destructive" onClick={() => persistCats(customCats.filter(x => x !== c))} aria-label={`Rimuovi ${c}`}>
+                      <X className="h-3 w-3" />
+                    </button>
+                  )}
+                </span>
+              );
+            })}
+          </div>
+          <div className="flex gap-2">
+            <Input className="h-8" placeholder="Nuova categoria…" value={newCat} onChange={(e) => setNewCat(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter" && newCat.trim()) { persistCats(Array.from(new Set([...customCats, newCat.trim()]))); setNewCat(""); } }} />
+            <Button size="sm" variant="outline" onClick={() => { if (newCat.trim()) { persistCats(Array.from(new Set([...customCats, newCat.trim()]))); setNewCat(""); } }}>
+              <Plus className="h-4 w-4 mr-1" />Aggiungi
+            </Button>
+          </div>
+        </div>
         <div className="divide-y border rounded">
           {(data ?? []).map((t) => (
             <div key={t.id} className="flex items-center justify-between p-3 text-sm">
