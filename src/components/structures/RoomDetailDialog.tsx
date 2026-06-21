@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Trash2, Upload, ZoomIn, ZoomOut, Crosshair } from "lucide-react";
+import { Plus, Trash2, Upload, ZoomIn, ZoomOut, Crosshair, Undo2, Redo2 } from "lucide-react";
 import { toast } from "sonner";
 
 type Room = { id: string; name: string; structure_id: string; plan_path: string | null };
@@ -18,6 +18,36 @@ type Furn = {
   name: string; locale: string | null; quantity: number | null; notes: string | null;
   pos_x: number | null; pos_y: number | null;
 };
+
+/* ─────────────────────────  Undo/Redo store (scoped per camera)  ───────────────────────── */
+type UndoEntry =
+  | { kind: "pos"; id: string; from: { x: number | null; y: number | null }; to: { x: number | null; y: number | null } }
+  | { kind: "qty"; id: string; from: number | null; to: number | null };
+
+const undoStores = new Map<string, { undo: UndoEntry[]; redo: UndoEntry[]; listeners: Set<() => void> }>();
+function getStore(roomId: string) {
+  let s = undoStores.get(roomId);
+  if (!s) { s = { undo: [], redo: [], listeners: new Set() }; undoStores.set(roomId, s); }
+  return s;
+}
+function notify(roomId: string) { getStore(roomId).listeners.forEach((l) => l()); }
+function pushUndo(roomId: string, e: UndoEntry) {
+  const s = getStore(roomId);
+  s.undo.push(e); if (s.undo.length > 50) s.undo.shift();
+  s.redo = [];
+  notify(roomId);
+}
+function useUndoState(roomId: string) {
+  const [, set] = useState(0);
+  useEffect(() => {
+    const s = getStore(roomId);
+    const fn = () => set((v) => v + 1);
+    s.listeners.add(fn);
+    return () => { s.listeners.delete(fn); };
+  }, [roomId]);
+  const s = getStore(roomId);
+  return { canUndo: s.undo.length > 0, canRedo: s.redo.length > 0, undoLen: s.undo.length, redoLen: s.redo.length };
+}
 
 export default function RoomDetailDialog({
   room, open, onOpenChange,
