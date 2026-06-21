@@ -64,6 +64,7 @@ import { Route as AuthenticatedAppDocsRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedAppDelegationsHistoryRouteImport } from './routes/_authenticated/app.delegations-history'
 import { Route as AuthenticatedAppDelegationsRouteImport } from './routes/_authenticated/app.delegations'
 import { Route as AuthenticatedAppDelegationAuditRouteImport } from './routes/_authenticated/app.delegation-audit'
+import { Route as AuthenticatedAppDataExplorerRouteImport } from './routes/_authenticated/app.data-explorer'
 import { Route as AuthenticatedAppCostAnalyticsRouteImport } from './routes/_authenticated/app.cost-analytics'
 import { Route as AuthenticatedAppContractsRouteImport } from './routes/_authenticated/app.contracts'
 import { Route as AuthenticatedAppCashbookRouteImport } from './routes/_authenticated/app.cashbook'
@@ -409,6 +410,12 @@ const AuthenticatedAppDelegationAuditRoute =
     path: '/app/delegation-audit',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedAppDataExplorerRoute =
+  AuthenticatedAppDataExplorerRouteImport.update({
+    id: '/app/data-explorer',
+    path: '/app/data-explorer',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedAppCostAnalyticsRoute =
   AuthenticatedAppCostAnalyticsRouteImport.update({
     id: '/app/cost-analytics',
@@ -619,6 +626,7 @@ export interface FileRoutesByFullPath {
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
+  '/app/data-explorer': typeof AuthenticatedAppDataExplorerRoute
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
@@ -707,6 +715,7 @@ export interface FileRoutesByTo {
   '/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/app/contracts': typeof AuthenticatedAppContractsRoute
   '/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
+  '/app/data-explorer': typeof AuthenticatedAppDataExplorerRoute
   '/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
   '/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
@@ -796,6 +805,7 @@ export interface FileRoutesById {
   '/_authenticated/app/cashbook': typeof AuthenticatedAppCashbookRoute
   '/_authenticated/app/contracts': typeof AuthenticatedAppContractsRoute
   '/_authenticated/app/cost-analytics': typeof AuthenticatedAppCostAnalyticsRoute
+  '/_authenticated/app/data-explorer': typeof AuthenticatedAppDataExplorerRoute
   '/_authenticated/app/delegation-audit': typeof AuthenticatedAppDelegationAuditRoute
   '/_authenticated/app/delegations': typeof AuthenticatedAppDelegationsRoute
   '/_authenticated/app/delegations-history': typeof AuthenticatedAppDelegationsHistoryRoute
@@ -886,6 +896,7 @@ export interface FileRouteTypes {
     | '/app/cashbook'
     | '/app/contracts'
     | '/app/cost-analytics'
+    | '/app/data-explorer'
     | '/app/delegation-audit'
     | '/app/delegations'
     | '/app/delegations-history'
@@ -974,6 +985,7 @@ export interface FileRouteTypes {
     | '/app/cashbook'
     | '/app/contracts'
     | '/app/cost-analytics'
+    | '/app/data-explorer'
     | '/app/delegation-audit'
     | '/app/delegations'
     | '/app/delegations-history'
@@ -1062,6 +1074,7 @@ export interface FileRouteTypes {
     | '/_authenticated/app/cashbook'
     | '/_authenticated/app/contracts'
     | '/_authenticated/app/cost-analytics'
+    | '/_authenticated/app/data-explorer'
     | '/_authenticated/app/delegation-audit'
     | '/_authenticated/app/delegations'
     | '/_authenticated/app/delegations-history'
@@ -1532,6 +1545,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAppDelegationAuditRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/app/data-explorer': {
+      id: '/_authenticated/app/data-explorer'
+      path: '/app/data-explorer'
+      fullPath: '/app/data-explorer'
+      preLoaderRoute: typeof AuthenticatedAppDataExplorerRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/app/cost-analytics': {
       id: '/_authenticated/app/cost-analytics'
       path: '/app/cost-analytics'
@@ -1790,6 +1810,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedAppCashbookRoute: typeof AuthenticatedAppCashbookRoute
   AuthenticatedAppContractsRoute: typeof AuthenticatedAppContractsRoute
   AuthenticatedAppCostAnalyticsRoute: typeof AuthenticatedAppCostAnalyticsRoute
+  AuthenticatedAppDataExplorerRoute: typeof AuthenticatedAppDataExplorerRoute
   AuthenticatedAppDelegationAuditRoute: typeof AuthenticatedAppDelegationAuditRoute
   AuthenticatedAppDelegationsRoute: typeof AuthenticatedAppDelegationsRoute
   AuthenticatedAppDelegationsHistoryRoute: typeof AuthenticatedAppDelegationsHistoryRoute
@@ -1865,6 +1886,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAppCashbookRoute: AuthenticatedAppCashbookRoute,
   AuthenticatedAppContractsRoute: AuthenticatedAppContractsRoute,
   AuthenticatedAppCostAnalyticsRoute: AuthenticatedAppCostAnalyticsRoute,
+  AuthenticatedAppDataExplorerRoute: AuthenticatedAppDataExplorerRoute,
   AuthenticatedAppDelegationAuditRoute: AuthenticatedAppDelegationAuditRoute,
   AuthenticatedAppDelegationsRoute: AuthenticatedAppDelegationsRoute,
   AuthenticatedAppDelegationsHistoryRoute:

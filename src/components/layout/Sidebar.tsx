@@ -4,7 +4,7 @@ import {
   Truck, FileSignature, ClipboardList, CalendarClock, Package, ShoppingCart,
   Gauge, Receipt, MessageSquare, BarChart3, ScrollText, ExternalLink,
   ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity, TrendingUp, Workflow, Mail, Sparkles,
-  BedDouble, Inbox, Leaf, Wallet, Plug, QrCode, CreditCard, Crown, DatabaseBackup, Eraser, Timer,
+  BedDouble, Inbox, Leaf, Wallet, Plug, QrCode, CreditCard, Crown, DatabaseBackup, Eraser, Timer, Database,
 } from "lucide-react";
 import { useMySubscription, useIsSuperAdmin } from "@/lib/use-subscription";
 
@@ -89,6 +89,13 @@ const groups: Array<{ label: string; items: Item[] }> = [
     { to: "/app/settings", label: "Impostazioni", icon: Settings },
   ]},
 ];
+
+groups.push({
+  label: "Strumenti (super admin)",
+  items: [
+    { to: "/app/data-explorer", label: "Data Explorer (CRUD universale)", icon: Database, superOnly: true },
+  ],
+});
 
 export function Sidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
