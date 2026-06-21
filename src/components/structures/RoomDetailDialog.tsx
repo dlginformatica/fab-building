@@ -253,8 +253,18 @@ function PlanAndFurniture({ room }: { room: Room }) {
   });
 
   const setPos = useMutation({
-    mutationFn: async ({ id, x, y }: { id: string; x: number; y: number }) => {
-      const { error } = await (supabase as any).from("room_furnishings").update({ pos_x: x, pos_y: y }).eq("id", id);
+    mutationFn: async ({ id, x, y }: { id: string; x: number | null; y: number | null }) => {
+      // Guardrail: clamp esplicito 0-100 e rigetto valori non finiti
+      const norm = (v: number | null) => {
+        if (v === null) return null;
+        if (!Number.isFinite(v)) throw new Error("Coordinate non valide");
+        return Math.max(0, Math.min(100, Number(v.toFixed(2))));
+      };
+      const nx = norm(x);
+      const ny = norm(y);
+      // Se uno solo dei due è null, normalizziamo a entrambi null (coerenza)
+      const payload = (nx === null || ny === null) ? { pos_x: null, pos_y: null } : { pos_x: nx, pos_y: ny };
+      const { error } = await (supabase as any).from("room_furnishings").update(payload).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["room_furnishings", room.id] }),
@@ -268,8 +278,12 @@ function PlanAndFurniture({ room }: { room: Room }) {
     const wrap = imgWrapRef.current;
     if (!wrap) return null;
     const rect = wrap.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return null;
     const clamp = (v: number) => Math.max(0, Math.min(100, v));
-    return { x: clamp(((clientX - rect.left) / rect.width) * 100), y: clamp(((clientY - rect.top) / rect.height) * 100) };
+    const x = clamp(((clientX - rect.left) / rect.width) * 100);
+    const y = clamp(((clientY - rect.top) / rect.height) * 100);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+    return { x, y };
   };
 
   const onMarkerDragStart = (e: React.MouseEvent, id: string) => {
@@ -299,14 +313,9 @@ function PlanAndFurniture({ room }: { room: Room }) {
 
   const onMapClick = (e: React.MouseEvent) => {
     if (!placingMode || !selectedId) return;
-    const wrap = imgWrapRef.current;
-    if (!wrap) return;
-    const rect = wrap.getBoundingClientRect();
-    // Reverse pan/zoom: position relative to displayed image
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    const clamped = (v: number) => Math.max(0, Math.min(100, v));
-    setPos.mutate({ id: selectedId, x: clamped(x), y: clamped(y) });
+    const p = computePct(e.clientX, e.clientY);
+    if (!p) { toast.error("Posizione non valida"); return; }
+    setPos.mutate({ id: selectedId, x: p.x, y: p.y });
     setPlacingMode(false);
   };
 
@@ -352,11 +361,18 @@ function PlanAndFurniture({ room }: { room: Room }) {
                 <button key={f.id}
                   onClick={(e) => { e.stopPropagation(); setSelectedId(f.id); }}
                   onMouseDown={(e) => onMarkerDragStart(e, f.id)}
-                  className={"absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow border cursor-move select-none " +
-                    (selectedId === f.id ? "bg-primary text-primary-foreground border-primary ring-2 ring-primary" : "bg-background border-border")}
+                  className={(() => {
+                    const fx = dragPos?.id === f.id ? dragPos.x : (f.pos_x as number);
+                    const fy = dragPos?.id === f.id ? dragPos.y : (f.pos_y as number);
+                    const invalid = !Number.isFinite(fx) || !Number.isFinite(fy) || fx < 0 || fx > 100 || fy < 0 || fy > 100;
+                    return "absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow border cursor-move select-none " +
+                      (invalid
+                        ? "bg-destructive text-destructive-foreground border-destructive ring-2 ring-destructive animate-pulse"
+                        : (selectedId === f.id ? "bg-primary text-primary-foreground border-primary ring-2 ring-primary" : "bg-background border-border"));
+                  })()}
                   style={{
-                    left: `${dragPos?.id === f.id ? dragPos.x : f.pos_x}%`,
-                    top: `${dragPos?.id === f.id ? dragPos.y : f.pos_y}%`,
+                    left: `${Math.max(0, Math.min(100, dragPos?.id === f.id ? dragPos.x : (f.pos_x as number)))}%`,
+                    top: `${Math.max(0, Math.min(100, dragPos?.id === f.id ? dragPos.y : (f.pos_y as number)))}%`,
                   }}
                   title={`${f.name} — trascina per spostare`}
                 >{f.name}</button>
