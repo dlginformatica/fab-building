@@ -53,6 +53,49 @@ export default function RoomDetailDialog({
   room, open, onOpenChange,
 }: { room: Room; open: boolean; onOpenChange: (v: boolean) => void }) {
   const qc = useQueryClient();
+  const { canUndo, canRedo, undoLen, redoLen } = useUndoState(room.id);
+
+  const applyUndo = async (forward: boolean) => {
+    const s = getStore(room.id);
+    const entry = forward ? s.redo.pop() : s.undo.pop();
+    if (!entry) return;
+    try {
+      if (entry.kind === "pos") {
+        const target = forward ? entry.to : entry.from;
+        const norm = (v: number | null) => v === null ? null : Math.max(0, Math.min(100, Number(v.toFixed(2))));
+        const payload = (target.x === null || target.y === null)
+          ? { pos_x: null, pos_y: null }
+          : { pos_x: norm(target.x), pos_y: norm(target.y) };
+        const { error } = await (supabase as any).from("room_furnishings").update(payload).eq("id", entry.id);
+        if (error) throw error;
+      } else {
+        const target = forward ? entry.to : entry.from;
+        const { error } = await (supabase as any).from("room_furnishings").update({ quantity: target }).eq("id", entry.id);
+        if (error) throw error;
+      }
+      (forward ? s.undo : s.redo).push(entry);
+      notify(room.id);
+      qc.invalidateQueries({ queryKey: ["room_furnishings", room.id] });
+    } catch (e: any) {
+      toast.error(e.message ?? "Undo fallito");
+      // re-push to keep stack consistent
+      (forward ? s.redo : s.undo).push(entry);
+      notify(room.id);
+    }
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (ev: KeyboardEvent) => {
+      const mod = ev.ctrlKey || ev.metaKey;
+      if (!mod || ev.key.toLowerCase() !== "z") return;
+      ev.preventDefault();
+      applyUndo(ev.shiftKey);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, room.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Realtime: arredi della camera → ogni client vede subito le modifiche
   useEffect(() => {
     if (!open) return;
@@ -70,7 +113,19 @@ export default function RoomDetailDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl">
-        <DialogHeader><DialogTitle>Camera {room.name}</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle className="flex items-center justify-between gap-3">
+            <span>Camera {room.name}</span>
+            <div className="flex items-center gap-1">
+              <Button size="sm" variant="outline" disabled={!canUndo} onClick={() => applyUndo(false)} title="Annulla (Ctrl/Cmd+Z)">
+                <Undo2 className="h-4 w-4 mr-1" />Annulla{undoLen ? ` (${undoLen})` : ""}
+              </Button>
+              <Button size="sm" variant="outline" disabled={!canRedo} onClick={() => applyUndo(true)} title="Ripeti (Ctrl/Cmd+Shift+Z)">
+                <Redo2 className="h-4 w-4 mr-1" />Ripeti{redoLen ? ` (${redoLen})` : ""}
+              </Button>
+            </div>
+          </DialogTitle>
+        </DialogHeader>
         <Tabs defaultValue="plan" className="space-y-3">
           <TabsList>
             <TabsTrigger value="plan">Pianta</TabsTrigger>
