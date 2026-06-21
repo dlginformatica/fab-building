@@ -22,6 +22,21 @@ type Furn = {
 export default function RoomDetailDialog({
   room, open, onOpenChange,
 }: { room: Room; open: boolean; onOpenChange: (v: boolean) => void }) {
+  const qc = useQueryClient();
+  // Realtime: arredi della camera → ogni client vede subito le modifiche
+  useEffect(() => {
+    if (!open) return;
+    const ch = supabase.channel(`rtc-furn-${room.id}`)
+      .on("postgres_changes",
+        { event: "*", schema: "public", table: "room_furnishings", filter: `room_id=eq.${room.id}` },
+        () => qc.invalidateQueries({ queryKey: ["room_furnishings", room.id] }))
+      .on("postgres_changes",
+        { event: "UPDATE", schema: "public", table: "rooms", filter: `id=eq.${room.id}` },
+        () => qc.invalidateQueries({ queryKey: ["rooms", room.structure_id] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [open, room.id, room.structure_id, qc]);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl">
@@ -55,12 +70,15 @@ function FurnitureList({ room }: { room: Room }) {
   const qc = useQueryClient();
   const { data } = useFurnishings(room);
   const [form, setForm] = useState({ kind: "arredo", name: "", locale: "camera", quantity: "1", notes: "" });
+  const [filters, setFilters] = useState({ q: "", locale: "all", kind: "all" });
   const create = useMutation({
     mutationFn: async () => {
+      const qty = form.quantity ? Number(form.quantity) : 1;
+      if (!Number.isFinite(qty) || qty < 0) throw new Error("Quantità non valida");
       const { error } = await (supabase as any).from("room_furnishings").insert({
         room_id: room.id, structure_id: room.structure_id,
         kind: form.kind, name: form.name, locale: form.locale || null,
-        quantity: form.quantity ? Number(form.quantity) : 1, notes: form.notes || null,
+        quantity: qty, notes: form.notes || null,
       });
       if (error) throw error;
     },
@@ -69,6 +87,9 @@ function FurnitureList({ room }: { room: Room }) {
   });
   const upd = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<Furn> }) => {
+      if (patch.quantity != null && (!Number.isFinite(Number(patch.quantity)) || Number(patch.quantity) < 0)) {
+        throw new Error("Quantità non valida");
+      }
       const { error } = await (supabase as any).from("room_furnishings").update(patch).eq("id", id);
       if (error) throw error;
     },
@@ -80,14 +101,24 @@ function FurnitureList({ room }: { room: Room }) {
     onSuccess: () => { toast.success("Eliminato"); qc.invalidateQueries({ queryKey: ["room_furnishings", room.id] }); },
     onError: (e: Error) => toast.error(e.message),
   });
+  const locales = useMemo(() => Array.from(new Set((data ?? []).map(f => f.locale).filter(Boolean) as string[])), [data]);
+  const filtered = useMemo(() => {
+    const q = filters.q.trim().toLowerCase();
+    return (data ?? []).filter(f => {
+      if (filters.kind !== "all" && (f.kind ?? "") !== filters.kind) return false;
+      if (filters.locale !== "all" && (f.locale ?? "") !== filters.locale) return false;
+      if (q && !(`${f.name} ${f.notes ?? ""} ${f.locale ?? ""}`.toLowerCase().includes(q))) return false;
+      return true;
+    });
+  }, [data, filters]);
   const grouped = useMemo(() => {
     const g: Record<string, Furn[]> = {};
-    for (const f of data ?? []) {
+    for (const f of filtered) {
       const k = f.locale || "altro";
       (g[k] ||= []).push(f);
     }
     return g;
-  }, [data]);
+  }, [filtered]);
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-1 md:grid-cols-6 gap-2 items-end">
@@ -110,6 +141,30 @@ function FurnitureList({ room }: { room: Room }) {
         <div className="md:col-span-1"><Label className="text-xs">Note</Label><Input value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} /></div>
         <Button onClick={() => create.mutate()} disabled={!form.name || create.isPending}><Plus className="h-4 w-4 mr-1" />Aggiungi</Button>
       </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 items-end">
+        <div><Label className="text-xs">Cerca</Label><Input value={filters.q} onChange={(e) => setFilters({ ...filters, q: e.target.value })} placeholder="nome, note, locale…" /></div>
+        <div><Label className="text-xs">Filtra per locale</Label>
+          <Select value={filters.locale} onValueChange={(v) => setFilters({ ...filters, locale: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tutti i locali</SelectItem>
+              {locales.map(l => <SelectItem key={l} value={l}>{l}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <div><Label className="text-xs">Filtra per tipo</Label>
+          <Select value={filters.kind} onValueChange={(v) => setFilters({ ...filters, kind: v })}>
+            <SelectTrigger><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tutti i tipi</SelectItem>
+              {["mobilio","arredo","accessorio"].map(k => <SelectItem key={k} value={k}>{k}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="text-xs text-muted-foreground">
+        {filtered.length} risultati su {data?.length ?? 0}
+      </div>
       <div className="space-y-3 max-h-[420px] overflow-auto">
         {Object.entries(grouped).map(([locale, items]) => (
           <div key={locale}>
@@ -123,7 +178,11 @@ function FurnitureList({ room }: { room: Room }) {
                   </Select>
                   <Input className="col-span-3 h-8" defaultValue={f.name} onBlur={(e) => e.target.value !== f.name && upd.mutate({ id: f.id, patch: { name: e.target.value } })} />
                   <Input className="col-span-2 h-8" defaultValue={f.locale ?? ""} onBlur={(e) => e.target.value !== (f.locale ?? "") && upd.mutate({ id: f.id, patch: { locale: e.target.value || null } })} />
-                  <Input type="number" className="col-span-1 h-8" defaultValue={f.quantity ?? 1} onBlur={(e) => Number(e.target.value) !== f.quantity && upd.mutate({ id: f.id, patch: { quantity: Number(e.target.value) } })} />
+                  <Input type="number" min={0} className="col-span-1 h-8" defaultValue={f.quantity ?? 1} onBlur={(e) => {
+                    const n = Number(e.target.value);
+                    if (!Number.isFinite(n) || n < 0) { toast.error("Quantità non valida"); e.target.value = String(f.quantity ?? 1); return; }
+                    if (n !== f.quantity) upd.mutate({ id: f.id, patch: { quantity: n } });
+                  }} />
                   <Input className="col-span-3 h-8" defaultValue={f.notes ?? ""} placeholder="note" onBlur={(e) => e.target.value !== (f.notes ?? "") && upd.mutate({ id: f.id, patch: { notes: e.target.value || null } })} />
                   <Button size="icon" variant="ghost" className="col-span-1" onClick={() => del.mutate(f.id)}><Trash2 className="h-4 w-4" /></Button>
                 </div>
@@ -131,7 +190,9 @@ function FurnitureList({ room }: { room: Room }) {
             </div>
           </div>
         ))}
-        {(!data || data.length === 0) && <div className="p-6 text-center text-sm text-muted-foreground border rounded">Nessun arredo registrato.</div>}
+        {filtered.length === 0 && <div className="p-6 text-center text-sm text-muted-foreground border rounded">
+          {(!data || data.length === 0) ? "Nessun arredo registrato." : "Nessun arredo corrisponde ai filtri."}
+        </div>}
       </div>
     </div>
   );
@@ -192,8 +253,18 @@ function PlanAndFurniture({ room }: { room: Room }) {
   });
 
   const setPos = useMutation({
-    mutationFn: async ({ id, x, y }: { id: string; x: number; y: number }) => {
-      const { error } = await (supabase as any).from("room_furnishings").update({ pos_x: x, pos_y: y }).eq("id", id);
+    mutationFn: async ({ id, x, y }: { id: string; x: number | null; y: number | null }) => {
+      // Guardrail: clamp esplicito 0-100 e rigetto valori non finiti
+      const norm = (v: number | null) => {
+        if (v === null) return null;
+        if (!Number.isFinite(v)) throw new Error("Coordinate non valide");
+        return Math.max(0, Math.min(100, Number(v.toFixed(2))));
+      };
+      const nx = norm(x);
+      const ny = norm(y);
+      // Se uno solo dei due è null, normalizziamo a entrambi null (coerenza)
+      const payload = (nx === null || ny === null) ? { pos_x: null, pos_y: null } : { pos_x: nx, pos_y: ny };
+      const { error } = await (supabase as any).from("room_furnishings").update(payload).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["room_furnishings", room.id] }),
@@ -207,8 +278,12 @@ function PlanAndFurniture({ room }: { room: Room }) {
     const wrap = imgWrapRef.current;
     if (!wrap) return null;
     const rect = wrap.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return null;
     const clamp = (v: number) => Math.max(0, Math.min(100, v));
-    return { x: clamp(((clientX - rect.left) / rect.width) * 100), y: clamp(((clientY - rect.top) / rect.height) * 100) };
+    const x = clamp(((clientX - rect.left) / rect.width) * 100);
+    const y = clamp(((clientY - rect.top) / rect.height) * 100);
+    if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+    return { x, y };
   };
 
   const onMarkerDragStart = (e: React.MouseEvent, id: string) => {
@@ -238,14 +313,9 @@ function PlanAndFurniture({ room }: { room: Room }) {
 
   const onMapClick = (e: React.MouseEvent) => {
     if (!placingMode || !selectedId) return;
-    const wrap = imgWrapRef.current;
-    if (!wrap) return;
-    const rect = wrap.getBoundingClientRect();
-    // Reverse pan/zoom: position relative to displayed image
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    const clamped = (v: number) => Math.max(0, Math.min(100, v));
-    setPos.mutate({ id: selectedId, x: clamped(x), y: clamped(y) });
+    const p = computePct(e.clientX, e.clientY);
+    if (!p) { toast.error("Posizione non valida"); return; }
+    setPos.mutate({ id: selectedId, x: p.x, y: p.y });
     setPlacingMode(false);
   };
 
@@ -291,11 +361,18 @@ function PlanAndFurniture({ room }: { room: Room }) {
                 <button key={f.id}
                   onClick={(e) => { e.stopPropagation(); setSelectedId(f.id); }}
                   onMouseDown={(e) => onMarkerDragStart(e, f.id)}
-                  className={"absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow border cursor-move select-none " +
-                    (selectedId === f.id ? "bg-primary text-primary-foreground border-primary ring-2 ring-primary" : "bg-background border-border")}
+                  className={(() => {
+                    const fx = dragPos?.id === f.id ? dragPos.x : (f.pos_x as number);
+                    const fy = dragPos?.id === f.id ? dragPos.y : (f.pos_y as number);
+                    const invalid = !Number.isFinite(fx) || !Number.isFinite(fy) || fx < 0 || fx > 100 || fy < 0 || fy > 100;
+                    return "absolute -translate-x-1/2 -translate-y-1/2 rounded-full px-2 py-0.5 text-[10px] font-semibold shadow border cursor-move select-none " +
+                      (invalid
+                        ? "bg-destructive text-destructive-foreground border-destructive ring-2 ring-destructive animate-pulse"
+                        : (selectedId === f.id ? "bg-primary text-primary-foreground border-primary ring-2 ring-primary" : "bg-background border-border"));
+                  })()}
                   style={{
-                    left: `${dragPos?.id === f.id ? dragPos.x : f.pos_x}%`,
-                    top: `${dragPos?.id === f.id ? dragPos.y : f.pos_y}%`,
+                    left: `${Math.max(0, Math.min(100, dragPos?.id === f.id ? dragPos.x : (f.pos_x as number)))}%`,
+                    top: `${Math.max(0, Math.min(100, dragPos?.id === f.id ? dragPos.y : (f.pos_y as number)))}%`,
                   }}
                   title={`${f.name} — trascina per spostare`}
                 >{f.name}</button>

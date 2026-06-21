@@ -147,21 +147,71 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
     },
   });
 
-  const catsStorageKey = `roomtype-cats:${structureId}`;
-  const [customCats, setCustomCats] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    try { return JSON.parse(localStorage.getItem(catsStorageKey) ?? "[]"); } catch { return []; }
+  // Categorie persistenti su DB (per struttura)
+  const { data: dbCats } = useQuery({
+    queryKey: ["room_type_categories", structureId],
+    queryFn: async () => {
+      const { data, error } = await (supabase as any).from("room_type_categories")
+        .select("id,name").eq("structure_id", structureId).order("name");
+      if (error) throw error;
+      return (data ?? []) as { id: string; name: string }[];
+    },
   });
-  const persistCats = (next: string[]) => {
-    setCustomCats(next);
-    if (typeof window !== "undefined") localStorage.setItem(catsStorageKey, JSON.stringify(next));
-  };
+
+  // Realtime: sincronizza categorie tra utenti/sessioni
+  useEffect(() => {
+    const ch = supabase.channel(`rtc-cats-${structureId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "room_type_categories", filter: `structure_id=eq.${structureId}` },
+        () => qc.invalidateQueries({ queryKey: ["room_type_categories", structureId] }))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [structureId, qc]);
+
+  // One-shot migrazione: porta eventuali categorie ancora in localStorage su DB
+  useEffect(() => {
+    if (typeof window === "undefined" || !dbCats) return;
+    const key = `roomtype-cats:${structureId}`;
+    try {
+      const ls: string[] = JSON.parse(localStorage.getItem(key) ?? "[]");
+      const known = new Set(dbCats.map(c => c.name));
+      const missing = ls.filter(x => typeof x === "string" && x.trim() && !known.has(x.trim()));
+      if (missing.length > 0) {
+        (supabase as any).from("room_type_categories")
+          .insert(missing.map(name => ({ structure_id: structureId, name })))
+          .then(() => { localStorage.removeItem(key); qc.invalidateQueries({ queryKey: ["room_type_categories", structureId] }); });
+      } else if (ls.length > 0) {
+        localStorage.removeItem(key);
+      }
+    } catch { /* ignore */ }
+  }, [dbCats, structureId, qc]);
+
+  const customCatNames = (dbCats ?? []).map(c => c.name);
   const categories = Array.from(new Set([
     ...DEFAULT_TYPE_CATEGORIES,
-    ...customCats,
+    ...customCatNames,
     ...((data ?? []).map((t: any) => t.category).filter(Boolean) as string[]),
   ]));
   const [newCat, setNewCat] = useState("");
+
+  const addCat = useMutation({
+    mutationFn: async (name: string) => {
+      const trimmed = name.trim();
+      if (!trimmed) return;
+      const { error } = await (supabase as any).from("room_type_categories")
+        .insert({ structure_id: structureId, name: trimmed });
+      if (error && !/duplicate key|unique/i.test(error.message)) throw error;
+    },
+    onSuccess: () => { setNewCat(""); qc.invalidateQueries({ queryKey: ["room_type_categories", structureId] }); },
+    onError: (e: Error) => toast.error(e.message),
+  });
+  const delCat = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await (supabase as any).from("room_type_categories").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["room_type_categories", structureId] }),
+    onError: (e: Error) => toast.error(e.message),
+  });
 
   const [editing, setEditing] = useState<{ id: string | null; form: RoomTypeForm } | null>(null);
 
@@ -212,12 +262,13 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
           <div className="text-xs font-medium uppercase text-muted-foreground">Categorie disponibili</div>
           <div className="flex flex-wrap gap-1">
             {categories.map((c) => {
-              const removable = customCats.includes(c) && !DEFAULT_TYPE_CATEGORIES.includes(c);
+              const dbEntry = (dbCats ?? []).find(x => x.name === c);
+              const removable = !!dbEntry && !DEFAULT_TYPE_CATEGORIES.includes(c);
               return (
                 <span key={c} className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded bg-accent text-accent-foreground">
                   {c}
-                  {removable && (
-                    <button type="button" className="hover:text-destructive" onClick={() => persistCats(customCats.filter(x => x !== c))} aria-label={`Rimuovi ${c}`}>
+                  {removable && dbEntry && (
+                    <button type="button" className="hover:text-destructive" onClick={() => delCat.mutate(dbEntry.id)} aria-label={`Rimuovi ${c}`}>
                       <X className="h-3 w-3" />
                     </button>
                   )}
@@ -227,11 +278,12 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
           </div>
           <div className="flex gap-2">
             <Input className="h-8" placeholder="Nuova categoria…" value={newCat} onChange={(e) => setNewCat(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter" && newCat.trim()) { persistCats(Array.from(new Set([...customCats, newCat.trim()]))); setNewCat(""); } }} />
-            <Button size="sm" variant="outline" onClick={() => { if (newCat.trim()) { persistCats(Array.from(new Set([...customCats, newCat.trim()]))); setNewCat(""); } }}>
+              onKeyDown={(e) => { if (e.key === "Enter" && newCat.trim()) addCat.mutate(newCat); }} />
+            <Button size="sm" variant="outline" disabled={!newCat.trim() || addCat.isPending} onClick={() => addCat.mutate(newCat)}>
               <Plus className="h-4 w-4 mr-1" />Aggiungi
             </Button>
           </div>
+          <p className="text-[11px] text-muted-foreground">Le categorie sono condivise tra tutti gli utenti della struttura.</p>
         </div>
         <div className="divide-y border rounded">
           {(data ?? []).map((t) => (
@@ -296,6 +348,24 @@ function RoomTypesTab({ structureId }: { structureId: string }) {
 function RoomsTab({ structureId }: { structureId: string }) {
   const qc = useQueryClient();
   const [openRoom, setOpenRoom] = useState<any | null>(null);
+
+  // Realtime: arredi e camere → invalida il summary e la lista camere
+  useEffect(() => {
+    const ch = supabase.channel(`rtc-rooms-${structureId}`)
+      .on("postgres_changes",
+        { event: "*", schema: "public", table: "room_furnishings", filter: `structure_id=eq.${structureId}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["room_furnishings_summary", structureId] });
+        })
+      .on("postgres_changes",
+        { event: "*", schema: "public", table: "rooms", filter: `structure_id=eq.${structureId}` },
+        () => {
+          qc.invalidateQueries({ queryKey: ["rooms", structureId] });
+        })
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [structureId, qc]);
+
   const { data: floors } = useQuery({
     queryKey: ["floors", structureId],
     queryFn: async () => {
