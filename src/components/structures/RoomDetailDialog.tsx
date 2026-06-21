@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Trash2, Upload, ZoomIn, ZoomOut, Crosshair } from "lucide-react";
+import { Plus, Trash2, Upload, ZoomIn, ZoomOut, Crosshair, Undo2, Redo2 } from "lucide-react";
 import { toast } from "sonner";
 
 type Room = { id: string; name: string; structure_id: string; plan_path: string | null };
@@ -19,10 +19,83 @@ type Furn = {
   pos_x: number | null; pos_y: number | null;
 };
 
+/* ─────────────────────────  Undo/Redo store (scoped per camera)  ───────────────────────── */
+type UndoEntry =
+  | { kind: "pos"; id: string; from: { x: number | null; y: number | null }; to: { x: number | null; y: number | null } }
+  | { kind: "qty"; id: string; from: number | null; to: number | null };
+
+const undoStores = new Map<string, { undo: UndoEntry[]; redo: UndoEntry[]; listeners: Set<() => void> }>();
+function getStore(roomId: string) {
+  let s = undoStores.get(roomId);
+  if (!s) { s = { undo: [], redo: [], listeners: new Set() }; undoStores.set(roomId, s); }
+  return s;
+}
+function notify(roomId: string) { getStore(roomId).listeners.forEach((l) => l()); }
+function pushUndo(roomId: string, e: UndoEntry) {
+  const s = getStore(roomId);
+  s.undo.push(e); if (s.undo.length > 50) s.undo.shift();
+  s.redo = [];
+  notify(roomId);
+}
+function useUndoState(roomId: string) {
+  const [, set] = useState(0);
+  useEffect(() => {
+    const s = getStore(roomId);
+    const fn = () => set((v) => v + 1);
+    s.listeners.add(fn);
+    return () => { s.listeners.delete(fn); };
+  }, [roomId]);
+  const s = getStore(roomId);
+  return { canUndo: s.undo.length > 0, canRedo: s.redo.length > 0, undoLen: s.undo.length, redoLen: s.redo.length };
+}
+
 export default function RoomDetailDialog({
   room, open, onOpenChange,
 }: { room: Room; open: boolean; onOpenChange: (v: boolean) => void }) {
   const qc = useQueryClient();
+  const { canUndo, canRedo, undoLen, redoLen } = useUndoState(room.id);
+
+  const applyUndo = async (forward: boolean) => {
+    const s = getStore(room.id);
+    const entry = forward ? s.redo.pop() : s.undo.pop();
+    if (!entry) return;
+    try {
+      if (entry.kind === "pos") {
+        const target = forward ? entry.to : entry.from;
+        const norm = (v: number | null) => v === null ? null : Math.max(0, Math.min(100, Number(v.toFixed(2))));
+        const payload = (target.x === null || target.y === null)
+          ? { pos_x: null, pos_y: null }
+          : { pos_x: norm(target.x), pos_y: norm(target.y) };
+        const { error } = await (supabase as any).from("room_furnishings").update(payload).eq("id", entry.id);
+        if (error) throw error;
+      } else {
+        const target = forward ? entry.to : entry.from;
+        const { error } = await (supabase as any).from("room_furnishings").update({ quantity: target }).eq("id", entry.id);
+        if (error) throw error;
+      }
+      (forward ? s.undo : s.redo).push(entry);
+      notify(room.id);
+      qc.invalidateQueries({ queryKey: ["room_furnishings", room.id] });
+    } catch (e: any) {
+      toast.error(e.message ?? "Undo fallito");
+      // re-push to keep stack consistent
+      (forward ? s.redo : s.undo).push(entry);
+      notify(room.id);
+    }
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (ev: KeyboardEvent) => {
+      const mod = ev.ctrlKey || ev.metaKey;
+      if (!mod || ev.key.toLowerCase() !== "z") return;
+      ev.preventDefault();
+      applyUndo(ev.shiftKey);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, room.id]); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Realtime: arredi della camera → ogni client vede subito le modifiche
   useEffect(() => {
     if (!open) return;
@@ -40,7 +113,19 @@ export default function RoomDetailDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl">
-        <DialogHeader><DialogTitle>Camera {room.name}</DialogTitle></DialogHeader>
+        <DialogHeader>
+          <DialogTitle className="flex items-center justify-between gap-3">
+            <span>Camera {room.name}</span>
+            <div className="flex items-center gap-1">
+              <Button size="sm" variant="outline" disabled={!canUndo} onClick={() => applyUndo(false)} title="Annulla (Ctrl/Cmd+Z)">
+                <Undo2 className="h-4 w-4 mr-1" />Annulla{undoLen ? ` (${undoLen})` : ""}
+              </Button>
+              <Button size="sm" variant="outline" disabled={!canRedo} onClick={() => applyUndo(true)} title="Ripeti (Ctrl/Cmd+Shift+Z)">
+                <Redo2 className="h-4 w-4 mr-1" />Ripeti{redoLen ? ` (${redoLen})` : ""}
+              </Button>
+            </div>
+          </DialogTitle>
+        </DialogHeader>
         <Tabs defaultValue="plan" className="space-y-3">
           <TabsList>
             <TabsTrigger value="plan">Pianta</TabsTrigger>
@@ -89,6 +174,11 @@ function FurnitureList({ room }: { room: Room }) {
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<Furn> }) => {
       if (patch.quantity != null && (!Number.isFinite(Number(patch.quantity)) || Number(patch.quantity) < 0)) {
         throw new Error("Quantità non valida");
+      }
+      // Traccia undo per quantity
+      if (Object.prototype.hasOwnProperty.call(patch, "quantity")) {
+        const cur = (data ?? []).find((f) => f.id === id);
+        if (cur) pushUndo(room.id, { kind: "qty", id, from: cur.quantity ?? null, to: (patch.quantity as number) ?? null });
       }
       const { error } = await (supabase as any).from("room_furnishings").update(patch).eq("id", id);
       if (error) throw error;
@@ -264,6 +354,16 @@ function PlanAndFurniture({ room }: { room: Room }) {
       const ny = norm(y);
       // Se uno solo dei due è null, normalizziamo a entrambi null (coerenza)
       const payload = (nx === null || ny === null) ? { pos_x: null, pos_y: null } : { pos_x: nx, pos_y: ny };
+      // Traccia undo per posizione
+      const cur = (furn ?? []).find((f) => f.id === id);
+      if (cur) {
+        pushUndo(room.id, {
+          kind: "pos",
+          id,
+          from: { x: cur.pos_x, y: cur.pos_y },
+          to: { x: payload.pos_x ?? null, y: payload.pos_y ?? null },
+        });
+      }
       const { error } = await (supabase as any).from("room_furnishings").update(payload).eq("id", id);
       if (error) throw error;
     },

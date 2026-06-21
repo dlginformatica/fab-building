@@ -4,7 +4,7 @@ import {
   Truck, FileSignature, ClipboardList, CalendarClock, Package, ShoppingCart,
   Gauge, Receipt, MessageSquare, BarChart3, ScrollText, ExternalLink,
   ShieldCheck, UserCog, AlertTriangle, FileBarChart, Activity, TrendingUp, Workflow, Mail, Sparkles,
-  BedDouble, Inbox, Leaf, Wallet, Plug, QrCode, CreditCard, Crown, DatabaseBackup, Eraser, Timer,
+  BedDouble, Inbox, Leaf, Wallet, Plug, QrCode, CreditCard, Crown, DatabaseBackup, Eraser, Timer, Database,
 } from "lucide-react";
 import { useMySubscription, useIsSuperAdmin } from "@/lib/use-subscription";
 
@@ -87,6 +87,9 @@ const groups: Array<{ label: string; items: Item[] }> = [
     { to: "/app/delivery-queue", label: "Coda invii report", icon: Activity, module: "scheduled_exports" },
     { to: "/app/docs", label: "Documenti", icon: FileText, module: "docs" },
     { to: "/app/settings", label: "Impostazioni", icon: Settings },
+  ]},
+  { label: "Strumenti (super admin)", items: [
+    { to: "/app/data-explorer", label: "Data Explorer (CRUD universale)", icon: Database, superOnly: true },
   ]},
 ];
 

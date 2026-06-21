@@ -1,42 +1,89 @@
-## Piano Fase 8 — Consolidamento operativo
+## Obiettivo
 
-Cinque moduli, li costruisco in sequenza in 5 step così rimangono testabili. Documenti (`REQUISITI_FUNZIONALI.md`, `REQUISITI_NON_FUNZIONALI.md`, `MANUALE_OPERATIVO.md`, `SCHEMA_DB.md`) aggiornati ad ogni step come da regola.
+1. **Undo arredi**: cronologia locale per modifiche pos_x/pos_y/quantità con ripristino immediato resistente al realtime.
+2. **Data Explorer generico**: pagina super-admin che genera CRUD list/detail per tutte le tabelle `public` (80+), con ricerca, paginazione, export CSV/JSON e stampa.
 
-### 8.1 — Modulo Contratti completo
-- Estensione tabella `contracts` (auto-renewal, notice_period_days, renewal_terms, next_review_at, attachments_count) + nuova `contract_attachments` (file su bucket privato `contracts`) + `contract_renewals` (storico rinnovi).
-- Pagina `/app/contracts`: lista filtrabile (stato, fornitore, struttura, scadenza), dettaglio con timeline rinnovi, upload allegati, scadenzario (KPI prossime scadenze 30/60/90 gg).
-- Trigger `pg_cron` giornaliero che alimenta `notification_log` via `dispatchNotification` per contratti in scadenza entro `notice_period_days`.
+Realistico essere onesti: un CRUD "completo come quello strutture" su 80 tabelle non è fattibile in un'iterazione (form personalizzati, FK, validazioni di dominio). Costruisco invece un **generatore data-driven** che funziona per tutte le tabelle, con edit JSON form sicuro per i tipi base. Le pagine specializzate già esistenti (strutture, asset, ticket, ecc.) restano la via "ricca", il Data Explorer è la via "universale".
 
-### 8.2 — Gestione SLA guidata
-- Wizard `/app/sla` per definire regole (priorità → soglie ack/risoluzione, escalation chain multi-livello con ritardi).
-- Tabelle nuove: `sla_escalation_rules` (rule_id, level, after_minutes, notify_role/user/channel), `sla_compliance_snapshots` (mensile per struttura).
-- Cron orario che valuta `sla_notifications` e dispatcha escalation ai canali configurati.
-- Pagina **Report Conformità**: % SLA rispettati per periodo, breakdown per categoria/priorità, export CSV/PDF.
+---
 
-### 8.3 — Asset avanzato
-- Nuove tabelle: `asset_history` (audit field-level via trigger), `asset_maintenance_log` (vista materializzata su `maintenance_tasks` + interventi su ticket collegati).
-- Dettaglio asset esteso: tab **Storico**, tab **Documenti** (riusa `asset_documents`), tab **Manutenzioni** (timeline interventi pianificati + correttivi con costi).
-- Indicatore MTBF/MTTR per asset.
+## Parte A — Undo arredi (RoomDetailDialog)
 
-### 8.4 — PWA offline + sync
-- Service worker via `vite-plugin-pwa` (Workbox `generateSW`) con guardie preview Lovable da skill PWA.
-- IndexedDB locale (`idb`) con outbox per: creazione/aggiornamento ticket, scansioni QR asset, foto allegate.
-- Hook `useOfflineSync` che monitora `navigator.onLine` e drena l'outbox alle server functions; UI badge "offline / N elementi in coda".
-- Cache `NetworkFirst` per navigazioni, `CacheFirst` per asset hashed, runtime cache per liste asset/ticket dell'utente.
+**Comportamento**
+- Ogni modifica di `pos_x`, `pos_y`, `quantity` su `room_furnishings` viene tracciata in uno stack locale (max 50 voci) con `{id, field, prevValue, newValue, ts}`.
+- Bottone "Annulla ultima modifica" (icona Undo + scorciatoia Ctrl/Cmd+Z) nella tab "Pianta" e in "Arredi & Mobilio".
+- L'undo applica una mutation che ripristina il valore precedente. Il valore ripristinato viene anch'esso loggato come step undo (così è ripetibile in avanti tramite Redo, Ctrl+Shift+Z, stack a parte).
+- **Resistente al realtime**: lo stack vive in `useRef`+`useState` locale, non viene resettato dalle invalidazioni di query. La mutation di ripristino sovrascrive il valore arrivato via realtime perché è una UPDATE successiva.
+- Guardrail già esistenti (clamp 0–100, quantità ≥ 0) si applicano anche al ripristino.
 
-### 8.5 — Dashboard KPI per struttura
-- Pagina `/app/dashboard` con selettore struttura. KPI cards: ticket aperti per stato, SLA compliance 30gg, ticket in ritardo, contratti in scadenza 90gg, top 5 fornitori per rating + tempo medio risposta, consumi utility trend.
-- Charts (recharts): andamento ticket settimanale, distribuzione per categoria, mix correttive/preventive.
-- Server functions read-only con `requireSupabaseAuth` + filtro `has_structure_access`.
+**File**
+- `src/components/structures/RoomDetailDialog.tsx`: aggiunta hook `useUndoStack`, wrapper sulle mutation `setPos` e `upd(quantity)`, UI bottoni Undo/Redo, listener tastiera.
 
-### Trasversali
-- Documentazione: ogni step aggiorna i 4 file `docs/*.md` con changelog datato in testa.
-- Test manuale guidato a fine 8.5 con checklist (login per ruolo, ticket end-to-end, OCR fattura, notifica Teams, offline+sync, dashboard).
-- Audit coerenza UI: revisione Sidebar, breadcrumb, permessi per ruolo (super_admin / direttore / facility_manager / manutentore / fornitore / economato / viewer).
+Nessuna migrazione necessaria (storico solo client-side, scelta voluta per istantaneità; chi vuole storico persistente usa `audit_log`).
 
-### Note tecniche
-- Tutte le nuove tabelle: `GRANT` + RLS + policy `has_structure_access` o `is_admin`.
-- Notifiche riusano `dispatchNotification` (Fase 7.4) — niente nuovi canali, solo nuovi eventi enum: `contract_expiring`, `sla_escalation_l1/l2/l3`, `compliance_report_ready`.
-- Cron jobs via `pg_cron` + `pg_net` verso `/api/public/hooks/...` con `apikey` anon (pattern standard).
+---
 
-Procedo step 8.1 → 8.5 in chiamate separate, oppure dimmi se vuoi cambiare ordine / saltare uno step.
+## Parte B — Data Explorer universale
+
+**Rotte**
+- `src/routes/_authenticated/app.data-explorer.index.tsx` — elenco tabelle (gruppi: Strutture & spazi, Asset, Ticket & SLA, Fornitori, Manutenzione, Inventario, Fatture, Sicurezza/Permessi, Notifiche, Sistema). Solo `super_admin`.
+- `src/routes/_authenticated/app.data-explorer.$table.tsx` — list view con ricerca full-text su colonne testo, paginazione (50/pag), filtri per `structure_id` se presente, export CSV/JSON, stampa lista (window.print con stile dedicato), bottoni "Nuova riga" / "Modifica" / "Elimina".
+- `src/routes/_authenticated/app.data-explorer.$table.$id.tsx` — detail/edit view: form generato da introspezione colonne (text/number/boolean/timestamp/uuid/jsonb=textarea JSON), bottone Stampa scheda, Elimina.
+
+**Backend**
+- Server functions in `src/lib/data-explorer.functions.ts` con `requireSupabaseAuth`:
+  - `listTables()`: ritorna whitelist tabelle con metadati (colonne, tipi, PK, FK, has_structure_id).
+  - `listRows({ table, q, page, pageSize, structureId, orderBy })`.
+  - `getRow({ table, id })`.
+  - `upsertRow({ table, id?, values })`.
+  - `deleteRow({ table, id })`.
+- Tutte controllano `has_role(auth.uid(),'super_admin')`. Tabelle e colonne validate contro whitelist statica per impedire SQL injection (uso solo `supabase.from(table)` con `table` ∈ whitelist).
+- Metadati colonne letti via query a `information_schema.columns` (server-only) e cache in memoria.
+
+**UI**
+- Componente `<DataTable>` riutilizzabile (Tailwind + shadcn Table) con header sortable, search input debounced, paginator.
+- Export CSV: utility in `src/lib/data-explorer-export.ts` (papaparse-style manuale, già abbiamo `csv-export.ts` da riusare).
+- Stampa: classe `print:` Tailwind + `@media print` minimale in `src/styles.css`.
+
+**Sidebar**
+- Voce "Data Explorer" sotto sezione Sistema, visibile solo a super_admin.
+
+**Limiti dichiarati nell'header della pagina**
+- Editing JSON-form generico: niente validazioni di dominio (date format libero, enum come testo). Per workflow ricchi usare le pagine dedicate.
+- RLS rispettata: il super_admin vede tutto comunque per via di `has_role(super_admin)` nelle policy esistenti.
+- Tabelle di sistema sensibili (`audit_log`, `permission_audit`, `delegation_audit`, `backup_runs`) in sola lettura.
+
+---
+
+## Dettagli tecnici
+
+```text
+src/
+├── components/
+│   ├── data-explorer/
+│   │   ├── DataTable.tsx          # tabella + ricerca + paginazione
+│   │   ├── RowForm.tsx            # form generato da metadati
+│   │   ├── PrintView.tsx          # layout stampa lista/scheda
+│   │   └── tables-catalog.ts      # whitelist + raggruppamento + read-only flags
+│   └── structures/
+│       └── RoomDetailDialog.tsx   # +useUndoStack, bottoni Undo/Redo, Ctrl+Z
+├── lib/
+│   ├── data-explorer.functions.ts # serverFn list/get/upsert/delete
+│   └── data-explorer-export.ts    # CSV/JSON export
+└── routes/_authenticated/
+    ├── app.data-explorer.index.tsx
+    ├── app.data-explorer.$table.tsx
+    └── app.data-explorer.$table.$id.tsx
+```
+
+Aggiorno docs (REQUISITI_FUNZIONALI, MANUALE_OPERATIVO, MANUALE_UTENTE, BROCHURE, features-catalog) come da regola permanente.
+
+Nessuna migrazione SQL: tutto passa per RLS esistenti + ruolo super_admin. Se in fase di test scopro tabelle che mancano di GRANT sulle policy super_admin, aggiungo migrazione minima.
+
+---
+
+## Conferma necessaria
+
+Procedo come sopra? Due note:
+- L'Undo è solo in sessione (non sopravvive al refresh). Se vuoi undo persistente cross-sessione lo costruiamo dopo su `audit_log`.
+- Il Data Explorer è uno strumento da super-admin: non lo esponiamo ai ruoli operativi per evitare bypass delle UI dedicate.

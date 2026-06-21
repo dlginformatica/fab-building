@@ -1,3 +1,7 @@
+<!-- changelog 2026-06-21 -->
+- **Undo/Redo arredi camera** (RoomDetailDialog): annulla/ripeti modifiche posizione segnaposti e quantità con bottoni dedicati e scorciatoie Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z. Stack locale di 50 voci per camera, resistente al realtime.
+- **Data Explorer super admin** su `/app/data-explorer`: CRUD generico su 80+ tabelle public con ricerca, paginazione, filtro in pagina, export CSV/JSON, stampa lista e stampa scheda. Editor riga generato automaticamente dalle colonne (parser JSON/bool/number/null). Tabelle audit e log in sola lettura. Voce in sidebar gruppo "Strumenti (super admin)".
+
 <!-- changelog 2026-06-20 -->
 - Nuova **gestione completa Strutture** (/app/structures/$id) con tab: Anagrafica editabile, Camere & Piani (CRUD + preset rapido), Tipologie camere (nuova tabella `room_types` org-scoped), Galleria foto (bucket privato `structure-photos`, RLS per struttura), Mappa OpenStreetMap (react-leaflet) con geocodifica Nominatim, marker draggable, salvataggio coordinate `lat`/`lng` su `structures`.
 
