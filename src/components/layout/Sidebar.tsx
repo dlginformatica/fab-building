@@ -88,14 +88,10 @@ const groups: Array<{ label: string; items: Item[] }> = [
     { to: "/app/docs", label: "Documenti", icon: FileText, module: "docs" },
     { to: "/app/settings", label: "Impostazioni", icon: Settings },
   ]},
-];
-
-groups.push({
-  label: "Strumenti (super admin)",
-  items: [
+  { label: "Strumenti (super admin)", items: [
     { to: "/app/data-explorer", label: "Data Explorer (CRUD universale)", icon: Database, superOnly: true },
-  ],
-});
+  ]},
+];
 
 export function Sidebar() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
