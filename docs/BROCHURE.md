@@ -1,3 +1,7 @@
+<!-- changelog 2026-06-21 -->
+- **Undo/Redo arredi camera** (RoomDetailDialog): annulla/ripeti modifiche posizione segnaposti e quantità con bottoni dedicati e scorciatoie Ctrl/Cmd+Z, Ctrl/Cmd+Shift+Z. Stack locale di 50 voci per camera, resistente al realtime.
+- **Data Explorer super admin** su `/app/data-explorer`: CRUD generico su 80+ tabelle public con ricerca, paginazione, filtro in pagina, export CSV/JSON, stampa lista e stampa scheda. Editor riga generato automaticamente dalle colonne (parser JSON/bool/number/null). Tabelle audit e log in sola lettura. Voce in sidebar gruppo "Strumenti (super admin)".
+
 <!-- changelog 2026-06-20 -->
 - **Tipologie camere**: aggiunte colonne `category` e `description`; UI con form di modifica completo (crea/edita/elimina), categoria scelta da elenco predefinito modificabile (Standard, Deluxe, Junior Suite, Suite, Garden Suite, Monolocale, Bilocale) con possibilità di aggiungere nuovi valori liberi.
 - **Camere — Pianta & Arredi**: nuova scheda di dettaglio camera con upload pianta (bucket `structure-photos`, path `<structure_id>/rooms/<room_id>/...`), viewer con zoom/pan; nuova tabella `room_furnishings` (kind mobilio/arredo/accessorio, name, locale, quantity, notes, pos_x/pos_y) org-scoped via `has_structure_access`/`is_org_admin`; segnaposti percentuali sulla pianta, evidenziazione bidirezionale lista↔pianta.
