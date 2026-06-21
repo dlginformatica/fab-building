@@ -487,7 +487,13 @@ function RoomsTab({ structureId }: { structureId: string }) {
           <RoomDetailDialog
             room={{ id: openRoom.id, name: openRoom.name, structure_id: structureId, plan_path: openRoom.plan_path ?? null }}
             open={!!openRoom}
-            onOpenChange={(v) => { if (!v) setOpenRoom(null); }}
+            onOpenChange={(v) => {
+              if (!v) {
+                setOpenRoom(null);
+                qc.invalidateQueries({ queryKey: ["room_furnishings_summary", structureId] });
+                qc.invalidateQueries({ queryKey: ["rooms", structureId] });
+              }
+            }}
           />
         </Suspense>
       )}
